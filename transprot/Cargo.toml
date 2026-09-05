@@ -4,3 +4,8 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+bytes = "1"
+util = { package = "webrtc-util", version = "0.5.4", default-features = false, features = ["marshal"] }
+zerocopy = "0.8.56"
+tokio = "1.53.1"
+rand = "0.10.2"
