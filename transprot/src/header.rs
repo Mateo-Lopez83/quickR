@@ -125,12 +125,12 @@ const HEADERSIZE:usize = 17;
         }
     }
 
-    impl ControlHeader{
-        fn marshallize(&self)->Vec<u8>{
-            let b0:u8;
-            Vec::new()
-        }
-    }
+    // impl ControlHeader{
+    //     fn marshallize(&self)->Vec<u8>{
+    //         let b0:u8;
+    //         Vec::new()
+    //     }
+    // }
 
  // pub fn marshallize(&self)-> Vec<u8>{
         //     let mut full_header: Vec<u8> = vec![self.version];

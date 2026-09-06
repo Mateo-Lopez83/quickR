@@ -9,3 +9,4 @@ util = { package = "webrtc-util", version = "0.5.4", default-features = false, f
 zerocopy = "0.8.56"
 tokio = "1.53.1"
 rand = "0.10.2"
+local-ip-address = "0.6.13"
