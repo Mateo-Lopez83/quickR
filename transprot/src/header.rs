@@ -47,15 +47,15 @@ const HEADERSIZE:usize = 17;
 
 #[derive(Debug, PartialEq, Clone)]
     pub struct Header {
-        fragment: FragmentType,
-        version: u8,        // 2 bits: version field
-        padding: bool,       // 1 bit: define si tiene padding al final del paquete      
-        channel: ChannelType,          //2 bits: define si es un paquete de video, audio o control
-        frametype: bool,         // 1 bit: si es video, define si es keyframe o deltaframe
-        sequence_number: u16,   //16 bits
-        size: u16,             //cantidad de bytes del payload
-        timestamp: u32,        //32 bits
-        ssrc: u32,            //32 bits
+        pub fragment: FragmentType,
+        pub version: u8,        // 2 bits: version field
+        pub padding: bool,       // 1 bit: define si tiene padding al final del paquete      
+        pub channel: ChannelType,          //2 bits: define si es un paquete de video, audio o control
+        pub frametype: bool,         // 1 bit: si es video, define si es keyframe o deltaframe
+        pub sequence_number: u16,   //16 bits
+        pub size: u16,             //cantidad de bytes del payload
+        pub timestamp: u32,        //32 bits
+        pub ssrc: u32,            //32 bits
         
     }
 

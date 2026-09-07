@@ -118,9 +118,10 @@ pub async fn receiving_process(conn: Arc<UdpSocket>)->Result<(), Box<dyn Error>>
         "Received {} bytes from connection",len);
         let mut received = Bytes::copy_from_slice(&buf[..len]);
         match Header::unserialize(&mut received) {
-            Ok(_header)=>{
+            Ok(header)=>{
                 //println!("Got header from {addr}: {:?}", header);
                 println!("Payload length: {}", received.len());
+                println!("Sequence number: {}", header.sequence_number )
             }
             Err(e)=>{
                 eprintln!("Failed to parse header: {:?}", e);
@@ -142,7 +143,7 @@ pub async fn advanced_hole_punching(conn: Arc<UdpSocket>)-> Result<(), Box<dyn E
     println!("Trying to connect to peer... Please wait...");
     let mut interval = time::interval(Duration::from_millis(500));
     let mut buf = [0u8; MAXDATAGRAMSIZE];
-    for i in 1..20{
+    for i in 1..5{
         tokio::select! {
             // Send a punching packet every 500 ms
             _ = interval.tick() => {
@@ -150,11 +151,11 @@ pub async fn advanced_hole_punching(conn: Arc<UdpSocket>)-> Result<(), Box<dyn E
                 println!("Sent packet number {i}");
             }
 
-            // Check whether the peer sent us something
+            // Check whether the peer sent something
             result = conn.recv(&mut buf) => {
                 let len = result?;
 
-                if &buf[..len] == b"punch" {
+                if &buf[..len] == b"punch" || len==1197 {
                     println!("Peer connected. Connection status: strong");
                     return Ok(());
                 }
