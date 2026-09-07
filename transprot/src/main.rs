@@ -26,7 +26,7 @@ async fn main() {
             let remote_addr: SocketAddr = address.parse().unwrap();
             //se actualiza la conexión desde el STUN server al destinatario real
             conn.connect(remote_addr).await.unwrap();
-            udp::hole_punching(conn.clone()).await.unwrap();
+            udp::advanced_hole_punching(conn.clone()).await.unwrap();
             let _ = udp::main_sending_process(conn).await;
         },
         "receive"=>{            
@@ -40,7 +40,7 @@ async fn main() {
             let remote_addr: SocketAddr = address.parse().unwrap();
             //se actualiza la conexión desde el STUN server al destinatario real
             conn.connect(remote_addr).await.unwrap();
-            udp::hole_punching(conn.clone()).await.unwrap();
+            udp::advanced_hole_punching(conn.clone()).await.unwrap();
             let _ = udp::receiving_process(conn).await.unwrap();
 
         },
