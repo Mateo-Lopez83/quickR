@@ -8,6 +8,7 @@ use bytes::Bytes;
 use local_ip_address::local_ip;
 
 use crate::header::Header;
+use crate::stuntry;
 
 
 pub const PAYLOADSIZE:usize = 1180;
@@ -63,11 +64,12 @@ pub mod dummy_gen{
     }
 }
 
-async fn fake_data_creator(tx:Sender<Bytes>){
+async fn channel_fake_data_creator(tx:Sender<Bytes>){
     let mut interval = time::interval(Duration::from_millis(1000));
-    for i in 0..10{
+    for _ in 0..10{
         interval.tick().await; 
         let fake_payload = dummy_gen::generate_fake_datagram();
+        println!("{}", String::from_utf8_lossy(&fake_payload));
         if tx.send(fake_payload).await.is_err() {
             println!("consumer dropped, stopping generator");
             break;
@@ -81,6 +83,9 @@ async fn channel_consumer(mut rx: mpsc::Receiver<Bytes>, socket: UdpSocket){
         if let Err(e) = socket.send(&payload).await {
             eprintln!("send failed: {e}");
             }
+        else {
+            println!("Packet sent successfully!")
+        }
         }
     println!("channel closed, no more senders");
     
@@ -104,7 +109,7 @@ pub async fn main_sending_process(remote_addr: String) -> Result<(), Box<dyn Err
     
     socket.connect(&remote_addr).await?;
     //se hacen los lets para que retorne al menos un None y cuando ya acaben ambos pasa al join!
-    let gen_handle = tokio::spawn(fake_data_creator(tx));
+    let gen_handle = tokio::spawn(channel_fake_data_creator(tx));
     let consumer_handle = tokio::spawn(channel_consumer(rx, socket));
 
     let _ = tokio::join!(gen_handle, consumer_handle);
@@ -114,12 +119,15 @@ pub async fn main_sending_process(remote_addr: String) -> Result<(), Box<dyn Err
     Ok(())
 }
 
-pub async fn receiving_process()->Result<(), Box<dyn Error>>{
-    let local_ip = local_ip().unwrap();
-    let local_addr = format!("{}:7550", local_ip);  
+pub async fn receiving_process(conn: UdpSocket)->Result<(), Box<dyn Error>>{
+    let stun_server = "stun4.l.google.com:19302";
+    let stunaddress = stuntry::discover_public_address(stun_server, conn).await.expect("Fallida la conexión con el stun server");
+    let local_ip = stunaddress.ip;
+    let port = stunaddress.port;
+    let local_addr = format!("{}:{}", local_ip,port.to_string());  
+    println!("Stun's IP address is {}", local_addr);
     let socket = UdpSocket::bind("0.0.0.0:7550").await?;
-    println!("UDP Server listening on {local_addr}");
-     let mut buf = [0u8; 1200];
+    let mut buf = [0u8; 1200];
     loop {
         let (len,addr) = socket.recv_from(&mut buf).await?;
         println!(

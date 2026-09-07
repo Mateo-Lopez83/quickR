@@ -81,6 +81,7 @@ const HEADERSIZE:usize = 17;
        
         
         pub fn serialize (&self)-> BytesMut{
+            //función para transformar un struct de Header en una cadena de bytes del struct Bytes
             let mut buf = BytesMut::with_capacity(HEADERSIZE);
             buf.put_u8(self.fragment as u8);
             buf.put_u8(self.version);
@@ -98,6 +99,7 @@ const HEADERSIZE:usize = 17;
         }
 
         pub fn unserialize(buffer: &mut Bytes)->Result<Header,PacketError>{
+            //inverso de serialize, transforma una cadena de bytes en un paquete
             
             if buffer.remaining() < HEADERSIZE{
                 Err(PacketError::WrongBufferSize)

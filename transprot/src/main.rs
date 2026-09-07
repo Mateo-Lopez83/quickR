@@ -1,6 +1,6 @@
 use std::env;
-use transprot::udp;
-
+use transprot::{stuntry, udp};
+use tokio::net::UdpSocket;
 
 
 
@@ -13,8 +13,15 @@ async fn main() {
             let _ = udp::main_sending_process(address).await;
         },
         "receive"=>{
-            let _ = udp::receiving_process().await;
+            let conn = UdpSocket::bind("0.0.0.0:0").await.unwrap();
+            let _ = udp::receiving_process(conn).await.unwrap();
         },
+        "stun"=>{
+            let conn = UdpSocket::bind("0.0.0.0:0").await.unwrap();
+            let example_stun_server = "stun4.l.google.com:19302";
+            let public_ip = stuntry::discover_public_address(example_stun_server, conn).await.unwrap();
+            
+        }
         othe =>{
             println!("No command associated with {}",othe);
         }
