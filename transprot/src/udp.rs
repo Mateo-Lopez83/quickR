@@ -9,6 +9,7 @@ use crate::header::Header;
 
 //udp.rs
 pub const PAYLOADSIZE:usize = 1180;
+pub const MAXDATAGRAMSIZE:usize = 1300;
 
 pub mod dummy_gen{
     use crate::header::{FragmentType, Header, ChannelType};
@@ -66,7 +67,7 @@ async fn channel_fake_data_creator(tx:Sender<Bytes>){
     for _ in 0..10{
         interval.tick().await; 
         let fake_payload = dummy_gen::generate_fake_datagram();
-        println!("{}", String::from_utf8_lossy(&fake_payload));
+        //println!("{}", String::from_utf8_lossy(&fake_payload));
         if tx.send(fake_payload).await.is_err() {
             println!("consumer dropped, stopping generator");
             break;
@@ -140,8 +141,8 @@ pub async fn hole_punching(conn: Arc<UdpSocket>) -> Result<(), Box<dyn Error>>{
 pub async fn advanced_hole_punching(conn: Arc<UdpSocket>)-> Result<(), Box<dyn Error>>{
     println!("Trying to connect to peer... Please wait...");
     let mut interval = time::interval(Duration::from_millis(500));
-    let mut buf = [0u8, 64];
-    for i in 1..15{
+    let mut buf = [0u8; MAXDATAGRAMSIZE];
+    for i in 1..20{
         tokio::select! {
             // Send a punching packet every 500 ms
             _ = interval.tick() => {
