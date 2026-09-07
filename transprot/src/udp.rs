@@ -145,7 +145,7 @@ pub async fn advanced_hole_punching(conn: Arc<UdpSocket>)-> Result<(), Box<dyn E
         tokio::select! {
             // Send a punching packet every 500 ms
             _ = interval.tick() => {
-                conn.send(b"hiii").await?;
+                conn.send(b"punch").await?;
                 println!("Sent packet number {i}");
             }
 
@@ -153,7 +153,7 @@ pub async fn advanced_hole_punching(conn: Arc<UdpSocket>)-> Result<(), Box<dyn E
             result = conn.recv(&mut buf) => {
                 let len = result?;
 
-                if &buf[..len] == b"hiii" {
+                if &buf[..len] == b"punch" {
                     println!("Peer connected. Connection status: strong");
                     return Ok(());
                 }
