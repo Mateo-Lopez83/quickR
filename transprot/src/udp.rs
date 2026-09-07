@@ -1,16 +1,13 @@
 use std::error::Error;
-use std::net::SocketAddr;
+use std::sync::Arc;
 use tokio::sync::mpsc::Sender;
 use tokio::net::UdpSocket;
 use tokio::time::{self, Duration};
 use tokio::sync::mpsc;
 use bytes::Bytes;
-use local_ip_address::local_ip;
-
 use crate::header::Header;
-use crate::stuntry;
 
-
+//udp.rs
 pub const PAYLOADSIZE:usize = 1180;
 
 pub mod dummy_gen{
@@ -78,7 +75,7 @@ async fn channel_fake_data_creator(tx:Sender<Bytes>){
    
 }
 
-async fn channel_consumer(mut rx: mpsc::Receiver<Bytes>, socket: UdpSocket){
+async fn channel_consumer(mut rx: mpsc::Receiver<Bytes>, socket: Arc<UdpSocket>){
     while let Some(payload) = rx.recv().await {
         if let Err(e) = socket.send(&payload).await {
             eprintln!("send failed: {e}");
@@ -91,23 +88,10 @@ async fn channel_consumer(mut rx: mpsc::Receiver<Bytes>, socket: UdpSocket){
     
 }
 
-pub async fn main_sending_process(remote_addr: String) -> Result<(), Box<dyn Error>> {
-    let remote_addr = format!("{}:7550", remote_addr); 
+pub async fn main_sending_process(conn: Arc<UdpSocket>) -> Result<(), Box<dyn Error>> {
     let (tx, rx) = mpsc::channel::<Bytes>(30);
-    
-    let remote_addrreal: SocketAddr = remote_addr.parse()?;
-
-
-    let local_addr: SocketAddr = if remote_addrreal.is_ipv4() {
-        "0.0.0.0:0"
-    } else {
-        "[::]:0"
-    }
-    .parse()?;
-
-    let socket = UdpSocket::bind(local_addr).await?;
-    
-    socket.connect(&remote_addr).await?;
+    let socket = conn.clone();
+    //socket.connect(remote_addr).await?;
     //se hacen los lets para que retorne al menos un None y cuando ya acaben ambos pasa al join!
     let gen_handle = tokio::spawn(channel_fake_data_creator(tx));
     let consumer_handle = tokio::spawn(channel_consumer(rx, socket));
@@ -119,30 +103,38 @@ pub async fn main_sending_process(remote_addr: String) -> Result<(), Box<dyn Err
     Ok(())
 }
 
-pub async fn receiving_process(conn: UdpSocket)->Result<(), Box<dyn Error>>{
-    let stun_server = "stun4.l.google.com:19302";
-    let stunaddress = stuntry::discover_public_address(stun_server, conn).await.expect("Fallida la conexión con el stun server");
-    let local_ip = stunaddress.ip;
-    let port = stunaddress.port;
-    let local_addr = format!("{}:{}", local_ip,port.to_string());  
-    println!("Stun's IP address is {}", local_addr);
-    let socket = UdpSocket::bind("0.0.0.0:7550").await?;
+// pub async fn receiving_process(stunaddress:XorMappedAddress,conn: Arc<UdpSocket>)->Result<(), Box<dyn Error>>{
+pub async fn receiving_process(conn: Arc<UdpSocket>)->Result<(), Box<dyn Error>>{    
+    // let local_ip = stunaddress.ip;
+    // let port = stunaddress.port;
+    // let local_addr = format!("{}:{}", local_ip,port.to_string());  
+    // println!("Stun's IP address is {}", local_addr);
+    let socket = conn.clone();
     let mut buf = [0u8; 1200];
     loop {
-        let (len,addr) = socket.recv_from(&mut buf).await?;
+        let len = socket.recv(&mut buf).await?;
         println!(
-        "Received {} bytes from {}",len,addr);
+        "Received {} bytes from connection",len);
         let mut received = Bytes::copy_from_slice(&buf[..len]);
         match Header::unserialize(&mut received) {
-            Ok(header)=>{
-                println!("Got header from {addr}: {:?}", header);
+            Ok(_header)=>{
+                //println!("Got header from {addr}: {:?}", header);
                 println!("Payload length: {}", received.len());
             }
             Err(e)=>{
-                eprintln!("Failed to parse header from {addr}: {:?}", e);
+                eprintln!("Failed to parse header: {:?}", e);
             }
             
         }
     }
+    
+}
+
+
+pub async fn hole_punching(conn: Arc<UdpSocket>) -> Result<(), Box<dyn Error>>{
+    let socket = conn.clone();
+    //socket.connect(address).await?;
+    socket.send(&[1]).await?;
+    Ok(())
     
 }
