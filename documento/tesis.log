@@ -1,0 +1,120 @@
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (MiKTeX 26.5) (preloaded format=pdflatex 2026.9.1)  7 SEP 2026 14:16
+entering extended mode
+ restricted \write18 enabled.
+ file:line:error style messages enabled.
+ %&-line parsing enabled.
+**"c:/Users/57304/Documents/Mateo Lopez/tesis/quikr/tesis.tex"
+(c:/Users/57304/Documents/Mateo Lopez/tesis/quikr/tesis.tex
+LaTeX2e <2026-06-01>
+L3 programming layer <2026-08-10>
+(C:\Users\57304\AppData\Local\Programs\MiKTeX\tex/latex/base\article.cls
+Document Class: article 2025/01/22 v1.4n Standard LaTeX document class
+(C:\Users\57304\AppData\Local\Programs\MiKTeX\tex/latex/base\size12.clo
+File: size12.clo 2025/01/22 v1.4n Standard LaTeX file (size option)
+)
+\c@part=\count276
+\c@section=\count277
+\c@subsection=\count278
+\c@subsubsection=\count279
+\c@paragraph=\count280
+\c@subparagraph=\count281
+\c@figure=\count282
+\c@table=\count283
+\abovecaptionskip=\skip49
+\belowcaptionskip=\skip50
+\bibindent=\dimen150
+) (C:\Users\57304\AppData\Local\Programs\MiKTeX\tex/latex/tree-dvips\lingmacros.sty
+\c@enums=\count284
+\widelabel=\dimen151
+\c@tempcnt=\count285
+\c@enumsi=\count286
+\eeindent=\dimen152
+) (C:\Users\57304\AppData\Local\Programs\MiKTeX\tex/latex/tree-dvips\tree-dvips.sty
+tree-dvips version .91 of May 16, 1995
+\nodemargin=\dimen153
+\treelinewidth=\dimen154
+\dashlength=\dimen155
+\arrowwidth=\dimen156
+\arrowlength=\dimen157
+\arrowinset=\dimen158
+\pos@t=\toks17
+\pos@b=\toks18
+\pos@l=\toks19
+\pos@r=\toks20
+\pos@tl=\toks21
+\pos@tr=\toks22
+\pos@bl=\toks23
+\pos@br=\toks24
+\@arrow=\count287
+\@tempdimc=\dimen159
+) (C:\Users\57304\AppData\Local\Programs\MiKTeX\tex/latex/l3kernel\l3backend-pdftex.def
+File: l3backend-pdftex.def 2026-08-10 L3 backend support: PDF output (pdfTeX)
+\l__color_backend_stack_int=\count288
+) (tesis.aux)
+\openout1 = `tesis.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 4.
+LaTeX Font Info:    ... okay on input line 4.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 4.
+LaTeX Font Info:    ... okay on input line 4.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 4.
+LaTeX Font Info:    ... okay on input line 4.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 4.
+LaTeX Font Info:    ... okay on input line 4.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 4.
+LaTeX Font Info:    ... okay on input line 4.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 4.
+LaTeX Font Info:    ... okay on input line 4.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 4.
+LaTeX Font Info:    ... okay on input line 4.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <10.95> on input line 17.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <8> on input line 17.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <6> on input line 17.
+ [1
+
+
+Non-PDF special ignored!
+<special> header=tree-dvips91.pro
+{C:/Users/57304/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}
+Non-PDF special ignored!
+<special> ps:@beginspec/nodemargin 2.0 pt def 0.3 pt setlinewidth [] 0 setd...
+Non-PDF special ignored!
+<special> ps:@beginspec/nodemargin 2.0 pt def 0.3 pt setlinewidth [] 0 setd...
+Non-PDF special ignored!
+<special> ps:@beginspec/nodemargin 2.0 pt def 0.3 pt setlinewidth [] 0 setd...
+Non-PDF special ignored!
+<special> ps:@beginspec/nodemargin 2.0 pt def 0.3 pt setlinewidth [] 0 setd...
+Non-PDF special ignored!
+<special> ps:@beginspec/nodemargin 2.0 pt def 0.3 pt setlinewidth [] 0 setd...
+Non-PDF special ignored!
+<special> ps:@beginspec/nodemargin 2.0 pt def 0.3 pt setlinewidth [] 0 setd...
+Non-PDF special ignored!
+<special> ps:@beginspec/nodemargin 2.0 pt def 0.3 pt setlinewidth [] 0 setd...
+Non-PDF special ignored!
+<special> ps:@beginspec/nodemargin 2.0 pt def 0.3 pt setlinewidth [] 0 setd...
+Non-PDF special ignored!
+<special> ps:@beginspec/nodemargin 2.0 pt def 0.3 pt setlinewidth [] 0 setd...
+] (tesis.aux)
+ ***********
+LaTeX2e <2026-06-01>
+L3 programming layer <2026-08-10>
+ ***********
+ ) 
+Here is how much of TeX's memory you used:
+ 614 strings out of 467441
+ 11208 string characters out of 5407592
+ 440799 words of memory out of 5000000
+ 29982 multiletter control sequences out of 15000+600000
+ 632925 words of font info for 57 fonts, out of 8000000 for 9000
+ 1141 hyphenation exceptions out of 8191
+ 35i,8n,38p,197b,266s stack positions out of 10000i,1000n,20000p,200000b,200000s
+<C:/Users/57304/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx10.pfb><C:/Users/57304/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Users/57304/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmcsc10.pfb><C:/Users/57304/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi8.pfb><C:/Users/57304/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/57304/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Users/57304/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy8.pfb><C:/Users/57304/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti12.pfb>
+Output written on tesis.pdf (1 page, 96240 bytes).
+PDF statistics:
+ 46 PDF objects out of 1000 (max. 8388607)
+ 0 named destinations out of 1000 (max. 500000)
+ 1 words of extra memory for PDF output out of 10000 (max. 10000000)
+
