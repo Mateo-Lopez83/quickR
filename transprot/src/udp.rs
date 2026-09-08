@@ -143,7 +143,7 @@ pub async fn advanced_hole_punching(conn: Arc<UdpSocket>)-> Result<(), Box<dyn E
     println!("Trying to connect to peer... Please wait...");
     let mut interval = time::interval(Duration::from_millis(500));
     let mut buf = [0u8; MAXDATAGRAMSIZE];
-    for i in 1..5{
+    for i in 1..15{
         tokio::select! {
             // Send a punching packet every 500 ms
             _ = interval.tick() => {
