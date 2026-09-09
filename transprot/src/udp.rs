@@ -227,5 +227,5 @@ pub async fn advanced_hole_punching(conn: Arc<UdpSocket>,timer: Instant)
         return Ok(());
     }
 
-    Err("hole punching timed out, no response from peer".into())
+    Err("Hole punching attempt timed out, no response from peer.".into())
 }
