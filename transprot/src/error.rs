@@ -12,7 +12,7 @@ impl fmt::Display for PacketError {
         match self {
             PacketError::WrongBufferSize => write!(f, "Buffer too short to parse packet"),
             PacketError::InvalidChannel(b) => write!(f, "Invalid channel byte received: {:#04X}", b),
-            PacketError::InvalidFragmenttype(b) => write!(f, "Invalid channel byte received: {:#04X}", b),
+            PacketError::InvalidFragmenttype(b) => write!(f, "Invalid fragment byte received: {:#04X}", b),
         }
     }
 }

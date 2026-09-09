@@ -43,7 +43,7 @@ use crate::header::{ChannelType, Header as head, FragmentType};
         wrong_serial.put_u8(2);
         wrong_serial.put_u8(0);
         //can be numbers 1-3, nothing else
-        wrong_serial.put_u8(4);
+        wrong_serial.put_u8(5);
         wrong_serial.put_u8(0);
         //seq number
         wrong_serial.put_u16(rng.random());

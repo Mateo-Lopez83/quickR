@@ -2,7 +2,7 @@ use bytes::{Bytes, BytesMut, Buf, BufMut};
 //use zerocopy::{self, ConvertError::Size};
 use crate::PacketError;
 
-const HEADERSIZE:usize = 17;
+pub const HEADERSIZE:usize = 17;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[repr(u8)]
@@ -10,6 +10,7 @@ const HEADERSIZE:usize = 17;
         Video = 1,
         Audio = 2,
         Control = 3,
+        Sync = 4,
     }
     impl TryFrom<u8> for ChannelType {
     type Error = PacketError;
@@ -19,6 +20,7 @@ const HEADERSIZE:usize = 17;
             1 => Ok(ChannelType::Video),
             2 => Ok(ChannelType::Audio),
             3 => Ok(ChannelType::Control),
+            4 => Ok(ChannelType::Sync),
             _ => Err(PacketError::InvalidChannel(value)),
         }
     }
@@ -59,9 +61,6 @@ const HEADERSIZE:usize = 17;
         
     }
 
-    pub struct ControlHeader{
-
-    }
 
     impl Header{
         pub fn new(
