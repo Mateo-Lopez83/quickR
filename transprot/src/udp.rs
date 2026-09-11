@@ -1,6 +1,7 @@
 use std::error::Error;
 use std::sync::Arc;
 use std::time::Instant;
+use rand::seq;
 use tokio::sync::mpsc::Sender;
 use tokio::net::UdpSocket;
 use tokio::time::{self, Duration};
@@ -22,14 +23,14 @@ use crate::header::{FragmentType, Header, ChannelType};
     use bytes::{BufMut, Bytes, BytesMut};
     
     
-    fn generate_test_header(timestamp: u32)->Header{
+    fn generate_test_header(timestamp: u32, seqnum: u16)->Header{
         let mut rng = rand::rng(); 
         let fragment = FragmentType::try_from(rand::random_range(1..5)).expect("Weird shi fragemtn");
         let version  = rand::random_range(1..=2);
         let padding = rand::random_bool(0.5);
         let channel = ChannelType::try_from(rand::random_range(1..4)).expect("Weird shi channel");
         let frametype = rand::random_bool(0.5);
-        let sequence: u16 = rng.random(); 
+        let sequence: u16 = seqnum; 
         let size: u16 = PAYLOADSIZE as u16; 
         //let timestamp: u32 = rng.random(); 
         let ssrc: u32 = rng.random(); 
@@ -77,8 +78,8 @@ use crate::header::{FragmentType, Header, ChannelType};
         payload
     }
 
-    pub fn generate_fake_datagram(timestamp: u32)->Bytes{
-        let header = generate_test_header(timestamp).serialize().freeze();
+    pub fn generate_fake_datagram(timestamp: u32, seqnum: u16)->Bytes{
+        let header = generate_test_header(timestamp, seqnum).serialize().freeze();
         let payload = generate_fake_payload();
         let mut combined = BytesMut::with_capacity(header.len() + payload.len());
         combined.put_slice(&header);
@@ -97,10 +98,13 @@ use crate::header::{FragmentType, Header, ChannelType};
 
 async fn channel_fake_data_creator(tx:Sender<Bytes>, timer: Instant){
     let mut interval = time::interval(Duration::from_millis(1000));
+
+    let mut seqnum: u16 = 11;
     for _ in 0..10{
         interval.tick().await; 
         let timestamp = timer.elapsed().as_millis() as u32;
-        let fake_payload = dummy_gen::generate_fake_datagram(timestamp);
+        let fake_payload = dummy_gen::generate_fake_datagram(timestamp, seqnum);
+        seqnum = seqnum +1;
         //println!("{}", String::from_utf8_lossy(&fake_payload));
         if tx.send(fake_payload).await.is_err() {
             println!("consumer dropped, stopping generator");
@@ -155,7 +159,8 @@ pub async fn receiving_process(conn: Arc<UdpSocket>)->Result<(), Box<dyn Error>>
             Ok(header)=>{
                 //println!("Got header from {addr}: {:?}", header);
                 println!("Payload length: {}", received.len());
-                println!("Sequence number: {}", header.sequence_number )
+                println!("Sequence number: {}", header.sequence_number );
+                println!("Timestamp: {}", header.timestamp );
             }
             Err(e)=>{
                 eprintln!("Failed to parse header: {:?}", e);
