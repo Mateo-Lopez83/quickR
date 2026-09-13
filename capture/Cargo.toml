@@ -6,3 +6,4 @@ edition = "2024"
 [dependencies]
 windows-capture = "2.0.0"
 windows = "0.62.2"
+openh264 = "=0.9.8"

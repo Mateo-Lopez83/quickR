@@ -1,7 +1,6 @@
 use std::error::Error;
 use std::sync::Arc;
 use std::time::Instant;
-use rand::seq;
 use tokio::sync::mpsc::Sender;
 use tokio::net::UdpSocket;
 use tokio::time::{self, Duration};
