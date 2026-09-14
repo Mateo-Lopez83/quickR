@@ -4,8 +4,9 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-bytes = "1"
+capture = { path = "../capture" }
 util = { package = "webrtc-util", version = "0.17.2", default-features = false, features = ["marshal"] }
 tokio = "1.53.1"
 rand = "0.10.2"
 stun ="0.17.2"
+bytes = "1"

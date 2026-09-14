@@ -1,17 +1,54 @@
-//! Step 3: prep for your RFC 6184 (H.264-over-RTP) packetizer.
-//!
-//! This isn't a codec test anymore — it confirms you can reliably pull
-//! individual NAL units (SPS, PPS, IDR slice, ...) out of real encoder
-//! output, which is exactly the shape of data your RTP payloader needs to
-//! consume one unit at a time.
-
+pub mod decoder_p;
+mod encoder_p;
+mod capture_pipeline;
+pub mod capturetry;
+use std::sync::mpsc as enc_mpsc;
+use std::thread;
+use windows_capture::{
+    capture::{GraphicsCaptureApiHandler},
+    monitor::Monitor,
+    settings::{ColorFormat, CursorCaptureSettings, DrawBorderSettings, Settings,
+               MinimumUpdateIntervalSettings, SecondaryWindowSettings, DirtyRegionSettings},
+};
 use openh264::decoder::{DecoderConfig,Decoder};
 use openh264::encoder::{Encoder, EncoderConfig, FrameType};
 use openh264::formats::{YUVBuffer, YUVSource};
 use openh264::{Error, OpenH264API, nal_units};
+use tokio::sync::mpsc as udp_mpsc;
+use bytes::Bytes;
+
+use crate::{capturetry::ScreenCapture, encoder_p::encoder_p::run_encoder};
 
 
 
+// Somewhere in your capture crate's public entry point:
+pub fn start_capture(udp_tx: udp_mpsc::Sender<Bytes>) {
+    let (enc_tx, enc_rx) = enc_mpsc::sync_channel::<Bytes>(1);
+    thread::spawn(move || {
+        let monitor = Monitor::primary().expect("no primary monitor found");
+
+        let settings = Settings::new(
+            monitor,
+            CursorCaptureSettings::Default,
+            DrawBorderSettings::Default,
+            SecondaryWindowSettings::Default,
+            MinimumUpdateIntervalSettings::Default,
+            DirtyRegionSettings::Default,
+            ColorFormat::Bgra8,
+            enc_tx, // parte importante, manda el tx al screen capture para q mande los frames al mpsc
+        );
+
+        // This call blocks this thread until the capture session ends
+        ScreenCapture::start(settings).expect("capture session failed");
+    });
+    thread::spawn(move || {
+        //encoder recibe el actual receiver del std channel (rx) y a donde enviar
+        //el bytestream(udp_tx)
+        run_encoder(enc_rx, udp_tx);
+    });
+    
+
+}
 
 
 #[test]

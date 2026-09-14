@@ -1,13 +1,14 @@
 use std::error::Error;
 use std::sync::Arc;
 use std::time::Instant;
-use tokio::sync::mpsc::Sender;
 use tokio::net::UdpSocket;
+use capture::capturetry;
 use tokio::time::{self, Duration};
-use tokio::sync::mpsc;
+use tokio::sync::mpsc::{self,Sender};
 use bytes::Bytes;
 use crate::PacketError;
 use crate::header::{ChannelType, HEADERSIZE, Header};
+
 
 //udp.rs
 pub const PAYLOADSIZE:usize = 1180;
@@ -131,10 +132,11 @@ pub async fn main_sending_process(conn: Arc<UdpSocket>, timer: Instant) -> Resul
     let socket = conn.clone();
     //socket.connect(remote_addr).await?;
     //se hacen los lets para que retorne al menos un None y cuando ya acaben ambos pasa al join!
-    let gen_handle = tokio::spawn(channel_fake_data_creator(tx, timer));
+    //let gen_handle = tokio::spawn(channel_fake_data_creator(tx, timer));
+    let _= capture::start_capture(tx);
     let consumer_handle = tokio::spawn(channel_consumer(rx, socket));
 
-    let _ = tokio::join!(gen_handle, consumer_handle);
+    let _ = consumer_handle.await;
     
     
 
