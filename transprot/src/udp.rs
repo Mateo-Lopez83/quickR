@@ -1,24 +1,26 @@
 use std::error::Error;
 use std::sync::Arc;
 use std::time::Instant;
+use commons::MAXDATAGRAMSIZE;
 use tokio::net::UdpSocket;
 use capture::capturetry;
 use tokio::time::{self, Duration};
 use tokio::sync::mpsc::{self,Sender};
 use bytes::Bytes;
 use crate::PacketError;
-use crate::header::{ChannelType, HEADERSIZE, Header};
-
+use commons::header::{ChannelType, HEADERSIZE, Header};
+use commons::error;
+use commons::header;
 
 //udp.rs
-pub const PAYLOADSIZE:usize = 1180;
-pub const MAXDATAGRAMSIZE:usize = 1300;
+
 
 pub mod dummy_gen{
 use std::time::Instant;
 
-use crate::header::{FragmentType, Header, ChannelType};
-    use crate::udp::PAYLOADSIZE;
+use commons::header::{FragmentType, Header, ChannelType};
+    use commons::PAYLOADSIZE;
+
     use crate::{RngExt};
     use bytes::{BufMut, Bytes, BytesMut};
     
@@ -133,7 +135,7 @@ pub async fn main_sending_process(conn: Arc<UdpSocket>, timer: Instant) -> Resul
     //socket.connect(remote_addr).await?;
     //se hacen los lets para que retorne al menos un None y cuando ya acaben ambos pasa al join!
     //let gen_handle = tokio::spawn(channel_fake_data_creator(tx, timer));
-    let _= capture::start_capture(tx);
+    let _= capture::start_capture(tx, timer);
     let consumer_handle = tokio::spawn(channel_consumer(rx, socket));
 
     let _ = consumer_handle.await;

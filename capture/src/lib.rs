@@ -1,7 +1,8 @@
 pub mod decoder_p;
 mod encoder_p;
-mod capture_pipeline;
+mod udp_connect;
 pub mod capturetry;
+use std::time::Instant;
 use std::sync::mpsc as enc_mpsc;
 use std::thread;
 use windows_capture::{
@@ -9,7 +10,7 @@ use windows_capture::{
     monitor::Monitor,
     settings::{ColorFormat, CursorCaptureSettings, DrawBorderSettings, Settings,
                MinimumUpdateIntervalSettings, SecondaryWindowSettings, DirtyRegionSettings},
-};
+    };
 use openh264::decoder::{DecoderConfig,Decoder};
 use openh264::encoder::{Encoder, EncoderConfig, FrameType};
 use openh264::formats::{YUVBuffer, YUVSource};
@@ -19,11 +20,16 @@ use bytes::Bytes;
 
 use crate::{capturetry::ScreenCapture, encoder_p::encoder_p::run_encoder};
 
-
+pub struct RawStreamData{
+    pub data: Bytes,
+    pub width: usize,
+    pub height: usize,
+}
 
 // Somewhere in your capture crate's public entry point:
-pub fn start_capture(udp_tx: udp_mpsc::Sender<Bytes>) {
-    let (enc_tx, enc_rx) = enc_mpsc::sync_channel::<Bytes>(1);
+pub fn start_capture(udp_tx: udp_mpsc::Sender<Bytes>, timer: Instant) {
+
+    let (enc_tx, enc_rx) = enc_mpsc::sync_channel::<RawStreamData>(1);
     thread::spawn(move || {
         let monitor = Monitor::primary().expect("no primary monitor found");
 
@@ -44,7 +50,7 @@ pub fn start_capture(udp_tx: udp_mpsc::Sender<Bytes>) {
     thread::spawn(move || {
         //encoder recibe el actual receiver del std channel (rx) y a donde enviar
         //el bytestream(udp_tx)
-        run_encoder(enc_rx, udp_tx);
+        run_encoder(enc_rx, udp_tx, timer);
     });
     
 

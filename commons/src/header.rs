@@ -1,6 +1,6 @@
 use bytes::{Bytes, BytesMut, Buf, BufMut};
 //use zerocopy::{self, ConvertError::Size};
-use crate::PacketError;
+use crate::error::PacketError;
 
 pub const HEADERSIZE:usize = 17;
 
@@ -53,7 +53,7 @@ pub const HEADERSIZE:usize = 17;
         pub version: u8,        // 2 bits: version field
         pub padding: bool,       // 1 bit: define si tiene padding al final del paquete      
         pub channel: ChannelType,          //2 bits: define si es un paquete de video, audio o control
-        pub frametype: bool,         // 1 bit: si es video, define si es keyframe o deltaframe
+        pub is_keyframe: bool,         // 1 bit: si es video, define si es keyframe(true) o deltaframe (false)
         pub sequence_number: u16,   //16 bits
         pub size: u16,             //cantidad de bytes del payload
         pub timestamp: u32,        //32 bits
@@ -68,13 +68,13 @@ pub const HEADERSIZE:usize = 17;
                 version:u8,
                 padding: bool,      
                 channel: ChannelType,          
-                frametype: bool,         
+                is_keyframe: bool,         
                 sequence_number: u16,  
                 size: u16,          
                 timestamp: u32,       
                 ssrc: u32)->Header
         {
-            Header { fragment, version, padding, channel, frametype, sequence_number, size, timestamp, ssrc }
+            Header { fragment, version, padding, channel, is_keyframe, sequence_number, size, timestamp, ssrc }
         }
 
        
@@ -86,7 +86,7 @@ pub const HEADERSIZE:usize = 17;
             buf.put_u8(self.version);
             buf.put_u8(self.padding as u8);
             buf.put_u8(self.channel as u8);
-            buf.put_u8(self.frametype as u8);
+            buf.put_u8(self.is_keyframe as u8);
 
             buf.put_u16(self.sequence_number);
             buf.put_u16(self.size);

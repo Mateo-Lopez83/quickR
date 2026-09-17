@@ -63,6 +63,7 @@ name = "capture"
 version = "0.1.0"
 dependencies = [
  "bytes",
+ "commons",
  "openh264",
  "tokio",
  "windows",
@@ -96,6 +97,14 @@ dependencies = [
  "cfg-if",
  "cpufeatures",
  "rand_core 0.10.1",
+]
+
+[[package]]
+name = "commons"
+version = "0.1.0"
+dependencies = [
+ "bytes",
+ "rand 0.10.2",
 ]
 
 [[package]]
@@ -884,6 +893,7 @@ version = "0.1.0"
 dependencies = [
  "bytes",
  "capture",
+ "commons",
  "rand 0.10.2",
  "stun",
  "tokio",
