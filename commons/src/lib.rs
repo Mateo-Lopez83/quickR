@@ -41,7 +41,7 @@ mod tests {
         wrong_serial.put_u8(1);
         wrong_serial.put_u8(2);
         wrong_serial.put_u8(0);
-        //can be numbers 1-3, nothing else
+        //can be numbers 1-5, nothing else
         wrong_serial.put_u8(5);
         wrong_serial.put_u8(0);
         //seq number
@@ -54,7 +54,7 @@ mod tests {
         wrong_serial.put_u32(rng.random());
         let mut bwrong_serial= wrong_serial.freeze();
         let deserialized = head::unserialize(&mut bwrong_serial);
-        assert_eq!(deserialized, Err(PacketError::InvalidChannel(4)));
+        assert_eq!(deserialized, Err(PacketError::InvalidChannel(5)));
     }
 
     #[test]
