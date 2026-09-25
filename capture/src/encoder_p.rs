@@ -34,13 +34,13 @@ use std::time::Instant;
                 match encoded.frame_type() {
                     FrameType::I => {
                         match udp_connect::frame_send(true, encoded_bytes, &udp_tx, &mut sequence_num, timestamp){
-                            Ok(_) => todo!(),
+                            Ok(_) => {},
                             Err(_) => break,
                         }
                     }
                     FrameType::P => {
                         match udp_connect::frame_send(true, encoded_bytes, &udp_tx, &mut sequence_num, timestamp){
-                            Ok(_) => todo!(),
+                            Ok(_) => {},
                             Err(_) => break,
                         }
                     }

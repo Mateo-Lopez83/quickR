@@ -11,7 +11,7 @@ pub fn turn_ip_to_code(ip: &IpAddr, port:&u16)-> String{
         let hex = format!("{:02X}", byte);
         resp.push_str(&hex);
     }
-    let port_str = format!("{:X}", port); 
+    let port_str = format!("{:x}", port); 
     resp.push(':');
     resp.push_str(&port_str);
 

@@ -69,7 +69,8 @@ async fn main() {
                     .expect("Failed to read line");
                 
                 
-                let address = input.trim().to_string();
+                let inpu2 = input.trim().to_string();
+                let address = turn_code_to_ip(&inpu2);
                 let remote_addr: SocketAddr = match address.parse() {
                     Ok(addr) => addr,
                     Err(e) => {
