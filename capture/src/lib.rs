@@ -26,7 +26,6 @@ pub struct RawStreamData{
     pub height: usize,
 }
 
-// Somewhere in your capture crate's public entry point:
 pub fn start_capture(udp_tx: udp_mpsc::Sender<Bytes>, timer: Instant) {
 
     let (enc_tx, enc_rx) = enc_mpsc::sync_channel::<RawStreamData>(1);

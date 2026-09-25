@@ -1,16 +1,18 @@
 use std::error::Error;
 use std::sync::Arc;
 use std::time::Instant;
+use std::collections::{BTreeMap, HashMap};
+
 use commons::MAXDATAGRAMSIZE;
+use rand::seq;
 use tokio::net::UdpSocket;
-use capture::capturetry;
+//use capture::capturetry;
 use tokio::time::{self, Duration};
-use tokio::sync::mpsc::{self,Sender};
+use tokio::sync::mpsc::{self};
 use bytes::Bytes;
 use crate::PacketError;
-use commons::header::{ChannelType, HEADERSIZE, Header};
-use commons::error;
-use commons::header;
+use commons::header::{ChannelType, FragmentType, HEADERSIZE, Header};
+
 
 //udp.rs
 
@@ -98,23 +100,24 @@ use commons::header::{FragmentType, Header, ChannelType};
     }
 }
 
-async fn channel_fake_data_creator(tx:Sender<Bytes>, timer: Instant){
-    let mut interval = time::interval(Duration::from_millis(1000));
+//meant for debugging before capture existed
+// async fn channel_fake_data_creator(tx:Sender<Bytes>, timer: Instant){
+//     let mut interval = time::interval(Duration::from_millis(1000));
 
-    let mut seqnum: u16 = 11;
-    for _ in 0..10{
-        interval.tick().await; 
-        let timestamp = timer.elapsed().as_millis() as u32;
-        let fake_payload = dummy_gen::generate_fake_datagram(timestamp, seqnum);
-        seqnum = seqnum +1;
-        //println!("{}", String::from_utf8_lossy(&fake_payload));
-        if tx.send(fake_payload).await.is_err() {
-            println!("consumer dropped, stopping generator");
-            break;
-        }
-    }
+//     let mut seqnum: u16 = 11;
+//     for _ in 0..10{
+//         interval.tick().await; 
+//         let timestamp = timer.elapsed().as_millis() as u32;
+//         let fake_payload = dummy_gen::generate_fake_datagram(timestamp, seqnum);
+//         seqnum = seqnum +1;
+//         //println!("{}", String::from_utf8_lossy(&fake_payload));
+//         if tx.send(fake_payload).await.is_err() {
+//             println!("consumer dropped, stopping generator");
+//             break;
+//         }
+//     }
    
-}
+// }
 
 async fn channel_consumer(mut rx: mpsc::Receiver<Bytes>, socket: Arc<UdpSocket>){
     while let Some(payload) = rx.recv().await {
@@ -144,7 +147,10 @@ pub async fn main_sending_process(conn: Arc<UdpSocket>, timer: Instant) -> Resul
 
     Ok(())
 }
-
+//____________________________________________________________________
+struct FrameInProgress{
+    map: BTreeMap<u16, Bytes>
+}
 // pub async fn receiving_process(stunaddress:XorMappedAddress,conn: Arc<UdpSocket>)->Result<(), Box<dyn Error>>{
 pub async fn receiving_process(conn: Arc<UdpSocket>)->Result<(), Box<dyn Error>>{    
     // let local_ip = stunaddress.ip;
@@ -152,7 +158,15 @@ pub async fn receiving_process(conn: Arc<UdpSocket>)->Result<(), Box<dyn Error>>
     // let local_addr = format!("{}:{}", local_ip,port.to_string());  
     // println!("Stun's IP address is {}", local_addr);
     let socket = conn.clone();
-    let mut buf = [0u8; 1200];
+    let mut saved_frames_map: HashMap<u32, FrameInProgress> = HashMap::new();
+    let mut first_packet:bool = false;
+    let mut curr_timestamp: u32 = 0;
+    let mut paquetes_inbetween: u64 = 0;
+    let mut packets_received: u64 = 0;
+    let mut packets_lost: u32 = 0;
+    let mut prev_seqnum: u16 = 0;
+    let mut actual_seqnum: u16 = 0;
+    let mut buf = [0u8; MAXDATAGRAMSIZE];
     loop {
         let len = socket.recv(&mut buf).await?;
         println!(
@@ -160,10 +174,54 @@ pub async fn receiving_process(conn: Arc<UdpSocket>)->Result<(), Box<dyn Error>>
         let mut received = Bytes::copy_from_slice(&buf[..len]);
         match Header::unserialize(&mut received) {
             Ok(header)=>{
+                packets_received+=1;
+                
                 //println!("Got header from {addr}: {:?}", header);
-                println!("Payload length: {}", received.len());
-                println!("Sequence number: {}", header.sequence_number );
-                println!("Timestamp: {}", header.timestamp );
+                // println!("Payload length: {}", received.len());
+                // println!("Sequence number: {}", header.sequence_number );
+                // println!("Timestamp: {}", header.timestamp );
+                actual_seqnum = header.sequence_number;
+                //logica para el primer paquete recibido
+                if !first_packet{
+                    prev_seqnum = header.sequence_number;
+                    first_packet = true;
+                }
+                else if actual_seqnum ==prev_seqnum{
+                    //duplicado de paquete, no hacer nada
+                    continue;
+                }
+                let seq_difference = (actual_seqnum.wrapping_sub(prev_seqnum) as i16)- 1;
+                if seq_difference > 0 {
+                    println!("{seq_difference} packets lost");
+                    packets_lost += seq_difference as u32;
+
+                } else if seq_difference < -1 {
+                    println!("Late packet not counted as loss");
+                }
+
+                // only advance the marker if this packet is newer
+                if seq_difference >= -1 {
+                    prev_seqnum = actual_seqnum;
+                }    
+                       
+                
+                //decode
+
+                println!("Packets lost until now: {packets_lost}");
+                println!("Packets received successfully: {packets_received}");
+                if header.fragment== FragmentType::Start{
+                    curr_timestamp = header.timestamp;
+                    println!("Comienzo del frame numero {curr_timestamp} ");
+                }
+                else if header.fragment== FragmentType::End && curr_timestamp== header.timestamp{
+                    curr_timestamp = header.timestamp;
+                    println!("Se acabó el frame numero {curr_timestamp} con {paquetes_inbetween} paquetes Middle ");
+                    paquetes_inbetween = 0;
+                }
+                else if header.fragment== FragmentType::Middle && curr_timestamp== header.timestamp{
+                    paquetes_inbetween +=1
+                }
+                //prev_seqnum = header.sequence_number; 
             }
             Err(e)=>{
                 eprintln!("Failed to parse header: {:?}", e);

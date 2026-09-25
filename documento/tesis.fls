@@ -55,6 +55,10 @@ INPUT C:\Users\57304\AppData\Local\Programs\MiKTeX\fonts\tfm\public\cm\cmbx12.tf
 INPUT C:\Users\57304\AppData\Local\Programs\MiKTeX\fonts\tfm\public\cm\cmr17.tfm
 INPUT C:\Users\57304\AppData\Local\Programs\MiKTeX\fonts\tfm\public\cm\cmbx12.tfm
 INPUT C:\Users\57304\AppData\Local\Programs\MiKTeX\fonts\tfm\public\cm\cmbx12.tfm
+INPUT C:\Users\57304\AppData\Local\MiKTeX\fonts\map\pdftex\pdftex.map
+INPUT .\tesis.toc
+INPUT .\tesis.toc
+INPUT tesis.toc
 INPUT C:\Users\57304\AppData\Local\Programs\MiKTeX\fonts\tfm\public\cm\cmr8.tfm
 INPUT C:\Users\57304\AppData\Local\Programs\MiKTeX\fonts\tfm\public\cm\cmr6.tfm
 INPUT C:\Users\57304\AppData\Local\Programs\MiKTeX\fonts\tfm\public\cm\cmmi12.tfm
@@ -63,10 +67,6 @@ INPUT C:\Users\57304\AppData\Local\Programs\MiKTeX\fonts\tfm\public\cm\cmmi6.tfm
 INPUT C:\Users\57304\AppData\Local\Programs\MiKTeX\fonts\tfm\public\cm\cmsy10.tfm
 INPUT C:\Users\57304\AppData\Local\Programs\MiKTeX\fonts\tfm\public\cm\cmsy8.tfm
 INPUT C:\Users\57304\AppData\Local\Programs\MiKTeX\fonts\tfm\public\cm\cmsy6.tfm
-INPUT C:\Users\57304\AppData\Local\MiKTeX\fonts\map\pdftex\pdftex.map
-INPUT .\tesis.toc
-INPUT .\tesis.toc
-INPUT tesis.toc
 OUTPUT tesis.toc
 INPUT tesis.aux
 INPUT C:\Users\57304\AppData\Local\Programs\MiKTeX\fonts\type1\public\amsfonts\cm\cmbx12.pfb

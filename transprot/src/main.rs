@@ -4,9 +4,10 @@ use transprot::{stuntry, udp};
 use tokio::net::UdpSocket;
 use std::io::{self, Write};
 use std::sync::Arc;
-use std::net::SocketAddr;
+use std::net::{SocketAddr};
 //use tokio::time::{sleep, Duration};
 use std::time::Instant;
+use commons::ip_converter::{turn_code_to_ip, turn_ip_to_code};
 
 //main.rs
 #[tokio::main]
@@ -19,7 +20,8 @@ async fn main() {
     let conn = Arc::new(UdpSocket::bind("0.0.0.0:0").await.unwrap());
     let stun_server = "stun4.l.google.com:19302";
     let public_ip = stuntry::discover_public_address(stun_server, conn.clone()).await.unwrap();
-    println!("The public address is: {}:{}", &public_ip.ip, &public_ip.port);
+    let ip_string= turn_ip_to_code(&public_ip.ip, &public_ip.port);
+    println!("The public address is: {}",  &ip_string );
     match devtype.as_str() {
         "send"=>{
             //let address = env::args().nth(2).expect("you have to specify the ip address of the receiver");
@@ -31,8 +33,8 @@ async fn main() {
                     .read_line(&mut input)
                     .expect("Failed to read line");
 
-
-                let address = input.trim().to_string();
+                let inpu2 = input.trim().to_string();
+                let address = turn_code_to_ip(&inpu2);
                 let remote_addr: SocketAddr = match address.parse() {
                     Ok(addr) => addr,
                     Err(e) => {

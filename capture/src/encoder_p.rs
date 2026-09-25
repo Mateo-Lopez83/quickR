@@ -1,6 +1,6 @@
 pub mod encoder_p{
     use openh264::encoder::{Encoder, FrameType};
-    use openh264::formats::{BgrSliceU8, BgraSliceU8, YUVBuffer};
+    use openh264::formats::{BgraSliceU8, YUVBuffer};
 use tokio::sync::mpsc as udp_mpsc;
 //use windows_capture::encoder::VideoSettingsSubType::BGRA8;
     use std::error::Error;
@@ -35,13 +35,13 @@ use std::time::Instant;
                     FrameType::I => {
                         match udp_connect::frame_send(true, encoded_bytes, &udp_tx, &mut sequence_num, timestamp){
                             Ok(_) => todo!(),
-                            Err(_) => todo!(),
+                            Err(_) => break,
                         }
                     }
                     FrameType::P => {
                         match udp_connect::frame_send(true, encoded_bytes, &udp_tx, &mut sequence_num, timestamp){
                             Ok(_) => todo!(),
-                            Err(_) => todo!(),
+                            Err(_) => break,
                         }
                     }
                     _ => {
@@ -55,7 +55,7 @@ use std::time::Instant;
                 // }
                 },
                 Err(_) => {
-                    println!("algo raro con la conversión de BGRA a YUB");
+                    println!("algo raro con la conversión de bytes a BGRA a YUB");
                     continue
                 },
             } // placeholder until the real encode call is wired in
@@ -64,6 +64,7 @@ use std::time::Instant;
             //     break; 
             // }
         }
+        println!("Encoder thread finished, no more frames to encode");
     }
     // pub fn encode_example()-> Result<(), Box<dyn Error>>{
     //     let h264_in = include_bytes!("../data/multi_512x512.h264");

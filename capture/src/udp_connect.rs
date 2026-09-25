@@ -21,15 +21,15 @@ pub fn frame_send(is_keyframe:bool, payload: Bytes, udp_tx: &udp_mpsc::Sender<By
             FragmentType::Middle
         };
         let fragment_header = Header::new(
-        fragment_type,
-        1,
-        false,
-        ChannelType::Video,
-        is_keyframe,
-        *seqnum,
-        chunk.len() as u16,
-        timestamp, // same value for every fragment of this frame
-        1, //TODO: cambiar esto cuando ya se implemente el ssrc check
+            fragment_type,
+            1,
+            false,
+            ChannelType::Video,
+            is_keyframe,
+            *seqnum,
+            chunk.len() as u16,
+            timestamp, // same value for every fragment of this frame
+            1, //TODO: cambiar esto cuando ya se implemente el ssrc check
         ).serialize();
         let mut combined = BytesMut::with_capacity(fragment_header.len() + chunk.len());
         combined.put_slice(&fragment_header);
@@ -38,7 +38,7 @@ pub fn frame_send(is_keyframe:bool, payload: Bytes, udp_tx: &udp_mpsc::Sender<By
             println!("udp_rx failed. Stopping encoding pipeline");
             break;
         }
-        *seqnum +=1;
+        *seqnum = seqnum.wrapping_add(1);
 
     }
         

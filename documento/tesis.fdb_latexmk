@@ -1,5 +1,5 @@
 # Fdb version 4
-["pdflatex"] 1789529427.86102 "c:/Users/57304/Documents/Mateo Lopez/tesis/quikr/documento/tesis.tex" "tesis.pdf" "tesis" 1789529428.89883 0
+["pdflatex"] 1789994973.35397 "c:/Users/57304/Documents/Mateo Lopez/tesis/quikr/documento/tesis.tex" "tesis.pdf" "tesis" 1789994975.40096 0
   "C:/Users/57304/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map" 1789249995.47093 80909 eab91d9745dd2edfd62a31d53cd5fe15 ""
   "C:/Users/57304/AppData/Local/MiKTeX/miktex/data/le/pdftex/pdflatex.fmt" 1788276204.40919 13373064 ec2b69524576835f1a891649806f75d2 ""
   "C:/Users/57304/AppData/Local/Programs/MiKTeX/fonts/tfm/public/cm/cmbx12.tfm" 1136765053 1324 c910af8c371558dc20f2d7822f66fe64 ""
@@ -29,9 +29,9 @@
   "C:/Users/57304/AppData/Local/Programs/MiKTeX/tex/latex/l3kernel/l3backend-pdftex.def" 1786970739 31615 2ca990bd5ca4d9a48b0fffd073e6d6fe ""
   "C:/Users/57304/AppData/Local/Programs/MiKTeX/tex/latex/tree-dvips/lingmacros.sty" 777848923 9506 61acecab9b335babd29e060f0011610b ""
   "C:/Users/57304/AppData/Local/Programs/MiKTeX/tex/latex/tree-dvips/tree-dvips.sty" 800661747 8552 b7db3c0732f761d31db398a8f3dca316 ""
-  "c:/Users/57304/Documents/Mateo Lopez/tesis/quikr/documento/tesis.tex" 1789529426.73726 1256 7411714acb275b3f766952e97bad61b4 ""
-  "tesis.aux" 1789529428.71331 145 44bc251e4360ebd09e95a243f672097b "pdflatex"
-  "tesis.toc" 1789529428.72132 72 302d88cdf20156871e7703cdc6d6d8f1 "pdflatex"
+  "c:/Users/57304/Documents/Mateo Lopez/tesis/quikr/documento/tesis.tex" 1789994953.72472 5311 be1d2d1843e5e1ebb23d64a9ebacaedd ""
+  "tesis.aux" 1789994975.05046 232 1b2cc312e70b8fb64a73fc7d7a5b789e "pdflatex"
+  "tesis.toc" 1789994975.06632 118 61d1fdca429cd813593e04783a6fe07b "pdflatex"
   "uniandeslogo.png" 1789528925.76044 22106 6b4a71c91d8d99566edaafef6f1cc7da ""
   (generated)
   "tesis.aux"

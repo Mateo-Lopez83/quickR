@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (MiKTeX 26.5) (preloaded format=pdflatex 2026.9.1)  15 SEP 2026 22:30
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (MiKTeX 26.5) (preloaded format=pdflatex 2026.9.1)  21 SEP 2026 07:49
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -109,37 +109,38 @@ File: uniandeslogo.png Graphic file (type png)
 <use uniandeslogo.png>
 Package pdftex.def Info: uniandeslogo.png  used on input line 16.
 (pdftex.def)             Requested size: 39.00238pt x 46.33452pt.
-LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <12> on input line 56.
-LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <8> on input line 56.
-LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <6> on input line 56.
  [1
 
 
 Non-PDF special ignored!
 <special> header=tree-dvips91.pro
-{C:/Users/57304/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map} <./uniandeslogo.png>] [2] (tesis.toc)
+{C:/Users/57304/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map} <./uniandeslogo.png>] (tesis.toc
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <12> on input line 2.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <8> on input line 2.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <6> on input line 2.
+)
 \tf@toc=\write3
 \openout3 = `tesis.toc'.
 
- [1] [2] (tesis.aux)
+ [1] [2] [3] (tesis.aux)
  ***********
 LaTeX2e <2026-06-01>
 L3 programming layer <2026-08-10>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 1472 strings out of 467441
- 24562 string characters out of 5407592
- 438799 words of memory out of 5000000
- 30806 multiletter control sequences out of 15000+600000
+ 1471 strings out of 467441
+ 24512 string characters out of 5407592
+ 443799 words of memory out of 5000000
+ 30805 multiletter control sequences out of 15000+600000
  632581 words of font info for 56 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 57i,6n,65p,243b,303s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 57i,6n,65p,1231b,303s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <C:/Users/57304/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Users/57304/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr12.pfb>
-Output written on tesis.pdf (4 pages, 56326 bytes).
+Output written on tesis.pdf (4 pages, 65663 bytes).
 PDF statistics:
  28 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)

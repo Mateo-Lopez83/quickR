@@ -1,9 +1,10 @@
-use openh264::encoder::Encoder;
+use openh264::decoder::Decoder;
 
 
 
 pub fn decode(){
-    let mut encoder = Encoder::new();
+    let mut decoder = Decoder::new().unwrap();
+    
 }
     
 
