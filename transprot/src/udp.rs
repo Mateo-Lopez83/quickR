@@ -2,7 +2,7 @@ use std::error::Error;
 use std::sync::Arc;
 use std::time::Instant;
 use std::collections::{BTreeMap, HashMap};
-
+use commons::FrameInProgress;
 use commons::MAXDATAGRAMSIZE;
 use rand::seq;
 use tokio::net::UdpSocket;
@@ -148,15 +148,8 @@ pub async fn main_sending_process(conn: Arc<UdpSocket>, timer: Instant) -> Resul
     Ok(())
 }
 //____________________________________________________________________
-struct FrameInProgress{
-    map: BTreeMap<u16, Bytes>
-}
-// pub async fn receiving_process(stunaddress:XorMappedAddress,conn: Arc<UdpSocket>)->Result<(), Box<dyn Error>>{
+
 pub async fn receiving_process(conn: Arc<UdpSocket>)->Result<(), Box<dyn Error>>{    
-    // let local_ip = stunaddress.ip;
-    // let port = stunaddress.port;
-    // let local_addr = format!("{}:{}", local_ip,port.to_string());  
-    // println!("Stun's IP address is {}", local_addr);
     let socket = conn.clone();
     let mut saved_frames_map: HashMap<u32, FrameInProgress> = HashMap::new();
     let mut first_packet:bool = false;
@@ -180,29 +173,84 @@ pub async fn receiving_process(conn: Arc<UdpSocket>)->Result<(), Box<dyn Error>>
                 // println!("Payload length: {}", received.len());
                 // println!("Sequence number: {}", header.sequence_number );
                 // println!("Timestamp: {}", header.timestamp );
-                actual_seqnum = header.sequence_number;
+                // actual_seqnum = header.sequence_number;
                 //logica para el primer paquete recibido
-                if !first_packet{
-                    prev_seqnum = header.sequence_number;
-                    first_packet = true;
-                }
-                else if actual_seqnum ==prev_seqnum{
-                    //duplicado de paquete, no hacer nada
-                    continue;
-                }
-                let seq_difference = (actual_seqnum.wrapping_sub(prev_seqnum) as i16)- 1;
-                if seq_difference > 0 {
-                    println!("{seq_difference} packets lost");
-                    packets_lost += seq_difference as u32;
+                // if !first_packet{
+                //     prev_seqnum = header.sequence_number;
+                //     first_packet = true;
+                // }
+                // else if actual_seqnum ==prev_seqnum{
+                //     //duplicado de paquete, no hacer nada
+                //     continue;
+                // }
+                // let seq_difference = (actual_seqnum.wrapping_sub(prev_seqnum) as i16)- 1;
+                // if seq_difference > 0 {
+                //     println!("{seq_difference} packets lost");
+                //     packets_lost += seq_difference as u32;
 
-                } else if seq_difference < -1 {
-                    println!("Late packet not counted as loss");
-                }
+                // } else if seq_difference < -1 {
+                //     println!("Late packet");
+                // }
 
-                // only advance the marker if this packet is newer
-                if seq_difference >= -1 {
-                    prev_seqnum = actual_seqnum;
-                }    
+                // // only advance the marker if this packet is newer
+                // if seq_difference >= -1 {
+                //     prev_seqnum = actual_seqnum;
+                // }    
+
+                curr_timestamp = header.timestamp;
+                actual_seqnum = header.sequence_number;
+
+                if saved_frames_map.contains_key(&curr_timestamp){
+                    
+                    let frame_in_progress = saved_frames_map.get_mut(&curr_timestamp).unwrap();
+                    frame_in_progress.map.insert(actual_seqnum, received);
+                    if header.fragment == FragmentType::Start{
+                        frame_in_progress.start_appeared = true;
+                        frame_in_progress.start_seqnum = actual_seqnum;
+                    }
+                    else if header.fragment == FragmentType::End{
+                        frame_in_progress.end_appeared = true;
+                        frame_in_progress.end_seqnum = actual_seqnum;
+                    }
+                    if frame_in_progress.start_appeared && frame_in_progress.end_appeared{
+                        frame_in_progress.is_complete = true;
+                        let frame_length = (frame_in_progress.end_seqnum.wrapping_sub(frame_in_progress.start_seqnum) as usize) + 1;
+                        frame_in_progress.length = frame_length;
+                        let tree_size = frame_in_progress.map.len();
+                        if tree_size != frame_length{
+                            println!("Frame with timestamp {} has start and end, but has missing packets. Expected length: {}, actual length: {}", curr_timestamp, frame_length, tree_size);
+                            //se espera que lleguen los paquetes faltantes, no se hace nada por ahora
+                        }
+                        else{
+                            println!("Frame with timestamp {} is complete and has all packets. Length: {}", curr_timestamp, frame_length);
+                            //aqui se puede hacer algo con el frame completo
+                            
+                            saved_frames_map.remove(&curr_timestamp);
+                        }
+                        
+                    }
+                }
+                else{
+                    let mut new_frame = FrameInProgress {
+                        map: BTreeMap::new(),
+                        start_seqnum: actual_seqnum,
+                        end_seqnum: actual_seqnum,
+                        start_appeared: false,
+                        end_appeared: false,
+                        length: 0,
+                        is_complete: false,
+                    };
+                    new_frame.map.insert(actual_seqnum, received);
+                    if header.fragment == FragmentType::Start{
+                        new_frame.start_appeared = true;
+                        new_frame.start_seqnum = actual_seqnum;
+                    }
+                    else if header.fragment == FragmentType::End{
+                        new_frame.end_appeared = true;
+                        new_frame.end_seqnum = actual_seqnum;
+                    }
+                    saved_frames_map.insert(curr_timestamp, new_frame);
+                }
                        
                 
                 //decode

@@ -104,6 +104,7 @@ name = "commons"
 version = "0.1.0"
 dependencies = [
  "bytes",
+ "openh264",
  "rand 0.10.2",
 ]
 

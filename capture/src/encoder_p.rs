@@ -39,13 +39,22 @@ use std::time::Instant;
                         }
                     }
                     FrameType::P => {
-                        match udp_connect::frame_send(true, encoded_bytes, &udp_tx, &mut sequence_num, timestamp){
+                        match udp_connect::frame_send(false, encoded_bytes, &udp_tx, &mut sequence_num, timestamp){
                             Ok(_) => {},
                             Err(_) => break,
                         }
                     }
-                    _ => {
-                        println!("_____ERROR defining keyframe-ness of frame______");
+                    FrameType::IDR => {
+                        println!("_____IDR frame created. Not sent______");
+                    }
+                    FrameType::Skip => {
+                        println!("_____Skip frame created. Not sent______");
+                    }
+                    FrameType::Invalid => {
+                        println!("_____Invalid frame created. Not sent______");
+                    }
+                    FrameType::IPMixed => {
+                        println!("_____IPMixed frame created. Not sent______");
                     }
                 }
                 

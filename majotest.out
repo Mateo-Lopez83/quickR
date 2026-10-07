@@ -1,0 +1,500 @@
+Local address: 0.0.0.0:49258
+The public address is: BA1F0DAF:c06a
+Enter the destination address as ip:port: BA9B1283:900f
+Trying to connect to peer. Please wait...
+Connection request number: 1.
+Connection request number: 2.
+Connection request number: 3.
+Connection request number: 4.
+Connection request number: 5.
+Connection request number: 6.
+Connection request number: 7.
+Connection request number: 8.
+Received 17 bytes
+Received correct control packet. Initiating communication
+Sending 5 more packets to stabilize connection
+Initializing receiver.
+Received 17 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 1
+Received 17 bytes from connection
+Received 17 bytes from connection
+Received 17 bytes from connection
+Received 17 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 7
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 8
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 9
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 10
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 11
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 12
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 13
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 14
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 15
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 16
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 17
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 18
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 19
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 20
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 21
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 22
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 23
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 24
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 25
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 26
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 27
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 28
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 29
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 30
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 31
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 32
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 33
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 34
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 35
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 36
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 37
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 38
+Received 982 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 39
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 40
+Comienzo del frame numero 5033 
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 41
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 42
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 43
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 44
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 45
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 46
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 47
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 48
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 49
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 50
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 51
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 52
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 53
+Received 670 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 54
+Se acabó el frame numero 5033 con 13 paquetes Middle 
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 55
+Comienzo del frame numero 5486 
+Received 480 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 56
+Se acabó el frame numero 5486 con 0 paquetes Middle 
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 57
+Comienzo del frame numero 5929 
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 58
+Received 1068 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 59
+Se acabó el frame numero 5929 con 1 paquetes Middle 
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 60
+Comienzo del frame numero 6435 
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 61
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 62
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 63
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 64
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 65
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 66
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 67
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 68
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 69
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 70
+Received 1162 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 71
+Se acabó el frame numero 6435 con 10 paquetes Middle 
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 72
+Comienzo del frame numero 7057 
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 73
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 74
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 75
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 76
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 77
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 78
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 79
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 80
+Received 696 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 81
+Se acabó el frame numero 7057 con 8 paquetes Middle 
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 82
+Comienzo del frame numero 7682 
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 83
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 84
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 85
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 86
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 87
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 88
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 89
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 90
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 91
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 92
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 93
+Received 739 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 94
+Se acabó el frame numero 7682 con 11 paquetes Middle 
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 95
+Comienzo del frame numero 8266 
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 96
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 97
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 98
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 99
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 100
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 101
+Received 75 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 102
+Se acabó el frame numero 8266 con 6 paquetes Middle 
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 103
+Comienzo del frame numero 8817 
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 104
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 105
+Received 911 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 106
+Se acabó el frame numero 8817 con 2 paquetes Middle 
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 107
+Comienzo del frame numero 9494 
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 108
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 109
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 110
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 111
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 112
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 113
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 114
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 115
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 116
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 117
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 118
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 119
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 120
+Received 873 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 121
+Se acabó el frame numero 9494 con 13 paquetes Middle 
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 122
+Comienzo del frame numero 10102 
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 123
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 124
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 125
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 126
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 127
+Received 748 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 128
+Se acabó el frame numero 10102 con 5 paquetes Middle 
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 129
+Comienzo del frame numero 10784 
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 130
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 131
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 132
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 133
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 134
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 135
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 136
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 137
+Received 1050 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 138
+Se acabó el frame numero 10784 con 8 paquetes Middle 
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 139
+Comienzo del frame numero 11502 
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 140
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 141
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 142
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 143
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 144
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 145
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 146
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 147
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 148
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 149
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 150
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 151
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 152
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 153
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 154
+Received 1197 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 155
+Received 728 bytes from connection
+Packets lost until now: 0
+Packets received successfully: 156
+Se acabó el frame numero 11502 con 16 paquetes Middle 
+error: process didn't exit successfully: `C:\Users\majoa\Downloads\quickR\target\debug\transprot.exe receive` (exit code: 0xc000013a, STATUS_CONTROL_C_EXIT)
+PS C:\Users\majoa\Downloads\quickR\transprot>

@@ -1,9 +1,21 @@
+use std::collections::BTreeMap;
+use bytes::Bytes;
 pub mod header;
 pub mod error;
+pub mod frame_decoder;
 pub mod ip_converter;
 pub const PAYLOADSIZE:usize = 1180;
 pub const MAXDATAGRAMSIZE:usize = 1300;
 
+pub struct FrameInProgress{
+    pub map: BTreeMap<u16, Bytes>,
+    pub start_seqnum: u16,
+    pub end_seqnum: u16,
+    pub start_appeared: bool,
+    pub end_appeared: bool,
+    pub length: usize,
+    pub is_complete: bool,
+}
 
 #[cfg(test)]
 mod tests {

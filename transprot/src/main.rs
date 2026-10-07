@@ -12,7 +12,7 @@ use commons::ip_converter::{turn_code_to_ip, turn_ip_to_code};
 //main.rs
 #[tokio::main]
 async fn main() {
-    let mut rng = rand::rng(); 
+    let mut _rng = rand::rng(); 
     //let video_ssrc: u32 = rng.random();
     //let audio_ssrc: u32 = rng.random();
     let mut timer: Instant;
@@ -21,12 +21,12 @@ async fn main() {
     let stun_server = "stun4.l.google.com:19302";
     let public_ip = stuntry::discover_public_address(stun_server, conn.clone()).await.unwrap();
     let ip_string= turn_ip_to_code(&public_ip.ip, &public_ip.port);
-    println!("The public address is: {}",  &ip_string );
+    println!("Your code is: {}",  &ip_string );
     match devtype.as_str() {
         "send"=>{
             //let address = env::args().nth(2).expect("you have to specify the ip address of the receiver");
             loop{
-                print!("Enter the destination address as ip:port: ");
+                print!("Enter the destination code: ");
                 io::stdout().flush().unwrap();
                 let mut input = String::new();
                 io::stdin()
@@ -61,7 +61,7 @@ async fn main() {
         "receive"=>{            
             
             loop{
-                print!("Enter the destination address as ip:port: ");
+                print!("Enter the destination code: ");
                 io::stdout().flush().unwrap();
                 let mut input = String::new();
                 io::stdin()
