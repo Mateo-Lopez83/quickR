@@ -7,6 +7,8 @@ use std::net::{SocketAddr};
 //use tokio::time::{sleep, Duration};
 use std::time::Instant;
 use commons::ip_converter::{turn_code_to_ip, turn_ip_to_code};
+use std::sync::mpsc as frame_mpsc;
+use commons::RGBFrameData;
 
 //main.rs
 #[tokio::main]
@@ -15,6 +17,7 @@ async fn main() {
     let devtype:String = env::args().nth(1).expect("you have to specify if this is a sender or receiver");
     let conn = Arc::new(UdpSocket::bind("0.0.0.0:0").await.unwrap());
     let stun_server = "stun4.l.google.com:19302";
+    let (enc_tx, enc_rx) = frame_mpsc::sync_channel::<RGBFrameData>(1);
     let public_ip = stuntry::discover_public_address(stun_server, conn.clone()).await.unwrap();
     let ip_string= turn_ip_to_code(&public_ip.ip, &public_ip.port);
     println!("Your code is: {}",  &ip_string );
@@ -88,7 +91,7 @@ async fn main() {
                     }
                 }
             }
-            //let _ = udp::receiving_process(conn, timer).await.unwrap();
+            let _ = udp::receiving_process(conn, timer, enc_tx.clone()).await.unwrap();
 
         },
         othe =>{

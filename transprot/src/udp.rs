@@ -163,11 +163,24 @@ fn drain_ready_frames(saved_frames_map: &mut BTreeMap<u32, FrameInProgress>, dec
             let is_stale = (timer.elapsed().as_millis() as u32).wrapping_sub(value.receiver_timestamp) > 2000;
 
             if is_complete {
-                let rgb_frame_data: RGBFrameData = decode_btree_frame(&mut value.map, decoder)?;
-                println!("Decoded full fragmented frame with timestamp {} and dimensions {}x{}", key, rgb_frame_data.width, rgb_frame_data.height);
-                //ACÁ SE MANDA EL FRAME AL GUI PARA QUE LO MUESTRE LA GUI
-                enc_tx.try_send(rgb_frame_data).map_err(|e| format!("Failed to send frame: {}", e))?;
-                should_remove = true;
+                println!("Attempting to decode frame with timestamp {} and {} packets", key, value.map.len());
+                match decode_btree_frame(&mut value.map, decoder) {
+                    Ok(rgb_frame_data) => {
+                        println!("Decoded full fragmented frame with timestamp {} and dimensions {}x{}", key, rgb_frame_data.width, rgb_frame_data.height);
+                        //ACÁ SE MANDA EL FRAME AL GUI PARA QUE LO MUESTRE LA GUI
+                        enc_tx.try_send(rgb_frame_data).map_err(|e| format!("Failed to send frame: {}", e))?;
+                        should_remove = true;
+                    }
+                    Err(e) => {
+                        println!("Failed to decode frame with timestamp {}: {}", key, e);
+                        should_remove = true; // Remove the frame even if decoding fails
+                    }
+                }
+                // let rgb_frame_data: RGBFrameData = decode_btree_frame(&mut value.map, decoder)?;
+                // println!("Decoded full fragmented frame with timestamp {} and dimensions {}x{}", key, rgb_frame_data.width, rgb_frame_data.height);
+                // //ACÁ SE MANDA EL FRAME AL GUI PARA QUE LO MUESTRE LA GUI
+                // enc_tx.try_send(rgb_frame_data).map_err(|e| format!("Failed to send frame: {}", e))?;
+                // should_remove = true;
             } else if is_stale {
                 should_remove = true;
             }

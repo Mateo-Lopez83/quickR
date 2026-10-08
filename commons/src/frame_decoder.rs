@@ -9,7 +9,11 @@ pub fn decode_btree_frame(map: &mut BTreeMap<u16, Bytes>, decoder: &mut Decoder)
     for bytes in map.values() {
         framevec.extend_from_slice(bytes);
     }
-    let Ok(Some(yuv)) = decoder.decode(&framevec) else { return Err("Failed to decode frame".into()) };
+    println!("Decoding frame of size: {}", framevec.len());
+    let Ok(Some(yuv)) = decoder.decode(&framevec) 
+        else { 
+            return Err("Failed to decode frame".into()) 
+        };
     let (width, height) = yuv.dimensions();
     let mut rgb_raw = vec![0u8; yuv.rgb8_len()];
     yuv.write_rgb8(&mut rgb_raw);
