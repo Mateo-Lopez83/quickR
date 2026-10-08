@@ -6,3 +6,8 @@ edition = "2024"
 [dependencies]
 capture = {path="../capture"}
 transprot = {path="../transprot"}
+commons = {path="../commons"}
+egui = "0.36.2"
+eframe = "0.36.2"
+openh264 = "=0.9.8"
+tokio = "1.53.1"

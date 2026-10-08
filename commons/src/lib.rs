@@ -15,6 +15,13 @@ pub struct FrameInProgress{
     pub end_appeared: bool,
     pub length: usize,
     pub is_complete: bool,
+    pub receiver_timestamp: u32,
+}
+
+pub struct RGBFrameData{
+    pub data: Vec<u8>,
+    pub width: usize,
+    pub height: usize,
 }
 
 #[cfg(test)]

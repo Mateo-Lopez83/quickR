@@ -25,7 +25,6 @@ use std::time::Instant;
         let mut encoder = Encoder::new().unwrap();
         let mut sequence_num: u16 = 0;
         while let Ok(raw_frame) = enc_rx.recv() {
-            // TODO: BGRA -> YUV conversion, then encoder.encode(&yuv)
             match bytes_to_yub(raw_frame){
                 Ok(yubytes) => {
                 let encoded = encoder.encode(&yubytes).unwrap();

@@ -7,7 +7,7 @@ use stun::xoraddr::XorMappedAddress;
 //stun.rs
 pub async fn discover_public_address(stun_server: &str, conn: Arc<UdpSocket>,) -> Result<XorMappedAddress, Box<dyn std::error::Error>> {
     // socket local: puede ser todos 0 pq igual despues se cambia
-    println!("Local address: {}", &conn.local_addr()?);
+    //println!("Local address: {}", &conn.local_addr()?);
     conn.connect(stun_server).await?; 
 
     let mut client = ClientBuilder::new().with_conn(conn.clone()).build()?;

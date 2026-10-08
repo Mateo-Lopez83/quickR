@@ -1,5 +1,4 @@
 use std::env;
-use rand::RngExt;
 use transprot::{stuntry, udp};
 use tokio::net::UdpSocket;
 use std::io::{self, Write};
@@ -12,9 +11,6 @@ use commons::ip_converter::{turn_code_to_ip, turn_ip_to_code};
 //main.rs
 #[tokio::main]
 async fn main() {
-    let mut _rng = rand::rng(); 
-    //let video_ssrc: u32 = rng.random();
-    //let audio_ssrc: u32 = rng.random();
     let mut timer: Instant;
     let devtype:String = env::args().nth(1).expect("you have to specify if this is a sender or receiver");
     let conn = Arc::new(UdpSocket::bind("0.0.0.0:0").await.unwrap());
@@ -92,7 +88,7 @@ async fn main() {
                     }
                 }
             }
-            let _ = udp::receiving_process(conn).await.unwrap();
+            //let _ = udp::receiving_process(conn, timer).await.unwrap();
 
         },
         othe =>{

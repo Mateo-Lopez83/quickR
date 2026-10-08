@@ -1,17 +1,20 @@
 use std::error::Error;
 use std::sync::Arc;
 use std::time::Instant;
-use std::collections::{BTreeMap, HashMap};
-use commons::FrameInProgress;
+use std::collections::{BTreeMap};
+use commons::{FrameInProgress, RGBFrameData};
 use commons::MAXDATAGRAMSIZE;
+use commons::frame_decoder::decode_btree_frame;
 use rand::seq;
 use tokio::net::UdpSocket;
 //use capture::capturetry;
 use tokio::time::{self, Duration};
 use tokio::sync::mpsc::{self};
 use bytes::Bytes;
+use openh264::decoder::Decoder;
 use crate::PacketError;
 use commons::header::{ChannelType, FragmentType, HEADERSIZE, Header};
+use std::sync::mpsc as frame_mpsc;
 
 
 //udp.rs
@@ -149,25 +152,133 @@ pub async fn main_sending_process(conn: Arc<UdpSocket>, timer: Instant) -> Resul
 }
 //____________________________________________________________________
 
-pub async fn receiving_process(conn: Arc<UdpSocket>)->Result<(), Box<dyn Error>>{    
+fn drain_ready_frames(saved_frames_map: &mut BTreeMap<u32, FrameInProgress>, decoder: &mut Decoder, timer: Instant,enc_tx: frame_mpsc::SyncSender<RGBFrameData>) -> Result<(), Box<dyn Error>> {
+    let mut loop_remove_stales: bool = true;
+    while loop_remove_stales{
+        if let Some((&key, _)) = saved_frames_map.iter().next() {
+            let mut should_remove = false;
+
+        if let Some(value) = saved_frames_map.get_mut(&key) {
+            let is_complete = value.is_complete;
+            let is_stale = (timer.elapsed().as_millis() as u32).wrapping_sub(value.receiver_timestamp) > 2000;
+
+            if is_complete {
+                let rgb_frame_data: RGBFrameData = decode_btree_frame(&mut value.map, decoder)?;
+                println!("Decoded full fragmented frame with timestamp {} and dimensions {}x{}", key, rgb_frame_data.width, rgb_frame_data.height);
+                //ACÁ SE MANDA EL FRAME AL GUI PARA QUE LO MUESTRE LA GUI
+                enc_tx.try_send(rgb_frame_data).map_err(|e| format!("Failed to send frame: {}", e))?;
+                should_remove = true;
+            } else if is_stale {
+                should_remove = true;
+            }
+            else{
+                loop_remove_stales = false;
+            }
+        }
+
+        if should_remove {
+            saved_frames_map.remove(&key);
+            }
+        }
+        else{
+            //map is empty
+            loop_remove_stales = false;
+        }
+    }
+    Ok(())
+}
+
+pub async fn receiving_process(conn: Arc<UdpSocket>,timer: Instant, enc_tx: frame_mpsc::SyncSender<RGBFrameData>)->Result<(), Box<dyn Error>>{   
+    let mut decoder = Decoder::new().unwrap(); 
     let socket = conn.clone();
-    let mut saved_frames_map: HashMap<u32, FrameInProgress> = HashMap::new();
-    let mut first_packet:bool = false;
+    let mut saved_frames_map: BTreeMap<u32, FrameInProgress> = BTreeMap::new();
+    //let mut first_packet:bool = false;
     let mut curr_timestamp: u32 = 0;
     let mut paquetes_inbetween: u64 = 0;
-    let mut packets_received: u64 = 0;
+    //let mut packets_received: u64 = 0;
     let mut packets_lost: u32 = 0;
-    let mut prev_seqnum: u16 = 0;
+    //let mut prev_seqnum: u16 = 0;
     let mut actual_seqnum: u16 = 0;
     let mut buf = [0u8; MAXDATAGRAMSIZE];
+    let mut interval = time::interval(Duration::from_millis(800));
     loop {
-        let len = socket.recv(&mut buf).await?;
-        println!(
-        "Received {} bytes from connection",len);
-        let mut received = Bytes::copy_from_slice(&buf[..len]);
-        match Header::unserialize(&mut received) {
-            Ok(header)=>{
-                packets_received+=1;
+        tokio::select! {
+            _ = interval.tick() => {
+                drain_ready_frames(&mut saved_frames_map, &mut decoder, timer, enc_tx.clone())?;
+            }
+            result = socket.recv(&mut buf) => {
+                let len = result?;
+                println!("Received {} bytes from connection",len);
+                let mut received = Bytes::copy_from_slice(&buf[..len]);
+                match Header::unserialize(&mut received) {
+                    Ok(header)=>{
+                        //packets_received+=1;
+
+                        curr_timestamp = header.timestamp;
+                        actual_seqnum = header.sequence_number;
+
+                        if saved_frames_map.contains_key(&curr_timestamp){
+                            
+                            let frame_in_progress = saved_frames_map.get_mut(&curr_timestamp).unwrap();
+                            frame_in_progress.map.insert(actual_seqnum, received);
+                            if header.fragment == FragmentType::Start{
+                                frame_in_progress.start_appeared = true;
+                                frame_in_progress.start_seqnum = actual_seqnum;
+                            }
+                            else if header.fragment == FragmentType::End{
+                                frame_in_progress.end_appeared = true;
+                                frame_in_progress.end_seqnum = actual_seqnum;
+                            }
+                            if frame_in_progress.start_appeared && frame_in_progress.end_appeared{
+                                //frame_in_progress.is_complete = true;
+                                let frame_length = (frame_in_progress.end_seqnum.wrapping_sub(frame_in_progress.start_seqnum) as usize) + 1;
+                                frame_in_progress.length = frame_length;
+                                let tree_size = frame_in_progress.map.len();
+                                if tree_size != frame_length{
+                                    println!("Frame with timestamp {} has start and end, but has missing packets. Expected length: {}, actual length: {}", curr_timestamp, frame_length, tree_size);
+                                    //se espera que lleguen los paquetes faltantes, no se hace nada por ahora
+                                }
+                                else{
+                                    println!("Frame with timestamp {} is complete and has all packets. Length: {}", curr_timestamp, frame_length);
+                                    frame_in_progress.is_complete = true;
+                                }
+                                
+                            }
+                        }
+                        else{
+                            let mut new_frame = FrameInProgress {
+                                map: BTreeMap::new(),
+                                start_seqnum: actual_seqnum,
+                                end_seqnum: actual_seqnum,
+                                start_appeared: false,
+                                end_appeared: false,
+                                length: 0,
+                                is_complete: if FragmentType::Unfragmented == header.fragment { true } else { false },
+                                receiver_timestamp: timer.elapsed().as_millis() as u32,
+                            };
+                            new_frame.map.insert(actual_seqnum, received);
+                            if header.fragment == FragmentType::Start{
+                                new_frame.start_appeared = true;
+                                new_frame.start_seqnum = actual_seqnum;
+                            }
+                            else if header.fragment == FragmentType::End{
+                                new_frame.end_appeared = true;
+                                new_frame.end_seqnum = actual_seqnum;
+                            }
+                            saved_frames_map.insert(curr_timestamp, new_frame);
+                        }
+                        drain_ready_frames(&mut saved_frames_map, &mut decoder, timer, enc_tx.clone())?;
+                    }
+                    Err(e)=>{
+                        eprintln!("Failed to parse header: {:?}", e);
+                    }
+                    
+                }
+            }
+        }
+    }
+}
+
                 
                 //println!("Got header from {addr}: {:?}", header);
                 // println!("Payload length: {}", received.len());
@@ -196,89 +307,24 @@ pub async fn receiving_process(conn: Arc<UdpSocket>)->Result<(), Box<dyn Error>>
                 // if seq_difference >= -1 {
                 //     prev_seqnum = actual_seqnum;
                 // }    
-
-                curr_timestamp = header.timestamp;
-                actual_seqnum = header.sequence_number;
-
-                if saved_frames_map.contains_key(&curr_timestamp){
-                    
-                    let frame_in_progress = saved_frames_map.get_mut(&curr_timestamp).unwrap();
-                    frame_in_progress.map.insert(actual_seqnum, received);
-                    if header.fragment == FragmentType::Start{
-                        frame_in_progress.start_appeared = true;
-                        frame_in_progress.start_seqnum = actual_seqnum;
-                    }
-                    else if header.fragment == FragmentType::End{
-                        frame_in_progress.end_appeared = true;
-                        frame_in_progress.end_seqnum = actual_seqnum;
-                    }
-                    if frame_in_progress.start_appeared && frame_in_progress.end_appeared{
-                        frame_in_progress.is_complete = true;
-                        let frame_length = (frame_in_progress.end_seqnum.wrapping_sub(frame_in_progress.start_seqnum) as usize) + 1;
-                        frame_in_progress.length = frame_length;
-                        let tree_size = frame_in_progress.map.len();
-                        if tree_size != frame_length{
-                            println!("Frame with timestamp {} has start and end, but has missing packets. Expected length: {}, actual length: {}", curr_timestamp, frame_length, tree_size);
-                            //se espera que lleguen los paquetes faltantes, no se hace nada por ahora
-                        }
-                        else{
-                            println!("Frame with timestamp {} is complete and has all packets. Length: {}", curr_timestamp, frame_length);
-                            //aqui se puede hacer algo con el frame completo
-                            
-                            saved_frames_map.remove(&curr_timestamp);
-                        }
-                        
-                    }
-                }
-                else{
-                    let mut new_frame = FrameInProgress {
-                        map: BTreeMap::new(),
-                        start_seqnum: actual_seqnum,
-                        end_seqnum: actual_seqnum,
-                        start_appeared: false,
-                        end_appeared: false,
-                        length: 0,
-                        is_complete: false,
-                    };
-                    new_frame.map.insert(actual_seqnum, received);
-                    if header.fragment == FragmentType::Start{
-                        new_frame.start_appeared = true;
-                        new_frame.start_seqnum = actual_seqnum;
-                    }
-                    else if header.fragment == FragmentType::End{
-                        new_frame.end_appeared = true;
-                        new_frame.end_seqnum = actual_seqnum;
-                    }
-                    saved_frames_map.insert(curr_timestamp, new_frame);
-                }
                        
                 
-                //decode
+                // //decode
 
-                println!("Packets lost until now: {packets_lost}");
-                println!("Packets received successfully: {packets_received}");
-                if header.fragment== FragmentType::Start{
-                    curr_timestamp = header.timestamp;
-                    println!("Comienzo del frame numero {curr_timestamp} ");
-                }
-                else if header.fragment== FragmentType::End && curr_timestamp== header.timestamp{
-                    curr_timestamp = header.timestamp;
-                    println!("Se acabó el frame numero {curr_timestamp} con {paquetes_inbetween} paquetes Middle ");
-                    paquetes_inbetween = 0;
-                }
-                else if header.fragment== FragmentType::Middle && curr_timestamp== header.timestamp{
-                    paquetes_inbetween +=1
-                }
-                //prev_seqnum = header.sequence_number; 
-            }
-            Err(e)=>{
-                eprintln!("Failed to parse header: {:?}", e);
-            }
-            
-        }
-    }
-    
-}
+                // println!("Packets lost until now: {packets_lost}");
+                // println!("Packets received successfully: {packets_received}");
+                // if header.fragment== FragmentType::Start{
+                //     curr_timestamp = header.timestamp;
+                //     println!("Comienzo del frame numero {curr_timestamp} ");
+                // }
+                // else if header.fragment== FragmentType::End && curr_timestamp== header.timestamp{
+                //     curr_timestamp = header.timestamp;
+                //     println!("Se acabó el frame numero {curr_timestamp} con {paquetes_inbetween} paquetes Middle ");
+                //     paquetes_inbetween = 0;
+                // }
+                // else if header.fragment== FragmentType::Middle && curr_timestamp== header.timestamp{
+                //     paquetes_inbetween +=1
+                // }
 
 
 pub async fn advanced_hole_punching(conn: Arc<UdpSocket>,timer: Instant) 
@@ -325,7 +371,7 @@ pub async fn advanced_hole_punching(conn: Arc<UdpSocket>,timer: Instant)
 
                     Err(error) => {
                         println!("Made an oopsie look: {}", error);
-    }
+                     }
                 }
             }
         }
@@ -340,6 +386,6 @@ pub async fn advanced_hole_punching(conn: Arc<UdpSocket>,timer: Instant)
             }
         return Ok(());
     }
-
+    
     Err("Hole punching attempt timed out, no response from peer.".into())
 }
