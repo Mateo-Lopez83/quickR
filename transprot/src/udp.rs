@@ -17,6 +17,7 @@ use openh264::decoder::Decoder;
 use crate::PacketError;
 use commons::header::{ChannelType, FragmentType, HEADERSIZE, Header};
 use std::sync::mpsc as frame_mpsc;
+use std::collections::VecDeque;
 
 
 //udp.rs
@@ -151,8 +152,8 @@ async fn idr_frame_listener(conn: Arc<UdpSocket>, received_idr_request: Arc<Atom
     let socket = conn.clone();
     loop {
         let result = socket.recv(&mut buf);
+        println!("Received something from receiver. Possible IDR request");
             let len = result.await.unwrap();
-            println!("Received {} bytes from connection",len);
             let mut received = Bytes::copy_from_slice(&buf[..len]);
             match Header::unserialize(&mut received) {
                 Ok(header) => {
@@ -193,7 +194,7 @@ async fn request_idr(conn: Arc<UdpSocket>, timer: Instant) -> Result<(), Box<dyn
     Ok(())
 }
 
-fn drain_ready_frames(saved_frames_map: &mut BTreeMap<u32, FrameInProgress>, decoder: &mut Decoder, timer: Instant,enc_tx: frame_mpsc::SyncSender<RGBFrameData>, conn: Arc<UdpSocket>) -> Result<bool, Box<dyn Error>> {
+fn drain_ready_frames(saved_frames_map: &mut BTreeMap<u32, FrameInProgress>, decoder: &mut Decoder, timer: Instant,enc_tx: frame_mpsc::SyncSender<RGBFrameData>, last_released: &mut Option<u32>) -> Result<bool, Box<dyn Error>> {
     let mut loop_remove_stales: bool = true;
     let mut return_false: bool = false;
     while loop_remove_stales{
@@ -248,6 +249,7 @@ fn drain_ready_frames(saved_frames_map: &mut BTreeMap<u32, FrameInProgress>, dec
         }
 
         if should_remove {
+            *last_released = Some(key);
             saved_frames_map.remove(&key);
             }
         }
@@ -256,10 +258,11 @@ fn drain_ready_frames(saved_frames_map: &mut BTreeMap<u32, FrameInProgress>, dec
             loop_remove_stales = false;
         }
     }
-    Ok(!return_false)
+    Ok(return_false)
 }
 
 pub async fn receiving_process(conn: Arc<UdpSocket>,timer: Instant, enc_tx: frame_mpsc::SyncSender<RGBFrameData>)->Result<(), Box<dyn Error>>{   
+
     let mut decoder = Decoder::new().unwrap(); 
     let socket = conn.clone();
     let mut saved_frames_map: BTreeMap<u32, FrameInProgress> = BTreeMap::new();
@@ -274,10 +277,11 @@ pub async fn receiving_process(conn: Arc<UdpSocket>,timer: Instant, enc_tx: fram
     let mut interval = time::interval(Duration::from_millis(800));
     let mut last_idr_request: Option<Instant> = None;
     let mut needs_dir = false;
+    let mut last_released: Option<u32> = None;
     loop {
         tokio::select! {
             _ = interval.tick() => {
-                needs_dir = drain_ready_frames(&mut saved_frames_map, &mut decoder, timer, enc_tx.clone(), conn.clone())?;
+                needs_dir = drain_ready_frames(&mut saved_frames_map, &mut decoder, timer, enc_tx.clone(), &mut last_released)?;
                 if needs_dir {
                             let due = last_idr_request
                                 .map_or(true, |t| t.elapsed() >= Duration::from_secs(1));
@@ -298,6 +302,13 @@ pub async fn receiving_process(conn: Arc<UdpSocket>,timer: Instant, enc_tx: fram
                         if header.channel != ChannelType::Video{
                             println!("Received packet with channel {:?}, expected Video. Ignoring packet.", header.channel);
                             continue;
+                        }
+                        //revisar que el nuevo frame no sea de un timestamp anterior a uno ya decodificado, DIFERENTE A QUE LLEGUE UN PAQUETE DE UN FRAME ANTERIOR
+                        if let Some(last) = last_released {
+                            if (header.timestamp.wrapping_sub(last) as i32) <= 0 {
+                                println!("Dropping late/duplicate packet (ts {}, seq {})", header.timestamp, header.sequence_number);
+                                continue;
+                            }
                         }
 
                         curr_timestamp = header.timestamp;
@@ -353,11 +364,12 @@ pub async fn receiving_process(conn: Arc<UdpSocket>,timer: Instant, enc_tx: fram
                             }
                             saved_frames_map.insert(curr_timestamp, new_frame);
                         }
-                        needs_dir = drain_ready_frames(&mut saved_frames_map, &mut decoder, timer, enc_tx.clone(), conn.clone())?;
+                        needs_dir = drain_ready_frames(&mut saved_frames_map, &mut decoder, timer, enc_tx.clone(), &mut last_released)?;
                         if needs_dir {
                             let due = last_idr_request
                                 .map_or(true, |t| t.elapsed() >= Duration::from_secs(1));
                             if due {
+                                //println!("Enviando request IDR");
                                 let _ = request_idr(conn.clone(), timer).await;
                                 last_idr_request = Some(Instant::now());
                             }

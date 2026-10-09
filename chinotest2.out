@@ -1,0 +1,386 @@
+Trying to connect to peer. Please wait...
+Connection request number: 1.
+Connection request number: 2.
+Connection request number: 3.
+Connection request number: 4.
+Connection request number: 5.
+Connection request number: 6.
+Connection request number: 7.
+Connection request number: 8.
+Connection request number: 9.
+Connection request number: 10.
+Connection request number: 11.
+Connection request number: 12.
+Connection request number: 13.
+Connection request number: 14.
+Connection request number: 15.
+Connection request number: 16.
+Connection request number: 17.
+Connection request number: 18.
+Connection request number: 19.
+Trying to connect to peer. Please wait...
+Connection request number: 1.
+Connection request number: 2.
+Received 17 bytes
+Received correct control packet. Initiating communication
+Sending 5 more packets to stabilize connection
+Received 17 bytes from connection
+Received packet with channel Sync, expected Video. Ignoring packet.
+Received 17 bytes from connection
+Received packet with channel Sync, expected Video. Ignoring packet.
+Received 17 bytes from connection
+Received packet with channel Sync, expected Video. Ignoring packet.
+Received 17 bytes from connection
+Received packet with channel Sync, expected Video. Ignoring packet.
+Received 17 bytes from connection
+Received packet with channel Sync, expected Video. Ignoring packet.
+Sent IDR frame request to peer
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 364 bytes from connection
+Frame with timestamp 29547 is complete and has all packets. Length: 41
+Attempting to decode frame with timestamp 29547 and 41 packets
+Decoding frame of size: 47547
+Decoded full fragmented frame with timestamp 29547 and dimensions 1920x1080
+Frame with timestamp 29547 sent to GUI successfully.
+Sent IDR frame request to peer
+Received 608 bytes from connection
+Attempting to decode frame with timestamp 30032 and 1 packets
+Decoding frame of size: 591
+Received a frame of size: 6220800
+Decoded full fragmented frame with timestamp 30032 and dimensions 1920x1080
+Frame with timestamp 30032 sent to GUI successfully.
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 292 bytes from connection
+Frame with timestamp 30355 is complete and has all packets. Length: 8
+Attempting to decode frame with timestamp 30355 and 8 packets
+Decoding frame of size: 8535
+Received a frame of size: 6220800
+Decoded full fragmented frame with timestamp 30355 and dimensions 1920x1080
+Frame with timestamp 30355 sent to GUI successfully.
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 29 bytes from connection
+Frame with timestamp 30791 is complete and has all packets. Length: 15
+Attempting to decode frame with timestamp 30791 and 15 packets
+Decoding frame of size: 16532
+Received a frame of size: 6220800
+Decoded full fragmented frame with timestamp 30791 and dimensions 1920x1080
+Frame with timestamp 30791 sent to GUI successfully.
+Sent IDR frame request to peer
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 988 bytes from connection
+Frame with timestamp 31151 is complete and has all packets. Length: 9
+Attempting to decode frame with timestamp 31151 and 9 packets
+Decoding frame of size: 10411
+Received a frame of size: 6220800
+Decoded full fragmented frame with timestamp 31151 and dimensions 1920x1080
+Frame with timestamp 31151 sent to GUI successfully.
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 96 bytes from connection
+Frame with timestamp 31458 is complete and has all packets. Length: 10
+Attempting to decode frame with timestamp 31458 and 10 packets
+Decoding frame of size: 10699
+Received a frame of size: 6220800
+Decoded full fragmented frame with timestamp 31458 and dimensions 1920x1080
+Frame with timestamp 31458 sent to GUI successfully.
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1197 bytes from connection
+Received 1187 bytes from connection
+Frame with timestamp 31735 is complete and has all packets. Length: 3
+Attempting to decode frame with timestamp 31735 and 3 packets
+Decoding frame of size: 3530
+Received a frame of size: 6220800
+Decoded full fragmented frame with timestamp 31735 and dimensions 1920x1080
+Frame with timestamp 31735 sent to GUI successfully.
+Sent IDR frame request to peer
+Received 1077 bytes from connection
+Received a frame of size: 6220800
+Attempting to decode frame with timestamp 32481 and 1 packets
+Decoding frame of size: 1060
+Decoded full fragmented frame with timestamp 32481 and dimensions 1920x1080
+Frame with timestamp 32481 sent to GUI successfully.
+Received 865 bytes from connection
+Attempting to decode frame with timestamp 32683 and 1 packets
+Decoding frame of size: 848
+Received a frame of size: 6220800
+Decoded full fragmented frame with timestamp 32683 and dimensions 1920x1080
+Frame with timestamp 32683 sent to GUI successfully.
+Received 185 bytes from connection
+Attempting to decode frame with timestamp 32876 and 1 packets
+Decoding frame of size: 168
+Received a frame of size: 6220800
+Decoded full fragmented frame with timestamp 32876 and dimensions 1920x1080
+Frame with timestamp 32876 sent to GUI successfully.
+Sent IDR frame request to peer
+Received 36 bytes from connection
+Attempting to decode frame with timestamp 33593 and 1 packets
+Decoding frame of size: 19
+Received a frame of size: 6220800
+Decoded full fragmented frame with timestamp 33593 and dimensions 1920x1080
+Frame with timestamp 33593 sent to GUI successfully.
+Received 192 bytes from connection
+Attempting to decode frame with timestamp 33784 and 1 packets
+Decoding frame of size: 175
+Received a frame of size: 6220800
+Decoded full fragmented frame with timestamp 33784 and dimensions 1920x1080
+Frame with timestamp 33784 sent to GUI successfully.
+Received 31 bytes from connection
+Attempting to decode frame with timestamp 33974 and 1 packets
+Decoding frame of size: 14
+Received a frame of size: 6220800
+Decoded full fragmented frame with timestamp 33974 and dimensions 1920x1080
+Frame with timestamp 33974 sent to GUI successfully.
+Sent IDR frame request to peer
+Received 163 bytes from connection
+Attempting to decode frame with timestamp 34615 and 1 packets
+Decoding frame of size: 146
+Received a frame of size: 6220800
+Decoded full fragmented frame with timestamp 34615 and dimensions 1920x1080
+Frame with timestamp 34615 sent to GUI successfully.
+Received 31 bytes from connection
+Attempting to decode frame with timestamp 34805 and 1 packets
+Decoding frame of size: 14
+Received a frame of size: 6220800
+Decoded full fragmented frame with timestamp 34805 and dimensions 1920x1080
+Frame with timestamp 34805 sent to GUI successfully.
+Received 31 bytes from connection
+Attempting to decode frame with timestamp 34997 and 1 packets
+Decoding frame of size: 14
+Received a frame of size: 6220800
+Decoded full fragmented frame with timestamp 34997 and dimensions 1920x1080
+Frame with timestamp 34997 sent to GUI successfully.
+Sent IDR frame request to peer
+Received 318 bytes from connection
+Attempting to decode frame with timestamp 35614 and 1 packets
+Decoding frame of size: 301
+Received a frame of size: 6220800
+Decoded full fragmented frame with timestamp 35614 and dimensions 1920x1080
+Frame with timestamp 35614 sent to GUI successfully.
+Received 31 bytes from connection
+Attempting to decode frame with timestamp 35804 and 1 packets
+Decoding frame of size: 14
+Received a frame of size: 6220800
+Decoded full fragmented frame with timestamp 35804 and dimensions 1920x1080
+Frame with timestamp 35804 sent to GUI successfully.
+Received 31 bytes from connection
+Attempting to decode frame with timestamp 35994 and 1 packets
+Decoding frame of size: 14
+Received a frame of size: 6220800
+Decoded full fragmented frame with timestamp 35994 and dimensions 1920x1080
+Frame with timestamp 35994 sent to GUI successfully.
+Sent IDR frame request to peer
+Received 31 bytes from connection
+Attempting to decode frame with timestamp 35994 and 1 packets
+Decoding frame of size: 14
+Failed to decode frame with timestamp 35994: Failed to decode frame: OpenH264 encountered an error. Native:2. Decoding State:0. User Message:None. Backtraces enabled.
+Received 139 bytes from connection
+Attempting to decode frame with timestamp 36185 and 1 packets
+Decoding frame of size: 122
+Failed to decode frame with timestamp 36185: Failed to decode frame: OpenH264 encountered an error. Native:18. Decoding State:0. User Message:None. Backtraces enabled.
+Received 235 bytes from connection
+Attempting to decode frame with timestamp 36614 and 1 packets
+Decoding frame of size: 218
+Failed to decode frame with timestamp 36614: Failed to decode frame: OpenH264 encountered an error. Native:18. Decoding State:0. User Message:None. Backtraces enabled.
+Received 31 bytes from connection
+Attempting to decode frame with timestamp 37337 and 1 packets
+Decoding frame of size: 14
+Failed to decode frame with timestamp 37337: Failed to decode frame: OpenH264 encountered an error. Native:18. Decoding State:0. User Message:None. Backtraces enabled.
+Received 31 bytes from connection
+Attempting to decode frame with timestamp 37528 and 1 packets
+Decoding frame of size: 14
+Failed to decode frame with timestamp 37528: Failed to decode frame: OpenH264 encountered an error. Native:18. Decoding State:0. User Message:None. Backtraces enabled.
+Received 31 bytes from connection
+Attempting to decode frame with timestamp 37718 and 1 packets
+Decoding frame of size: 14
+Failed to decode frame with timestamp 37718: Failed to decode frame: OpenH264 encountered an error. Native:18. Decoding State:0. User Message:None. Backtraces enabled.
+Received 198 bytes from connection
+Attempting to decode frame with timestamp 38439 and 1 packets
+Decoding frame of size: 181
+Failed to decode frame with timestamp 38439: Failed to decode frame: OpenH264 encountered an error. Native:18. Decoding State:0. User Message:None. Backtraces enabled.
+Received 36 bytes from connection
+Received a frame of size: 6220800
+Attempting to decode frame with timestamp 38630 and 1 packets
+Decoding frame of size: 19
+Failed to decode frame with timestamp 38630: Failed to decode frame: OpenH264 encountered an error. Native:18. Decoding State:0. User Message:None. Backtraces enabled.
+Received 179 bytes from connection
+Attempting to decode frame with timestamp 38820 and 1 packets
+Decoding frame of size: 162
+Failed to decode frame with timestamp 38820: Failed to decode frame: OpenH264 encountered an error. Native:18. Decoding State:0. User Message:None. Backtraces enabled.
+Received 31 bytes from connection
+Attempting to decode frame with timestamp 39555 and 1 packets
+Decoding frame of size: 14
+Failed to decode frame with timestamp 39555: Failed to decode frame: OpenH264 encountered an error. Native:18. Decoding State:0. User Message:None. Backtraces enabled.
+Received 31 bytes from connection
+Attempting to decode frame with timestamp 39748 and 1 packets
+Decoding frame of size: 14
+Failed to decode frame with timestamp 39748: Failed to decode frame: OpenH264 encountered an error. Native:18. Decoding State:0. User Message:None. Backtraces enabled.
+Received 147 bytes from connection
+Attempting to decode frame with timestamp 39938 and 1 packets
+Decoding frame of size: 130
+Failed to decode frame with timestamp 39938: Failed to decode frame: OpenH264 encountered an error. Native:18. Decoding State:0. User Message:None. Backtraces enabled.
+Received 147 bytes from connection
+Attempting to decode frame with timestamp 39938 and 1 packets
+Decoding frame of size: 130
+Failed to decode frame with timestamp 39938: Failed to decode frame: OpenH264 encountered an error. Native:18. Decoding State:0. User Message:None. Backtraces enabled.
+Sent IDR frame request to peer
+Received 183 bytes from connection
+Attempting to decode frame with timestamp 40614 and 1 packets
+Decoding frame of size: 166
+Failed to decode frame with timestamp 40614: Failed to decode frame: OpenH264 encountered an error. Native:18. Decoding State:0. User Message:None. Backtraces enabled.
+Received 31 bytes from connection
+Attempting to decode frame with timestamp 40804 and 1 packets
+Decoding frame of size: 14
+Failed to decode frame with timestamp 40804: Failed to decode frame: OpenH264 encountered an error. Native:18. Decoding State:0. User Message:None. Backtraces enabled.
+Received 31 bytes from connection
+Attempting to decode frame with timestamp 40993 and 1 packets
+Decoding frame of size: 14
+Failed to decode frame with timestamp 40993: Failed to decode frame: OpenH264 encountered an error. Native:18. Decoding State:0. User Message:None. Backtraces enabled.
+Received 154 bytes from connection
+Attempting to decode frame with timestamp 41613 and 1 packets
+Decoding frame of size: 137
+Failed to decode frame with timestamp 41613: Failed to decode frame: OpenH264 encountered an error. Native:18. Decoding State:0. User Message:None. Backtraces enabled.
+Sent IDR frame request to peer
+Received 31 bytes from connection
+Attempting to decode frame with timestamp 41803 and 1 packets
+Decoding frame of size: 14
+Failed to decode frame with timestamp 41803: Failed to decode frame: OpenH264 encountered an error. Native:18. Decoding State:0. User Message:None. Backtraces enabled.
+Received 31 bytes from connection
+Attempting to decode frame with timestamp 41994 and 1 packets
+Decoding frame of size: 14
+Failed to decode frame with timestamp 41994: Failed to decode frame: OpenH264 encountered an error. Native:18. Decoding State:0. User Message:None. Backtraces enabled.
+Received 150 bytes from connection
+Attempting to decode frame with timestamp 42613 and 1 packets
+Decoding frame of size: 133
+Failed to decode frame with timestamp 42613: Failed to decode frame: OpenH264 encountered an error. Native:18. Decoding State:0. User Message:None. Backtraces enabled.
+Received 36 bytes from connection
+Attempting to decode frame with timestamp 42804 and 1 packets
+Decoding frame of size: 19
+Failed to decode frame with timestamp 42804: Failed to decode frame: OpenH264 encountered an error. Native:18. Decoding State:0. User Message:None. Backtraces enabled.
+Received 31 bytes from connection
+Attempting to decode frame with timestamp 42994 and 1 packets
+Decoding frame of size: 14
+Failed to decode frame with timestamp 42994: Failed to decode frame: OpenH264 encountered an error. Native:18. Decoding State:0. User Message:None. Backtraces enabled.
+Sent IDR frame request to peer
+Received 190 bytes from connection
+Attempting to decode frame with timestamp 43613 and 1 packets
+Decoding frame of size: 173
+Failed to decode frame with timestamp 43613: Failed to decode frame: OpenH264 encountered an error. Native:18. Decoding State:0. User Message:None. Backtraces enabled.
+Received 31 bytes from connection
+Attempting to decode frame with timestamp 43803 and 1 packets
+Decoding frame of size: 14
+Failed to decode frame with timestamp 43803: Failed to decode frame: OpenH264 encountered an error. Native:18. Decoding State:0. User Message:None. Backtraces enabled.
+Received 31 bytes from connection
+Attempting to decode frame with timestamp 43993 and 1 packets
+Decoding frame of size: 14
+Failed to decode frame with timestamp 43993: Failed to decode frame: OpenH264 encountered an error. Native:18. Decoding State:0. User Message:None. Backtraces enabled.
+Received 164 bytes from connection
+Attempting to decode frame with timestamp 44614 and 1 packets
+Decoding frame of size: 147
+Failed to decode frame with timestamp 44614: Failed to decode frame: OpenH264 encountered an error. Native:18. Decoding State:0. User Message:None. Backtraces enabled.
+Received 164 bytes from connection
+Attempting to decode frame with timestamp 44614 and 1 packets
+Decoding frame of size: 147
+Failed to decode frame with timestamp 44614: Failed to decode frame: OpenH264 encountered an error. Native:18. Decoding State:0. User Message:None. Backtraces enabled.
+Received 31 bytes from connection
+Attempting to decode frame with timestamp 44803 and 1 packets
+Decoding frame of size: 14
+Failed to decode frame with timestamp 44803: Failed to decode frame: OpenH264 encountered an error. Native:18. Decoding State:0. User Message:None. Backtraces enabled.
+Sent IDR frame request to peer
+Received 31 bytes from connection
+Attempting to decode frame with timestamp 44993 and 1 packets
+Decoding frame of size: 14
+Failed to decode frame with timestamp 44993: Failed to decode frame: OpenH264 encountered an error. Native:18. Decoding State:0. User Message:None. Backtraces enabled.
+Received 283 bytes from connection
+Attempting to decode frame with timestamp 45614 and 1 packets
+Decoding frame of size: 266
+Failed to decode frame with timestamp 45614: Failed to decode frame: OpenH264 encountered an error. Native:18. Decoding State:0. User Message:None. Backtraces enabled.
+Received 31 bytes from connection
+Attempting to decode frame with timestamp 45803 and 1 packets
+Decoding frame of size: 14
+Failed to decode frame with timestamp 45803: Failed to decode frame: OpenH264 encountered an error. Native:18. Decoding State:0. User Message:None. Backtraces enabled.
+Received 31 bytes from connection
+Attempting to decode frame with timestamp 45993 and 1 packets
+Decoding frame of size: 14
+Failed to decode frame with timestamp 45993: Failed to decode frame: OpenH264 encountered an error. Native:18. Decoding State:0. User Message:None. Backtraces enabled.
+Sent IDR frame request to peer
+Received 132 bytes from connection
+Attempting to decode frame with timestamp 46613 and 1 packets
+Decoding frame of size: 115
+Failed to decode frame with timestamp 46613: Failed to decode frame: OpenH264 encountered an error. Native:18. Decoding State:0. User Message:None. Backtraces enabled.
+Received 36 bytes from connection
+Attempting to decode frame with timestamp 46803 and 1 packets
+Decoding frame of size: 19
+Failed to decode frame with timestamp 46803: Failed to decode frame: OpenH264 encountered an error. Native:18. Decoding State:0. User Message:None. Backtraces enabled.
