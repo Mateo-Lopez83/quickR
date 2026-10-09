@@ -1,11 +1,16 @@
 pub mod encoder_p{
-    use openh264::encoder::{Encoder, FrameType};
+    use commons::MAXDATAGRAMSIZE;
+use commons::header::{ChannelType, Header};
+use openh264::encoder::{Encoder, FrameType};
     use openh264::formats::{BgraSliceU8, YUVBuffer};
+use tokio::net::UdpSocket;
 use tokio::sync::mpsc as udp_mpsc;
+use tokio::time;
 //use windows_capture::encoder::VideoSettingsSubType::BGRA8;
     use std::error::Error;
-    use std::sync::mpsc as enc_mpsc;
-use std::time::Instant;
+    use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::{Arc, mpsc as enc_mpsc};
+use std::time::{Duration, Instant};
     use bytes::Bytes;
     //use openh264::decoder::Decoder;
     
@@ -20,13 +25,19 @@ use std::time::Instant;
         let bgra = BgraSliceU8::new(&bytedata.data, (width, height));
         Ok(YUVBuffer::from_bgra8_source(bgra))
     }
+
+
     //rx recibe de windows-capture, envía a tx el encoded bytestream
-    pub fn run_encoder(enc_rx: enc_mpsc::Receiver<RawStreamData>, udp_tx: udp_mpsc::Sender<Bytes>, timer: Instant) {
+    pub fn run_encoder(enc_rx: enc_mpsc::Receiver<RawStreamData>, udp_tx: udp_mpsc::Sender<Bytes>, timer: Instant, receiver_idr_request: Arc<AtomicBool> ) {
         let mut encoder = Encoder::new().unwrap();
         let mut sequence_num: u16 = 0;
         while let Ok(raw_frame) = enc_rx.recv() {
             match bytes_to_yub(raw_frame){
                 Ok(yubytes) => {
+                    if receiver_idr_request.swap(false,Ordering::SeqCst) {
+                        println!("Sending IDR frame due to request");
+                        encoder.force_intra_frame();
+                    }
                 let encoded = encoder.encode(&yubytes).unwrap();
                 let encoded_bytes = Bytes::from(encoded.to_vec());
                 let timestamp = timer.elapsed().as_millis() as u32;
@@ -34,13 +45,13 @@ use std::time::Instant;
                     FrameType::I => {
                         match udp_connect::frame_send(false, encoded_bytes, &udp_tx, &mut sequence_num, timestamp){
                             Ok(_) => {},
-                            Err(e) => return Err(e).unwrap(),
+                            Err(e) => return,
                         }
                     }
                     FrameType::P => {
                         match udp_connect::frame_send(false, encoded_bytes, &udp_tx, &mut sequence_num, timestamp){
                             Ok(_) => {},
-                            Err(e) => return Err(e).unwrap(),
+                            Err(e) => return ,
                         }
                     }
                     //añadir logica para esto despues idk
@@ -48,7 +59,7 @@ use std::time::Instant;
                         println!("_____IDR frame created. Sending frame______");
                         match udp_connect::frame_send(true, encoded_bytes, &udp_tx, &mut sequence_num, timestamp){
                             Ok(_) => {},
-                            Err(e) => return Err(e).unwrap(),
+                            Err(e) => return ,
                         }
                     }
                     FrameType::Skip => {

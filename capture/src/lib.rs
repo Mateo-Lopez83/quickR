@@ -2,7 +2,9 @@ pub mod decoder_p;
 mod encoder_p;
 mod udp_connect;
 pub mod capturetry;
-use std::time::Instant;
+use tokio::net::UdpSocket;
+use std::sync::atomic::AtomicBool;
+use std::{sync::Arc, time::Instant};
 use std::sync::mpsc as enc_mpsc;
 use std::thread;
 use windows_capture::{
@@ -26,7 +28,7 @@ pub struct RawStreamData{
     pub height: usize,
 }
 
-pub fn start_capture(udp_tx: udp_mpsc::Sender<Bytes>, timer: Instant) {
+pub fn start_capture(udp_tx: udp_mpsc::Sender<Bytes>, timer: Instant, received_idr_request: Arc<AtomicBool>) {
 
     let (enc_tx, enc_rx) = enc_mpsc::sync_channel::<RawStreamData>(1);
     thread::spawn(move || {
@@ -49,7 +51,7 @@ pub fn start_capture(udp_tx: udp_mpsc::Sender<Bytes>, timer: Instant) {
     thread::spawn(move || {
         //encoder recibe el actual receiver del std channel (rx) y a donde enviar
         //el bytestream(udp_tx)
-        run_encoder(enc_rx, udp_tx, timer);
+        run_encoder(enc_rx, udp_tx, timer, received_idr_request);
     });
     
 
