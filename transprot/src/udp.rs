@@ -171,6 +171,10 @@ fn drain_ready_frames(saved_frames_map: &mut BTreeMap<u32, FrameInProgress>, dec
                         enc_tx.try_send(rgb_frame_data).map_err(|e| format!("Failed to send frame: {}", e))?;
                         should_remove = true;
                     }
+                    // Ok(None) => {
+                    //     println!("No frame data returned for timestamp {}.", key);
+                    //     //should_remove = true;
+                    // }
                     Err(e) => {
                         println!("Failed to decode frame with timestamp {}: {}", key, e);
                         should_remove = true; // Remove the frame even if decoding fails
@@ -226,6 +230,10 @@ pub async fn receiving_process(conn: Arc<UdpSocket>,timer: Instant, enc_tx: fram
                 match Header::unserialize(&mut received) {
                     Ok(header)=>{
                         //packets_received+=1;
+                        if header.channel != ChannelType::Video{
+                            println!("Received packet with channel {:?}, expected Video. Ignoring packet.", header.channel);
+                            continue;
+                        }
 
                         curr_timestamp = header.timestamp;
                         actual_seqnum = header.sequence_number;
