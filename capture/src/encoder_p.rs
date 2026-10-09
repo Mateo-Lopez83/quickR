@@ -32,19 +32,24 @@ use std::time::Instant;
                 let timestamp = timer.elapsed().as_millis() as u32;
                 match encoded.frame_type() {
                     FrameType::I => {
-                        match udp_connect::frame_send(true, encoded_bytes, &udp_tx, &mut sequence_num, timestamp){
+                        match udp_connect::frame_send(false, encoded_bytes, &udp_tx, &mut sequence_num, timestamp){
                             Ok(_) => {},
-                            Err(_) => break,
+                            Err(e) => return Err(e).unwrap(),
                         }
                     }
                     FrameType::P => {
                         match udp_connect::frame_send(false, encoded_bytes, &udp_tx, &mut sequence_num, timestamp){
                             Ok(_) => {},
-                            Err(_) => break,
+                            Err(e) => return Err(e).unwrap(),
                         }
                     }
+                    //añadir logica para esto despues idk
                     FrameType::IDR => {
-                        println!("_____IDR frame created. Not sent______");
+                        println!("_____IDR frame created. Sending frame______");
+                        match udp_connect::frame_send(true, encoded_bytes, &udp_tx, &mut sequence_num, timestamp){
+                            Ok(_) => {},
+                            Err(e) => return Err(e).unwrap(),
+                        }
                     }
                     FrameType::Skip => {
                         println!("_____Skip frame created. Not sent______");

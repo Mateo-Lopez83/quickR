@@ -136,11 +136,9 @@ async fn channel_consumer(mut rx: mpsc::Receiver<Bytes>, socket: Arc<UdpSocket>)
 }
 
 pub async fn main_sending_process(conn: Arc<UdpSocket>, timer: Instant) -> Result<(), Box<dyn Error>> {
-    let (tx, rx) = mpsc::channel::<Bytes>(30);
+    let (tx, rx) = mpsc::channel::<Bytes>(60);
     let socket = conn.clone();
-    //socket.connect(remote_addr).await?;
-    //se hacen los lets para que retorne al menos un None y cuando ya acaben ambos pasa al join!
-    //let gen_handle = tokio::spawn(channel_fake_data_creator(tx, timer));
+
     let _= capture::start_capture(tx, timer);
     let consumer_handle = tokio::spawn(channel_consumer(rx, socket));
 
