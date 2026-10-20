@@ -1,15 +1,13 @@
 use std::error::Error;
 use std::sync::Arc;
-use std::sync::atomic::AtomicBool;
+use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::atomic::Ordering::SeqCst;
 use std::time::Instant;
 use std::collections::{BTreeMap};
-use commons::{FrameInProgress, RGBFrameData};
+use commons::{FrameInProgress, RGBFrameData, SharedStats};
 use commons::MAXDATAGRAMSIZE;
 use commons::frame_decoder::decode_btree_frame;
-use rand::seq;
 use tokio::net::UdpSocket;
-//use capture::capturetry;
 use tokio::time::{self, Duration};
 use tokio::sync::mpsc::{self};
 use bytes::Bytes;
@@ -17,22 +15,16 @@ use openh264::decoder::Decoder;
 use crate::PacketError;
 use commons::header::{ChannelType, FragmentType, HEADERSIZE, Header};
 use std::sync::mpsc as frame_mpsc;
-use std::collections::VecDeque;
 
-
-//udp.rs
-
-
-pub mod dummy_gen{
+pub mod packet_gen{
 use std::time::Instant;
 
 use commons::header::{FragmentType, Header, ChannelType};
     use commons::PAYLOADSIZE;
-
     use crate::{RngExt};
     use bytes::{BufMut, Bytes, BytesMut};
-    
-    
+
+
     fn generate_test_header(timestamp: u32, seqnum: u16)->Header{
         let mut rng = rand::rng(); 
         let fragment = FragmentType::try_from(rand::random_range(1..5)).expect("Weird shi fragemtn");
@@ -121,7 +113,7 @@ use commons::header::{FragmentType, Header, ChannelType};
 //     for _ in 0..10{
 //         interval.tick().await; 
 //         let timestamp = timer.elapsed().as_millis() as u32;
-//         let fake_payload = dummy_gen::generate_fake_datagram(timestamp, seqnum);
+//         let fake_payload = packet_gen::generate_fake_datagram(timestamp, seqnum);
 //         seqnum = seqnum +1;
 //         //println!("{}", String::from_utf8_lossy(&fake_payload));
 //         if tx.send(fake_payload).await.is_err() {
@@ -146,9 +138,12 @@ async fn channel_consumer(mut rx: mpsc::Receiver<Bytes>, socket: Arc<UdpSocket>)
 }
 
 
-async fn idr_frame_listener(conn: Arc<UdpSocket>, received_idr_request: Arc<AtomicBool>){
+async fn idr_request_listener(conn: Arc<UdpSocket>, received_idr_request: Arc<AtomicBool>){
+    /*
+        Listener that loops forever on the sender to be actively listening for any
+        control packets sent by the receiver.
+    */
     let mut buf = [0u8; MAXDATAGRAMSIZE];
-    //let mut interval = time::interval(Duration::from_millis(800));
     let socket = conn.clone();
     loop {
         let result = socket.recv(&mut buf);
@@ -157,6 +152,8 @@ async fn idr_frame_listener(conn: Arc<UdpSocket>, received_idr_request: Arc<Atom
             let mut received = Bytes::copy_from_slice(&buf[..len]);
             match Header::unserialize(&mut received) {
                 Ok(header) => {
+                    //por ahora el unico control packet es para pedir IDR
+                    //TODO: expandir esto para handlear más control packets
                     if header.channel == ChannelType::Control {
                         println!("Received IDR frame request");
                         received_idr_request.store(true, SeqCst);
@@ -173,9 +170,10 @@ async fn idr_frame_listener(conn: Arc<UdpSocket>, received_idr_request: Arc<Atom
 
 pub async fn main_sending_process(conn: Arc<UdpSocket>, timer: Instant) -> Result<(), Box<dyn Error>> {
     let received_idr_request = Arc::new(AtomicBool::new(false));
-    let (tx, rx) = mpsc::channel::<Bytes>(60);
+    //TODO: revisar que tanto importa el tamaño de este buffer
+    let (tx, rx) = mpsc::channel::<Bytes>(90);
     let socket = conn.clone();
-    let idr_listener_handle = tokio::spawn(idr_frame_listener(conn.clone(), received_idr_request.clone()));
+    let _idr_listener_handle = tokio::spawn(idr_request_listener(conn.clone(), received_idr_request.clone()));
     let _= capture::start_capture(tx, timer, received_idr_request.clone());
     let consumer_handle = tokio::spawn(channel_consumer(rx, socket));
 
@@ -188,101 +186,111 @@ pub async fn main_sending_process(conn: Arc<UdpSocket>, timer: Instant) -> Resul
 //____________________________________________________________________
 
 async fn request_idr(conn: Arc<UdpSocket>, timer: Instant) -> Result<(), Box<dyn Error>>{
-    let ctrl_datagram =dummy_gen::generate_control_datagram(timer);
+    let ctrl_datagram =packet_gen::generate_control_datagram(timer);
     conn.send(&ctrl_datagram).await?;
     println!("Sent IDR frame request to peer");
     Ok(())
 }
 
-fn drain_ready_frames(saved_frames_map: &mut BTreeMap<u32, FrameInProgress>, decoder: &mut Decoder, timer: Instant,enc_tx: frame_mpsc::SyncSender<RGBFrameData>, last_released: &mut Option<u32>) -> Result<bool, Box<dyn Error>> {
+fn drain_ready_frames(saved_frames_map: &mut BTreeMap<u32, FrameInProgress>, decoder: &mut Decoder, timer: Instant,enc_tx: frame_mpsc::SyncSender<RGBFrameData>, last_released: &mut Option<u32>, waiting_for_idr: &mut bool) -> Result<bool, Box<dyn Error>> {
+    //returns true if it needs an IDR, either because the decoding failed for some reason or the 
     let mut loop_remove_stales: bool = true;
-    let mut return_false: bool = false;
+    let mut should_request_idr: bool = false;
     while loop_remove_stales{
         if let Some((&key, _)) = saved_frames_map.iter().next() {
             let mut should_remove = false;
 
-        if let Some(value) = saved_frames_map.get_mut(&key) {
-            let is_complete = value.is_complete;
-            let is_stale = (timer.elapsed().as_millis() as u32).wrapping_sub(value.receiver_timestamp) > 2000;
+            if let Some(value) = saved_frames_map.get_mut(&key) {
+                let is_complete = value.is_complete;
+                let is_stale = (timer.elapsed().as_millis() as u32).wrapping_sub(value.last_updated) > 700;
 
-            if is_complete {
-                println!("Attempting to decode frame with timestamp {} and {} packets", key, value.map.len());
-                match decode_btree_frame(&mut value.map, decoder) {
-                    Ok(rgb_frame_data) => {
-                        println!("Decoded full fragmented frame with timestamp {} and dimensions {}x{}", key, rgb_frame_data.width, rgb_frame_data.height);
-                        //ACÁ SE MANDA EL FRAME AL GUI PARA QUE LO MUESTRE LA GUI
-                        match enc_tx.try_send(rgb_frame_data) {
-                            Ok(_) => {
-                                println!("Frame with timestamp {} sent to GUI successfully.", key);
-                            }
-                            Err(e) => {
-                                println!("Failed to send frame with timestamp {} to GUI: {}", key, e);
-                            }
-                        }
-                        //enc_tx.try_send(rgb_frame_data).map_err(|e| format!("Failed to send frame: {}", e))?;
-                        should_remove = true;
-                    }
-                    // Ok(None) => {
-                    //     println!("No frame data returned for timestamp {}.", key);
-                    //     //should_remove = true;
-                    // }
-                    Err(e) => {
-                        println!("Failed to decode frame with timestamp {}: {}", key, e);
-                        should_remove = true; // Remove the frame even if decoding fails
-                        return_false = true; // Indicate that an error occurred
-
-                    }
+                //si se necesita el idr y el paquete no lo es, se elimina y se vuelve a intentar
+                if *waiting_for_idr && value.is_idr == false {
+                    saved_frames_map.remove(&key);
+                    continue;
                 }
-                // let rgb_frame_data: RGBFrameData = decode_btree_frame(&mut value.map, decoder)?;
-                // println!("Decoded full fragmented frame with timestamp {} and dimensions {}x{}", key, rgb_frame_data.width, rgb_frame_data.height);
-                // //ACÁ SE MANDA EL FRAME AL GUI PARA QUE LO MUESTRE LA GUI
-                // enc_tx.try_send(rgb_frame_data).map_err(|e| format!("Failed to send frame: {}", e))?;
-                // should_remove = true;
-            } else if is_stale {
-                should_remove = true;
-                return_false = true; // Indicates that frame will be missing
-                
-            }
-            else{
-                loop_remove_stales = false;
-            }
-        }
+                if is_complete {
+                    println!("Attempting to decode frame with timestamp {} and {} packets", key, value.map.len());
+                    match decode_btree_frame(&mut value.map, decoder) {
+                        Ok(rgb_frame_data) => {
+                            *waiting_for_idr = false; 
+                            println!("Decoded full fragmented frame with timestamp {} and dimensions {}x{}", key, rgb_frame_data.width, rgb_frame_data.height);
 
-        if should_remove {
-            *last_released = Some(key);
-            saved_frames_map.remove(&key);
+                            //ACÁ SE MANDA EL FRAME AL GUI PARA QUE LO MUESTRE LA GUI
+                            match enc_tx.try_send(rgb_frame_data) {
+                                Ok(_) => {
+                                    println!("Frame with timestamp {} sent to GUI successfully.", key);
+                                }
+                                Err(e) => {
+                                    println!("Failed to send frame with timestamp {} to GUI: {}", key, e);
+                                }
+                            }
+                            should_remove = true;
+                        }
+                        // Ok(None) => {
+                        //     println!("No frame data returned for timestamp {}.", key);
+                        //     //should_remove = true;
+                        // }
+                        Err(e) => {
+                            println!("Failed to decode frame with timestamp {}: {}", key, e);
+                            should_remove = true; // Remove the frame even if decoding fails
+                            should_request_idr = true; // Indicate that an error occurred
+                            *waiting_for_idr = true; //will indicate that there's a need for idr until it arrives
+
+                        }
+                    }
+                    // let rgb_frame_data: RGBFrameData = decode_btree_frame(&mut value.map, decoder)?;
+                    // println!("Decoded full fragmented frame with timestamp {} and dimensions {}x{}", key, rgb_frame_data.width, rgb_frame_data.height);
+                    // //ACÁ SE MANDA EL FRAME AL GUI PARA QUE LO MUESTRE LA GUI
+                    // enc_tx.try_send(rgb_frame_data).map_err(|e| format!("Failed to send frame: {}", e))?;
+                    // should_remove = true;
+                } else if is_stale {
+                    should_remove = true;
+                    should_request_idr = true; 
+                    
+                    *waiting_for_idr = true;
+                    
+                    
+                }
+                else{
+                    loop_remove_stales = false;
+                }
             }
+
+            if should_remove {
+                println!("Evicted frame with timestam {} ", key);
+                *last_released = Some(key);
+                saved_frames_map.remove(&key);
+                }
         }
         else{
             //map is empty
             loop_remove_stales = false;
         }
     }
-    Ok(return_false)
+    Ok(should_request_idr)
 }
 
-pub async fn receiving_process(conn: Arc<UdpSocket>,timer: Instant, enc_tx: frame_mpsc::SyncSender<RGBFrameData>)->Result<(), Box<dyn Error>>{   
-
+pub async fn receiving_process(conn: Arc<UdpSocket>,timer: Instant, enc_tx: frame_mpsc::SyncSender<RGBFrameData>, stats: SharedStats,)->Result<(), Box<dyn Error>>{   
     let mut decoder = Decoder::new().unwrap(); 
     let socket = conn.clone();
     let mut saved_frames_map: BTreeMap<u32, FrameInProgress> = BTreeMap::new();
-    //let mut first_packet:bool = false;
-    let mut curr_timestamp: u32 = 0;
-    let mut paquetes_inbetween: u64 = 0;
-    //let mut packets_received: u64 = 0;
-    let mut packets_lost: u32 = 0;
-    //let mut prev_seqnum: u16 = 0;
-    let mut actual_seqnum: u16 = 0;
+    let mut first_packet:bool = true;
+    let mut curr_timestamp: u32;
+    let mut prev_seqnum: u16 = 0;
+    let mut actual_seqnum: u16;
     let mut buf = [0u8; MAXDATAGRAMSIZE];
     let mut interval = time::interval(Duration::from_millis(800));
     let mut last_idr_request: Option<Instant> = None;
-    let mut needs_dir = false;
+    let mut needs_idr: bool;
+    let mut waiting_for_idr: bool = true;
     let mut last_released: Option<u32> = None;
     loop {
         tokio::select! {
             _ = interval.tick() => {
-                needs_dir = drain_ready_frames(&mut saved_frames_map, &mut decoder, timer, enc_tx.clone(), &mut last_released)?;
-                if needs_dir {
+                needs_idr = drain_ready_frames(&mut saved_frames_map, &mut decoder, timer, enc_tx.clone(), &mut last_released, &mut waiting_for_idr)?;
+                //si se necesita el IDR y ha pasado mas de 1 segundo desde el ultimo IDR, se solicita
+                if needs_idr || waiting_for_idr {
                             let due = last_idr_request
                                 .map_or(true, |t| t.elapsed() >= Duration::from_secs(1));
                             if due {
@@ -298,7 +306,33 @@ pub async fn receiving_process(conn: Arc<UdpSocket>,timer: Instant, enc_tx: fram
                 let mut received = Bytes::copy_from_slice(&buf[..len]);
                 match Header::unserialize(&mut received) {
                     Ok(header)=>{
-                        //packets_received+=1;
+                        stats.packets_received.fetch_add(1, Ordering::Relaxed);
+                        //*packets_received+=1;
+                        actual_seqnum = header.sequence_number;
+                        if first_packet{
+                            prev_seqnum = actual_seqnum;
+                            first_packet = false;
+                        }
+                        else if actual_seqnum ==prev_seqnum{
+                            //duplicado de paquete, no hacer nada
+                            continue;
+                        }
+                        let seq_difference = (actual_seqnum.wrapping_sub(prev_seqnum) as i16)- 1;
+                        if seq_difference > 0 {
+                            println!("{seq_difference} packets lost");
+                            stats.packets_lost.fetch_add(seq_difference as u64, Ordering::Relaxed);
+                            //*packets_lost += seq_difference as u64;
+                            waiting_for_idr = true;
+                        }      
+                        // only advance the marker if this packet is newer
+                        if seq_difference >= -1 {
+                            prev_seqnum = actual_seqnum;
+                        }           
+
+                        //Si se necesita un IDR se loggea. No se ignora el paquete igual
+                        // if !header.is_keyframe && needs_idr{
+                        //     println!("We are under fucking attack. Non-IDR packet received")
+                        // }
                         if header.channel != ChannelType::Video{
                             println!("Received packet with channel {:?}, expected Video. Ignoring packet.", header.channel);
                             continue;
@@ -310,6 +344,7 @@ pub async fn receiving_process(conn: Arc<UdpSocket>,timer: Instant, enc_tx: fram
                                 continue;
                             }
                         }
+                        
 
                         curr_timestamp = header.timestamp;
                         actual_seqnum = header.sequence_number;
@@ -318,6 +353,7 @@ pub async fn receiving_process(conn: Arc<UdpSocket>,timer: Instant, enc_tx: fram
                             
                             let frame_in_progress = saved_frames_map.get_mut(&curr_timestamp).unwrap();
                             frame_in_progress.map.insert(actual_seqnum, received);
+                            frame_in_progress.last_updated = timer.elapsed().as_millis() as u32;
                             if header.fragment == FragmentType::Start{
                                 frame_in_progress.start_appeared = true;
                                 frame_in_progress.start_seqnum = actual_seqnum;
@@ -352,6 +388,8 @@ pub async fn receiving_process(conn: Arc<UdpSocket>,timer: Instant, enc_tx: fram
                                 length: 0,
                                 is_complete: if FragmentType::Unfragmented == header.fragment { true } else { false },
                                 receiver_timestamp: timer.elapsed().as_millis() as u32,
+                                is_idr: header.is_keyframe,
+                                last_updated: timer.elapsed().as_millis() as u32,
                             };
                             new_frame.map.insert(actual_seqnum, received);
                             if header.fragment == FragmentType::Start{
@@ -364,8 +402,8 @@ pub async fn receiving_process(conn: Arc<UdpSocket>,timer: Instant, enc_tx: fram
                             }
                             saved_frames_map.insert(curr_timestamp, new_frame);
                         }
-                        needs_dir = drain_ready_frames(&mut saved_frames_map, &mut decoder, timer, enc_tx.clone(), &mut last_released)?;
-                        if needs_dir {
+                        needs_idr = drain_ready_frames(&mut saved_frames_map, &mut decoder, timer, enc_tx.clone(), &mut last_released, &mut waiting_for_idr)?;
+                        if needs_idr || waiting_for_idr {
                             let due = last_idr_request
                                 .map_or(true, |t| t.elapsed() >= Duration::from_secs(1));
                             if due {
@@ -433,6 +471,11 @@ pub async fn receiving_process(conn: Arc<UdpSocket>,timer: Instant, enc_tx: fram
                 // }
 
 
+
+
+
+
+                
 pub async fn advanced_hole_punching(conn: Arc<UdpSocket>,timer: Instant) 
                                         -> Result<(), Box<dyn Error>> {
 
@@ -446,7 +489,7 @@ pub async fn advanced_hole_punching(conn: Arc<UdpSocket>,timer: Instant)
         tokio::select! {
 
             _ = interval.tick() => {
-                let ctrl_datagram =dummy_gen::generate_sync_datagram(timer);
+                let ctrl_datagram =packet_gen::generate_sync_datagram(timer);
 
                 conn.send(&ctrl_datagram).await?;
 
@@ -487,7 +530,7 @@ pub async fn advanced_hole_punching(conn: Arc<UdpSocket>,timer: Instant)
         let mut interval = time::interval(Duration::from_millis(100));
         for _ in 0..5 {
             interval.tick().await;
-            let ctrl_datagram =dummy_gen::generate_sync_datagram(timer);
+            let ctrl_datagram =packet_gen::generate_sync_datagram(timer);
             conn.send(&ctrl_datagram).await?;
             }
         return Ok(());

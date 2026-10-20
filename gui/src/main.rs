@@ -1,18 +1,22 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")] // hide console window on Windows in release
 #![expect(rustdoc::missing_crate_level_docs)] // it's an example
 mod frame_builder;
-use std::{env, error::Error, net::SocketAddr, sync::Arc, time::{Duration, Instant}};
+use std::{env, net::SocketAddr, sync::{Arc, atomic::Ordering}, time::{Duration, Instant}};
 use commons::RGBFrameData;
 use eframe::egui;
-use egui::{ColorImage, frame};
+use egui::{ColorImage, Id, frame};
 use tokio::{net::UdpSocket, runtime::Runtime};
 //use tokio::time::sleep;
 use std::sync::mpsc as frame_mpsc;
 use transprot::{
-    udp::{self, receiving_process,advanced_hole_punching}, 
+    udp::{receiving_process,advanced_hole_punching, main_sending_process}, 
     stuntry::discover_public_address
 };
-use commons::ip_converter::{turn_code_to_ip, turn_ip_to_code};
+use commons::{
+    ip_converter::{turn_code_to_ip, turn_ip_to_code},
+    SharedStats, PacketStats
+};
+
 struct MyApp {
     own_code: String,
     remote_addr: String,
@@ -27,9 +31,12 @@ struct MyApp {
     connected: bool,
     devtype: String,
     timer: Instant,
-    texture: Option<egui::TextureHandle>
+    texture: Option<egui::TextureHandle>,
+    stats: SharedStats,
 
 }
+
+
 impl MyApp {
     fn new(runtime: Arc<Runtime>,conn: Arc<UdpSocket>,own_code: String,frame_tx: frame_mpsc::SyncSender<RGBFrameData>, devtype: String, frame_rx: frame_mpsc::Receiver<RGBFrameData>, timer: Instant
     ) -> Self {
@@ -49,7 +56,8 @@ impl MyApp {
             devtype,
             frame_rx,
             timer,
-            texture: None
+            texture: None,
+            stats: Arc::new(PacketStats::default()),
 
         }
     }
@@ -61,13 +69,14 @@ async fn udp_main_process(frame_tx: frame_mpsc::SyncSender<RGBFrameData>,
                           devtype: String, 
                           //runtime: Arc<Runtime>, 
                           conn: Arc<UdpSocket>, 
-                          timer: Instant) {
+                          timer: Instant,
+                          stats: SharedStats) {
     match devtype.as_str() {
         "send"=>{
-            let _ = udp::main_sending_process(conn, timer).await;
+            let _ = main_sending_process(conn, timer).await;
         }
         "receive"=>{
-            let _ = receiving_process(conn, timer, frame_tx).await;
+            let _ = receiving_process(conn, timer, frame_tx, stats).await;
         }
         othe =>{
             println!("No command associated with {}",othe);
@@ -92,13 +101,13 @@ fn main() -> eframe::Result {
     let (enc_tx, enc_rx) = frame_mpsc::sync_channel::<RGBFrameData>(1);
     //let video_ssrc: u32 = rng.random();
     //let audio_ssrc: u32 = rng.random();
-    let mut timer: Instant = Instant::now();
+    let timer: Instant = Instant::now();
     let devtype:String = env::args().nth(1).expect("you have to specify if this is a sender or receiver");
     let conn = Arc::new(runtime.block_on(UdpSocket::bind("0.0.0.0:0")).unwrap());
     let ip_string = runtime.block_on(get_stun_ip(conn.clone()));
     //se envía al GUI para que tenga conexión al resto de vainas
+    
     let app = MyApp::new(runtime.clone(), conn.clone(), ip_string, enc_tx.clone(), devtype.clone(), enc_rx, timer.clone());
-    //timer = Instant::now();
     //runtime.block_on(advanced_hole_punching(conn.clone(), timer));
     
     
@@ -148,7 +157,8 @@ impl eframe::App for MyApp {
             match result {
                 Ok(()) => {
                     self.connected = true;
-                    self.runtime.spawn(udp_main_process(self.frame_tx.clone(), self.devtype.clone(), self.conn.clone(), self.timer));
+                    let stats = Arc::clone(&self.stats);
+                    self.runtime.spawn(udp_main_process(self.frame_tx.clone(), self.devtype.clone(), self.conn.clone(), self.timer, stats ));
                 }
                 Err(message) => {
                     self.error = Some(message);
@@ -160,9 +170,6 @@ impl eframe::App for MyApp {
             ctx.request_repaint_after(Duration::from_millis(100));
         }
     }
-
-
-
 
 
     fn ui(&mut self, ui: &mut egui::Ui, _frame: &mut eframe::Frame) {
@@ -207,6 +214,17 @@ impl eframe::App for MyApp {
         }
         else{
             ui.heading("Screen Sharing");
+            ui.horizontal(|ui| {
+                ui.label(format!(
+                    "Packets received: {}",
+                    self.stats.packets_received.load(Ordering::Relaxed)
+                ));
+
+                ui.label(format!(
+                    "Packets lost: {}",
+                    self.stats.packets_lost.load(Ordering::Relaxed)
+                ));
+            });
             match &self.texture {
                 Some(tex) => {
                     ui.add(egui::Image::new(tex).shrink_to_fit());

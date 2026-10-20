@@ -8,7 +8,7 @@ use std::net::{SocketAddr};
 use std::time::Instant;
 use commons::ip_converter::{turn_code_to_ip, turn_ip_to_code};
 use std::sync::mpsc as frame_mpsc;
-use commons::RGBFrameData;
+use commons::{PacketStats, RGBFrameData};
 
 //main.rs
 #[tokio::main]
@@ -91,7 +91,8 @@ async fn main() {
                     }
                 }
             }
-            let _ = udp::receiving_process(conn, timer, enc_tx.clone()).await.unwrap();
+            let stats=  Arc::new(PacketStats::default());
+            let _ = udp::receiving_process(conn, timer, enc_tx.clone(), stats).await.unwrap();
 
         },
         othe =>{

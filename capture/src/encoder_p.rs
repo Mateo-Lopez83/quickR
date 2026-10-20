@@ -1,21 +1,17 @@
+
+
 pub mod encoder_p{
-    use commons::MAXDATAGRAMSIZE;
-use commons::header::{ChannelType, Header};
-use openh264::encoder::{Encoder, FrameType};
+    use openh264::encoder::{Encoder, FrameType};
     use openh264::formats::{BgraSliceU8, YUVBuffer};
-use tokio::net::UdpSocket;
-use tokio::sync::mpsc as udp_mpsc;
-use tokio::time;
-//use windows_capture::encoder::VideoSettingsSubType::BGRA8;
+    use tokio::sync::mpsc as udp_mpsc;
     use std::error::Error;
     use std::sync::atomic::{AtomicBool, Ordering};
-use std::sync::{Arc, mpsc as enc_mpsc};
-use std::time::{Duration, Instant};
-    use bytes::Bytes;
-    //use openh264::decoder::Decoder;
-    
+    use std::sync::{Arc, mpsc as enc_mpsc};
+    use std::time::{Instant};
+    use bytes::Bytes;    
     use crate::{RawStreamData, udp_connect};
 
+    
     fn bytes_to_yub(bytedata: RawStreamData)-> Result<YUVBuffer, Box<dyn Error>>{
         let height = bytedata.height;
         let width = bytedata.width;
@@ -45,20 +41,22 @@ use std::time::{Duration, Instant};
                     FrameType::I => {
                         match udp_connect::frame_send(false, encoded_bytes, &udp_tx, &mut sequence_num, timestamp){
                             Ok(_) => {},
+                            //TODO: mejorar el comportamiento con errores de envio 
                             Err(e) => return,
                         }
                     }
                     FrameType::P => {
                         match udp_connect::frame_send(false, encoded_bytes, &udp_tx, &mut sequence_num, timestamp){
                             Ok(_) => {},
+                            //TODO: mejorar el comportamiento con errores de envio 
                             Err(e) => return ,
                         }
                     }
-                    //añadir logica para esto despues idk
                     FrameType::IDR => {
                         println!("_____IDR frame created. Sending frame______");
                         match udp_connect::frame_send(true, encoded_bytes, &udp_tx, &mut sequence_num, timestamp){
                             Ok(_) => {},
+                            //TODO: mejorar el comportamiento con errores de envio 
                             Err(e) => return ,
                         }
                     }
@@ -72,21 +70,13 @@ use std::time::{Duration, Instant};
                         println!("_____IPMixed frame created. Not sent______");
                     }
                 }
-                
-                // if udp_tx.blocking_send(encoded_bytes).is_err(){
-                //     println!("udp_rx failed. Stopping encoding pipeline");
-                //     break;
-                // }
                 },
                 Err(_) => {
                     println!("algo raro con la conversión de bytes a BGRA a YUB");
+                    //just try again with the next frame
                     continue
                 },
-            } // placeholder until the real encode call is wired in
-            
-            // if udp_tx.blocking_send(encoded).is_err() {
-            //     break; 
-            // }
+            } 
         }
         println!("Encoder thread finished, no more frames to encode");
     }

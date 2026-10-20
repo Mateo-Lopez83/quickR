@@ -1,4 +1,4 @@
-use std::collections::BTreeMap;
+use std::{collections::BTreeMap, sync::{Arc, atomic::AtomicU64}};
 use bytes::Bytes;
 pub mod header;
 pub mod error;
@@ -16,6 +16,8 @@ pub struct FrameInProgress{
     pub length: usize,
     pub is_complete: bool,
     pub receiver_timestamp: u32,
+    pub is_idr: bool,
+    pub last_updated: u32
 }
 
 pub struct RGBFrameData{
@@ -23,6 +25,14 @@ pub struct RGBFrameData{
     pub width: usize,
     pub height: usize,
 }
+
+#[derive(Default)]
+pub struct PacketStats {
+    pub packets_received: AtomicU64,
+    pub packets_lost: AtomicU64,
+}
+pub type SharedStats = Arc<PacketStats>;
+
 
 #[cfg(test)]
 mod tests {
