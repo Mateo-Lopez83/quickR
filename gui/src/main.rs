@@ -33,6 +33,9 @@ struct MyApp {
     timer: Instant,
     texture: Option<egui::TextureHandle>,
     stats: SharedStats,
+    fps_window_start: Instant,
+    fps_frame_count: u32,
+    current_fps: f32,
 
 }
 
@@ -58,6 +61,10 @@ impl MyApp {
             timer,
             texture: None,
             stats: Arc::new(PacketStats::default()),
+            fps_window_start: timer.clone(),
+            fps_frame_count:0,
+            current_fps:0.0,
+            
 
         }
     }
@@ -142,6 +149,14 @@ impl eframe::App for MyApp {
                     Some(tex) => {
                         tex.set(image, egui::TextureOptions::LINEAR);
                         self.stats.frames_shown.fetch_add(1, Ordering::Relaxed);
+                        self.fps_frame_count += 1;
+                        let elapsed = self.fps_window_start.elapsed();
+                        if elapsed >= Duration::from_secs(1) {
+                            self.current_fps = self.fps_frame_count as f32 / elapsed.as_secs_f32();
+                            self.fps_frame_count = 0;
+                            self.fps_window_start = Instant::now();
+                        }
+                        
                     },
                     None => {
                         self.texture = Some(ctx.load_texture(
@@ -236,6 +251,9 @@ impl eframe::App for MyApp {
                     "Frames dropped: {}",
                     self.stats.frames_dropped.load(Ordering::Relaxed)
                 ));
+                ui.label(format!(
+                    "{:.1} fps", 
+                    self.current_fps));
             });
             match &self.texture {
                 Some(tex) => {

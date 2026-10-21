@@ -17,9 +17,8 @@ use commons::header::{ChannelType, FragmentType, HEADERSIZE, Header};
 use std::sync::mpsc as frame_mpsc;
 
 pub mod packet_gen{
-use std::time::Instant;
-
-use commons::header::{FragmentType, Header, ChannelType};
+    use std::time::Instant;
+    use commons::header::{FragmentType, Header, ChannelType};
     use commons::PAYLOADSIZE;
     use crate::{RngExt};
     use bytes::{BufMut, Bytes, BytesMut};
@@ -105,34 +104,51 @@ use commons::header::{FragmentType, Header, ChannelType};
     }
 }
 
-//meant for debugging before capture existed
-// async fn channel_fake_data_creator(tx:Sender<Bytes>, timer: Instant){
-//     let mut interval = time::interval(Duration::from_millis(1000));
 
-//     let mut seqnum: u16 = 11;
-//     for _ in 0..10{
-//         interval.tick().await; 
-//         let timestamp = timer.elapsed().as_millis() as u32;
-//         let fake_payload = packet_gen::generate_fake_datagram(timestamp, seqnum);
-//         seqnum = seqnum +1;
-//         //println!("{}", String::from_utf8_lossy(&fake_payload));
-//         if tx.send(fake_payload).await.is_err() {
-//             println!("consumer dropped, stopping generator");
-//             break;
-//         }
-//     }
-   
-// }
+const IDR_RETRY_GAPS_MS: [u64; 4] = [250, 250, 500, 1000];
+const NUM_ENVIO_BURST_IDR: usize = 3;     
+struct IdrRetry {
+    last: Option<Instant>,
+    attempts: usize,
+}
+impl IdrRetry {
+    fn new() -> Self { Self { last: None, attempts: 0 } }
+
+    async fn maybe_request(&mut self, conn: &Arc<UdpSocket>, timer: Instant, wanted: bool) {
+        //reinicia el conteo de tiempos si no se necesita pedir el IDR
+        if !wanted {
+            self.attempts = 0;
+            return;
+        }
+
+        let gap = Duration::from_millis(IDR_RETRY_GAPS_MS[self.attempts.min(IDR_RETRY_GAPS_MS.len() - 1)]);
+        if self.last.map_or(true, |t| t.elapsed() >= gap) {
+            for i in 0..NUM_ENVIO_BURST_IDR {
+                let _ = request_idr(conn.clone(), timer).await;
+                if i + 1 < NUM_ENVIO_BURST_IDR {
+                    time::sleep(Duration::from_millis(5)).await; // spread copies so one burst isn't dropped together
+                }
+            }
+            self.last = Some(Instant::now());
+            self.attempts += 1;
+        }
+    }
+}
 
 async fn channel_consumer(mut rx: mpsc::Receiver<Bytes>, socket: Arc<UdpSocket>){
     while let Some(payload) = rx.recv().await {
         if let Err(e) = socket.send(&payload).await {
             eprintln!("send failed: {e}");
             }
-        else {
-            println!("Packet sent successfully!")
+        else{
+            println!("packet sent successfully")
         }
+        //el primer byte de cada paquete es el fragment type.
+        //solo añade delays si es un frame fragmentado
+        if matches!(payload.first(), Some(1 | 2 | 3)) {
+            tokio::time::sleep(Duration::from_micros(300)).await;
         }
+    }
     println!("channel closed, no more senders");
     
 }
@@ -282,23 +298,23 @@ pub async fn receiving_process(conn: Arc<UdpSocket>,timer: Instant, enc_tx: fram
     let mut actual_seqnum: u16;
     let mut buf = [0u8; MAXDATAGRAMSIZE];
     let mut interval = time::interval(Duration::from_millis(800));
-    let mut last_idr_request: Option<Instant> = None;
+    let mut idr = IdrRetry::new();
+    let mut idr_check = time::interval(Duration::from_millis(50));
     let mut needs_idr: bool;
     let mut waiting_for_idr: bool = true;
     let mut last_released: Option<u32> = None;
     loop {
         tokio::select! {
+            //revisa si se necesita un idr cada 50ms para acelerar el request
+            _ = idr_check.tick() => {
+                if waiting_for_idr {
+                    idr.maybe_request(&conn, timer, true).await;
+                }
+            }
             _ = interval.tick() => {
                 needs_idr = drain_ready_frames(&mut saved_frames_map, &mut decoder, timer, enc_tx.clone(), &mut last_released, &mut waiting_for_idr, stats.clone())?;
-                //si se necesita el IDR y ha pasado mas de 1 segundo desde el ultimo IDR, se solicita
-                if needs_idr || waiting_for_idr {
-                            let due = last_idr_request
-                                .map_or(true, |t| t.elapsed() >= Duration::from_secs(1));
-                            if due {
-                                let _ = request_idr(conn.clone(), timer).await;
-                                last_idr_request = Some(Instant::now());
-                            }
-                        }
+                //si se necesita el IDR y ha pasado mas de 800 ms desde el ultimo IDR, se solicita
+                idr.maybe_request(&conn, timer, needs_idr || waiting_for_idr).await;
                 
             }
             result = socket.recv(&mut buf) => {
@@ -404,15 +420,8 @@ pub async fn receiving_process(conn: Arc<UdpSocket>,timer: Instant, enc_tx: fram
                             saved_frames_map.insert(curr_timestamp, new_frame);
                         }
                         needs_idr = drain_ready_frames(&mut saved_frames_map, &mut decoder, timer, enc_tx.clone(), &mut last_released, &mut waiting_for_idr, stats.clone())?;
-                        if needs_idr || waiting_for_idr {
-                            let due = last_idr_request
-                                .map_or(true, |t| t.elapsed() >= Duration::from_secs(1));
-                            if due {
-                                //println!("Enviando request IDR");
-                                let _ = request_idr(conn.clone(), timer).await;
-                                last_idr_request = Some(Instant::now());
-                            }
-                        }
+                        needs_idr = drain_ready_frames(&mut saved_frames_map, &mut decoder, timer, enc_tx.clone(), &mut last_released, &mut waiting_for_idr, stats.clone())?;
+                        idr.maybe_request(&conn, timer, needs_idr || waiting_for_idr).await;
                     }
                     Err(e)=>{
                         eprintln!("Failed to parse header: {:?}", e);

@@ -7,7 +7,7 @@ pub mod encoder_p{
     use std::error::Error;
     use std::sync::atomic::{AtomicBool, Ordering};
     use std::sync::{Arc, mpsc as enc_mpsc};
-    use std::time::{Instant};
+    use std::time::{Duration, Instant};
     use bytes::Bytes;    
     use crate::{RawStreamData, udp_connect};
 
@@ -33,12 +33,20 @@ pub mod encoder_p{
                 
         let mut encoder = Encoder::with_api_config(openh264::OpenH264API::from_source(), encoder_config).unwrap();
         let mut sequence_num: u16 = 0;
+        let mut last_forced_idr: Option<Instant> = None;
         while let Ok(raw_frame) = enc_rx.recv() {
             match bytes_to_yub(raw_frame){
                 Ok(yubytes) => {
-                    if receiver_idr_request.swap(false,Ordering::SeqCst) {
-                        println!("Sending IDR frame due to request");
-                        encoder.force_intra_frame();
+                    if receiver_idr_request.swap(false, Ordering::SeqCst) {
+                        //si han pasado menos de 150ms desde el último request recibido
+                        //de IDR, se ignora para no llenar el buffer
+                        let cooled = last_forced_idr
+                            .map_or(true, |t| t.elapsed() >= Duration::from_millis(150));
+                        if cooled {
+                            println!("Sending IDR frame due to request");
+                            encoder.force_intra_frame();
+                            last_forced_idr = Some(Instant::now());
+                        }
                     }
                 let encoded = encoder.encode(&yubytes).unwrap();
                 let encoded_bytes = Bytes::from(encoded.to_vec());
