@@ -145,9 +145,9 @@ async fn channel_consumer(mut rx: mpsc::Receiver<Bytes>, socket: Arc<UdpSocket>)
         }
         //el primer byte de cada paquete es el fragment type.
         //solo añade delays si es un frame fragmentado
-        if matches!(payload.first(), Some(1 | 2 | 3)) {
-            tokio::time::sleep(Duration::from_micros(300)).await;
-        }
+        // if matches!(payload.first(), Some(1 | 2 | 3)) {
+        //     tokio::time::sleep(Duration::from_micros(300)).await;
+        // }
     }
     println!("channel closed, no more senders");
     
