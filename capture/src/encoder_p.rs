@@ -1,7 +1,7 @@
 
 
 pub mod encoder_p{
-    use openh264::encoder::{Encoder, FrameType};
+    use openh264::encoder::{BitRate, Encoder, EncoderConfig, FrameRate, FrameType, IntraFramePeriod, RateControlMode};
     use openh264::formats::{BgraSliceU8, YUVBuffer};
     use tokio::sync::mpsc as udp_mpsc;
     use std::error::Error;
@@ -25,7 +25,13 @@ pub mod encoder_p{
 
     //rx recibe de windows-capture, envía a tx el encoded bytestream
     pub fn run_encoder(enc_rx: enc_mpsc::Receiver<RawStreamData>, udp_tx: udp_mpsc::Sender<Bytes>, timer: Instant, receiver_idr_request: Arc<AtomicBool> ) {
-        let mut encoder = Encoder::new().unwrap();
+        let encoder_config = EncoderConfig::new()
+            .bitrate(BitRate::from_bps(1_500_000))  //TODO: optimizar el valor de este atributo
+            .max_frame_rate(FrameRate::from_hz(30.0))
+            .rate_control_mode(RateControlMode::Bitrate)
+            .intra_frame_period(IntraFramePeriod::from_num_frames(60)); // hard cap de cada cuanto mandar un IDR
+                
+        let mut encoder = Encoder::with_api_config(openh264::OpenH264API::from_source(), encoder_config).unwrap();
         let mut sequence_num: u16 = 0;
         while let Ok(raw_frame) = enc_rx.recv() {
             match bytes_to_yub(raw_frame){

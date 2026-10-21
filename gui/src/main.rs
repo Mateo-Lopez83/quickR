@@ -139,7 +139,10 @@ impl eframe::App for MyApp {
                 );
                 match &mut self.texture {
                     // reuse the existing texture instead of allocating a new one every frame
-                    Some(tex) => tex.set(image, egui::TextureOptions::LINEAR),
+                    Some(tex) => {
+                        tex.set(image, egui::TextureOptions::LINEAR);
+                        self.stats.frames_shown.fetch_add(1, Ordering::Relaxed);
+                    },
                     None => {
                         self.texture = Some(ctx.load_texture(
                             "remote_screen",
@@ -223,6 +226,15 @@ impl eframe::App for MyApp {
                 ui.label(format!(
                     "Packets lost: {}",
                     self.stats.packets_lost.load(Ordering::Relaxed)
+                ));
+                ui.label(format!(
+                    "Frames shown: {}",
+                    self.stats.frames_shown.load(Ordering::Relaxed)
+                ));
+
+                ui.label(format!(
+                    "Frames dropped: {}",
+                    self.stats.frames_dropped.load(Ordering::Relaxed)
                 ));
             });
             match &self.texture {

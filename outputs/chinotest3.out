@@ -1,0 +1,547 @@
+Trying to connect to peer. Please wait...
+Connection request number: 1.
+Connection request number: 2.
+Connection request number: 3.
+Received correct control packet. Initiating communication
+Sending 5 more packets to stabilize connection
+Received packet with channel Sync, expected Video. Ignoring packet.
+Sent IDR frame request to peer
+Sent IDR frame request to peer
+Frame with timestamp 17556 is complete and has all packets. Length: 2
+Evicted frame with timestam 17051 
+Frame with timestamp 18066 is complete and has all packets. Length: 42
+Attempting to decode frame with timestamp 18066 and 42 packets
+Decoding frame of size: 48754
+Decoded full fragmented frame with timestamp 18066 and dimensions 1920x1080
+Frame with timestamp 18066 sent to GUI successfully.
+Evicted frame with timestam 18066 
+Received a frame of size: 6220800
+Frame with timestamp 18752 is complete and has all packets. Length: 23
+Attempting to decode frame with timestamp 18752 and 23 packets
+Decoding frame of size: 27052
+Decoded full fragmented frame with timestamp 18752 and dimensions 1920x1080
+Frame with timestamp 18752 sent to GUI successfully.
+Evicted frame with timestam 18752 
+Received a frame of size: 6220800
+Frame with timestamp 19262 is complete and has all packets. Length: 10
+Attempting to decode frame with timestamp 19262 and 10 packets
+Decoding frame of size: 11520
+Decoded full fragmented frame with timestamp 19262 and dimensions 1920x1080
+Frame with timestamp 19262 sent to GUI successfully.
+Evicted frame with timestam 19262 
+Received a frame of size: 6220800
+2 packets lost
+Sent IDR frame request to peer
+Frame with timestamp 20449 is complete and has all packets. Length: 70
+Attempting to decode frame with timestamp 20449 and 70 packets
+Decoding frame of size: 82003
+Decoded full fragmented frame with timestamp 20449 and dimensions 1920x1080
+Frame with timestamp 20449 sent to GUI successfully.
+Evicted frame with timestam 20449 
+Received a frame of size: 6220800
+Frame with timestamp 21053 is complete and has all packets. Length: 10
+Attempting to decode frame with timestamp 21053 and 10 packets
+Decoding frame of size: 10811
+Decoded full fragmented frame with timestamp 21053 and dimensions 1920x1080
+Frame with timestamp 21053 sent to GUI successfully.
+Evicted frame with timestam 21053 
+Received a frame of size: 6220800
+Frame with timestamp 21658 is complete and has all packets. Length: 10
+Attempting to decode frame with timestamp 21658 and 10 packets
+Decoding frame of size: 11066
+Decoded full fragmented frame with timestamp 21658 and dimensions 1920x1080
+Frame with timestamp 21658 sent to GUI successfully.
+Evicted frame with timestam 21658 
+Received a frame of size: 6220800
+Frame with timestamp 22463 is complete and has all packets. Length: 101
+Attempting to decode frame with timestamp 22463 and 101 packets
+Decoding frame of size: 118115
+Decoded full fragmented frame with timestamp 22463 and dimensions 1920x1080
+Frame with timestamp 22463 sent to GUI successfully.
+Evicted frame with timestam 22463 
+Received a frame of size: 6220800
+Frame with timestamp 23656 is complete and has all packets. Length: 20
+Attempting to decode frame with timestamp 23656 and 20 packets
+Decoding frame of size: 22902
+Decoded full fragmented frame with timestamp 23656 and dimensions 1920x1080
+Frame with timestamp 23656 sent to GUI successfully.
+Evicted frame with timestam 23656 
+Received a frame of size: 6220800
+Frame with timestamp 24442 is complete and has all packets. Length: 21
+Attempting to decode frame with timestamp 24442 and 21 packets
+Decoding frame of size: 24724
+Decoded full fragmented frame with timestamp 24442 and dimensions 1920x1080
+Frame with timestamp 24442 sent to GUI successfully.
+Evicted frame with timestam 24442 
+Frame with timestamp 24984 is complete and has all packets. Length: 10
+Attempting to decode frame with timestamp 24984 and 10 packets
+Decoding frame of size: 11749
+Received a frame of size: 6220800
+Decoded full fragmented frame with timestamp 24984 and dimensions 1920x1080
+Frame with timestamp 24984 sent to GUI successfully.
+Evicted frame with timestam 24984 
+Frame with timestamp 25356 is complete and has all packets. Length: 9
+Attempting to decode frame with timestamp 25356 and 9 packets
+Decoding frame of size: 9722
+Received a frame of size: 6220800
+Decoded full fragmented frame with timestamp 25356 and dimensions 1920x1080
+Frame with timestamp 25356 sent to GUI successfully.
+Evicted frame with timestam 25356 
+Frame with timestamp 25708 is complete and has all packets. Length: 8
+Attempting to decode frame with timestamp 25708 and 8 packets
+Decoding frame of size: 8332
+Received a frame of size: 6220800
+Decoded full fragmented frame with timestamp 25708 and dimensions 1920x1080
+Frame with timestamp 25708 sent to GUI successfully.
+Evicted frame with timestam 25708 
+Frame with timestamp 26057 is complete and has all packets. Length: 7
+Attempting to decode frame with timestamp 26057 and 7 packets
+Decoding frame of size: 7745
+Received a frame of size: 6220800
+Decoded full fragmented frame with timestamp 26057 and dimensions 1920x1080
+Frame with timestamp 26057 sent to GUI successfully.
+Evicted frame with timestam 26057 
+Frame with timestamp 26427 is complete and has all packets. Length: 10
+Attempting to decode frame with timestamp 26427 and 10 packets
+Decoding frame of size: 11350
+Received a frame of size: 6220800
+Decoded full fragmented frame with timestamp 26427 and dimensions 1920x1080
+Frame with timestamp 26427 sent to GUI successfully.
+Evicted frame with timestam 26427 
+1 packets lost
+Sent IDR frame request to peer
+13 packets lost
+Received a frame of size: 6220800
+Frame with timestamp 28685 is complete and has all packets. Length: 96
+Attempting to decode frame with timestamp 28685 and 96 packets
+Decoding frame of size: 112166
+Decoded full fragmented frame with timestamp 28685 and dimensions 1920x1080
+Frame with timestamp 28685 sent to GUI successfully.
+Evicted frame with timestam 28685 
+Received a frame of size: 6220800
+Frame with timestamp 29448 is complete and has all packets. Length: 7
+Attempting to decode frame with timestamp 29448 and 7 packets
+Decoding frame of size: 7097
+Decoded full fragmented frame with timestamp 29448 and dimensions 1920x1080
+Frame with timestamp 29448 sent to GUI successfully.
+Evicted frame with timestam 29448 
+Received a frame of size: 6220800
+Frame with timestamp 30132 is complete and has all packets. Length: 9
+Attempting to decode frame with timestamp 30132 and 9 packets
+Decoding frame of size: 9571
+Decoded full fragmented frame with timestamp 30132 and dimensions 1920x1080
+Frame with timestamp 30132 sent to GUI successfully.
+Evicted frame with timestam 30132 
+Received a frame of size: 6220800
+Frame with timestamp 30767 is complete and has all packets. Length: 14
+Attempting to decode frame with timestamp 30767 and 14 packets
+Decoding frame of size: 15432
+Decoded full fragmented frame with timestamp 30767 and dimensions 1920x1080
+Frame with timestamp 30767 sent to GUI successfully.
+Evicted frame with timestam 30767 
+Frame with timestamp 31240 is complete and has all packets. Length: 14
+Attempting to decode frame with timestamp 31240 and 14 packets
+Decoding frame of size: 15927
+Received a frame of size: 6220800
+Decoded full fragmented frame with timestamp 31240 and dimensions 1920x1080
+Frame with timestamp 31240 sent to GUI successfully.
+Evicted frame with timestam 31240 
+Frame with timestamp 31726 is complete and has all packets. Length: 14
+Attempting to decode frame with timestamp 31726 and 14 packets
+Decoding frame of size: 15555
+Received a frame of size: 6220800
+Decoded full fragmented frame with timestamp 31726 and dimensions 1920x1080
+Frame with timestamp 31726 sent to GUI successfully.
+Evicted frame with timestam 31726 
+Frame with timestamp 32268 is complete and has all packets. Length: 17
+Attempting to decode frame with timestamp 32268 and 17 packets
+Decoding frame of size: 19175
+Received a frame of size: 6220800
+Decoded full fragmented frame with timestamp 32268 and dimensions 1920x1080
+Frame with timestamp 32268 sent to GUI successfully.
+Evicted frame with timestam 32268 
+Frame with timestamp 32741 is complete and has all packets. Length: 13
+Attempting to decode frame with timestamp 32741 and 13 packets
+Decoding frame of size: 14340
+Received a frame of size: 6220800
+Decoded full fragmented frame with timestamp 32741 and dimensions 1920x1080
+Frame with timestamp 32741 sent to GUI successfully.
+Evicted frame with timestam 32741 
+Frame with timestamp 33341 is complete and has all packets. Length: 12
+Attempting to decode frame with timestamp 33341 and 12 packets
+Decoding frame of size: 13048
+Received a frame of size: 6220800
+Decoded full fragmented frame with timestamp 33341 and dimensions 1920x1080
+Frame with timestamp 33341 sent to GUI successfully.
+Evicted frame with timestam 33341 
+Frame with timestamp 33749 is complete and has all packets. Length: 11
+Attempting to decode frame with timestamp 33749 and 11 packets
+Decoding frame of size: 12160
+Received a frame of size: 6220800
+Decoded full fragmented frame with timestamp 33749 and dimensions 1920x1080
+Frame with timestamp 33749 sent to GUI successfully.
+Evicted frame with timestam 33749 
+Frame with timestamp 34194 is complete and has all packets. Length: 11
+Attempting to decode frame with timestamp 34194 and 11 packets
+Decoding frame of size: 12186
+Received a frame of size: 6220800
+Decoded full fragmented frame with timestamp 34194 and dimensions 1920x1080
+Frame with timestamp 34194 sent to GUI successfully.
+Evicted frame with timestam 34194 
+Frame with timestamp 34625 is complete and has all packets. Length: 19
+Attempting to decode frame with timestamp 34625 and 19 packets
+Decoding frame of size: 21775
+Received a frame of size: 6220800
+Decoded full fragmented frame with timestamp 34625 and dimensions 1920x1080
+Frame with timestamp 34625 sent to GUI successfully.
+Evicted frame with timestam 34625 
+Frame with timestamp 35204 is complete and has all packets. Length: 16
+Attempting to decode frame with timestamp 35204 and 16 packets
+Decoding frame of size: 18585
+Received a frame of size: 6220800
+Decoded full fragmented frame with timestamp 35204 and dimensions 1920x1080
+Frame with timestamp 35204 sent to GUI successfully.
+Evicted frame with timestam 35204 
+Frame with timestamp 35630 is complete and has all packets. Length: 14
+Attempting to decode frame with timestamp 35630 and 14 packets
+Decoding frame of size: 16265
+Received a frame of size: 6220800
+Decoded full fragmented frame with timestamp 35630 and dimensions 1920x1080
+Frame with timestamp 35630 sent to GUI successfully.
+Evicted frame with timestam 35630 
+Frame with timestamp 36053 is complete and has all packets. Length: 16
+Attempting to decode frame with timestamp 36053 and 16 packets
+Decoding frame of size: 17877
+Received a frame of size: 6220800
+Decoded full fragmented frame with timestamp 36053 and dimensions 1920x1080
+Frame with timestamp 36053 sent to GUI successfully.
+Evicted frame with timestam 36053 
+Frame with timestamp 36619 is complete and has all packets. Length: 15
+Attempting to decode frame with timestamp 36619 and 15 packets
+Decoding frame of size: 16603
+Received a frame of size: 6220800
+Decoded full fragmented frame with timestamp 36619 and dimensions 1920x1080
+Frame with timestamp 36619 sent to GUI successfully.
+Evicted frame with timestam 36619 
+Frame with timestamp 36998 is complete and has all packets. Length: 12
+Attempting to decode frame with timestamp 36998 and 12 packets
+Decoding frame of size: 13186
+Received a frame of size: 6220800
+Decoded full fragmented frame with timestamp 36998 and dimensions 1920x1080
+Frame with timestamp 36998 sent to GUI successfully.
+Evicted frame with timestam 36998 
+Frame with timestamp 37388 is complete and has all packets. Length: 11
+Attempting to decode frame with timestamp 37388 and 11 packets
+Decoding frame of size: 12242
+Received a frame of size: 6220800
+Decoded full fragmented frame with timestamp 37388 and dimensions 1920x1080
+Frame with timestamp 37388 sent to GUI successfully.
+Evicted frame with timestam 37388 
+Frame with timestamp 37775 is complete and has all packets. Length: 12
+Attempting to decode frame with timestamp 37775 and 12 packets
+Decoding frame of size: 13748
+Received a frame of size: 6220800
+Decoded full fragmented frame with timestamp 37775 and dimensions 1920x1080
+Frame with timestamp 37775 sent to GUI successfully.
+Evicted frame with timestam 37775 
+Received a frame of size: 6220800
+Frame with timestamp 38156 is complete and has all packets. Length: 10
+Attempting to decode frame with timestamp 38156 and 10 packets
+Decoding frame of size: 11414
+Decoded full fragmented frame with timestamp 38156 and dimensions 1920x1080
+Frame with timestamp 38156 sent to GUI successfully.
+Evicted frame with timestam 38156 
+Frame with timestamp 38677 is complete and has all packets. Length: 25
+Attempting to decode frame with timestamp 38677 and 25 packets
+Decoding frame of size: 29439
+Received a frame of size: 6220800
+Decoded full fragmented frame with timestamp 38677 and dimensions 1920x1080
+Frame with timestamp 38677 sent to GUI successfully.
+Evicted frame with timestam 38677 
+Frame with timestamp 39160 is complete and has all packets. Length: 20
+Attempting to decode frame with timestamp 39160 and 20 packets
+Decoding frame of size: 23208
+Received a frame of size: 6220800
+Decoded full fragmented frame with timestamp 39160 and dimensions 1920x1080
+Frame with timestamp 39160 sent to GUI successfully.
+Evicted frame with timestam 39160 
+Frame with timestamp 39895 is complete and has all packets. Length: 22
+Attempting to decode frame with timestamp 39895 and 22 packets
+Decoding frame of size: 25501
+Received a frame of size: 6220800
+Decoded full fragmented frame with timestamp 39895 and dimensions 1920x1080
+Frame with timestamp 39895 sent to GUI successfully.
+Evicted frame with timestam 39895 
+Frame with timestamp 40426 is complete and has all packets. Length: 16
+Attempting to decode frame with timestamp 40426 and 16 packets
+Decoding frame of size: 18066
+Received a frame of size: 6220800
+Decoded full fragmented frame with timestamp 40426 and dimensions 1920x1080
+Frame with timestamp 40426 sent to GUI successfully.
+Evicted frame with timestam 40426 
+Frame with timestamp 40770 is complete and has all packets. Length: 9
+Attempting to decode frame with timestamp 40770 and 9 packets
+Decoding frame of size: 10607
+Received a frame of size: 6220800
+Decoded full fragmented frame with timestamp 40770 and dimensions 1920x1080
+Frame with timestamp 40770 sent to GUI successfully.
+Evicted frame with timestam 40770 
+Frame with timestamp 41115 is complete and has all packets. Length: 11
+Attempting to decode frame with timestamp 41115 and 11 packets
+Decoding frame of size: 12571
+Received a frame of size: 6220800
+Decoded full fragmented frame with timestamp 41115 and dimensions 1920x1080
+Frame with timestamp 41115 sent to GUI successfully.
+Evicted frame with timestam 41115 
+Frame with timestamp 41465 is complete and has all packets. Length: 11
+Attempting to decode frame with timestamp 41465 and 11 packets
+Decoding frame of size: 12292
+Received a frame of size: 6220800
+Decoded full fragmented frame with timestamp 41465 and dimensions 1920x1080
+Frame with timestamp 41465 sent to GUI successfully.
+Evicted frame with timestam 41465 
+Frame with timestamp 41821 is complete and has all packets. Length: 13
+Attempting to decode frame with timestamp 41821 and 13 packets
+Decoding frame of size: 14563
+Received a frame of size: 6220800
+Decoded full fragmented frame with timestamp 41821 and dimensions 1920x1080
+Frame with timestamp 41821 sent to GUI successfully.
+Evicted frame with timestam 41821 
+Frame with timestamp 42204 is complete and has all packets. Length: 14
+Attempting to decode frame with timestamp 42204 and 14 packets
+Decoding frame of size: 15345
+Received a frame of size: 6220800
+Decoded full fragmented frame with timestamp 42204 and dimensions 1920x1080
+Frame with timestamp 42204 sent to GUI successfully.
+Evicted frame with timestam 42204 
+Received a frame of size: 6220800
+Frame with timestamp 42606 is complete and has all packets. Length: 14
+Attempting to decode frame with timestamp 42606 and 14 packets
+Decoding frame of size: 16351
+Decoded full fragmented frame with timestamp 42606 and dimensions 1920x1080
+Frame with timestamp 42606 sent to GUI successfully.
+Evicted frame with timestam 42606 
+1 packets lost
+Sent IDR frame request to peer
+16 packets lost
+Received a frame of size: 6220800
+2 packets lost
+Frame with timestamp 45429 is complete and has all packets. Length: 70
+Attempting to decode frame with timestamp 45429 and 70 packets
+Decoding frame of size: 81805
+Decoded full fragmented frame with timestamp 45429 and dimensions 1920x1080
+Frame with timestamp 45429 sent to GUI successfully.
+Evicted frame with timestam 45429 
+Received a frame of size: 6220800
+Frame with timestamp 46057 is complete and has all packets. Length: 10
+Attempting to decode frame with timestamp 46057 and 10 packets
+Decoding frame of size: 10833
+Decoded full fragmented frame with timestamp 46057 and dimensions 1920x1080
+Frame with timestamp 46057 sent to GUI successfully.
+Evicted frame with timestam 46057 
+Received a frame of size: 6220800
+Frame with timestamp 46806 is complete and has all packets. Length: 21
+Attempting to decode frame with timestamp 46806 and 21 packets
+Decoding frame of size: 24425
+Decoded full fragmented frame with timestamp 46806 and dimensions 1920x1080
+Frame with timestamp 46806 sent to GUI successfully.
+Evicted frame with timestam 46806 
+Received a frame of size: 6220800
+Frame with timestamp 47435 is complete and has all packets. Length: 17
+Attempting to decode frame with timestamp 47435 and 17 packets
+Decoding frame of size: 19934
+Decoded full fragmented frame with timestamp 47435 and dimensions 1920x1080
+Frame with timestamp 47435 sent to GUI successfully.
+Evicted frame with timestam 47435 
+Frame with timestamp 47819 is complete and has all packets. Length: 9
+Attempting to decode frame with timestamp 47819 and 9 packets
+Decoding frame of size: 10522
+Received a frame of size: 6220800
+Decoded full fragmented frame with timestamp 47819 and dimensions 1920x1080
+Frame with timestamp 47819 sent to GUI successfully.
+Evicted frame with timestam 47819 
+Frame with timestamp 48193 is complete and has all packets. Length: 11
+Attempting to decode frame with timestamp 48193 and 11 packets
+Decoding frame of size: 12774
+Received a frame of size: 6220800
+Decoded full fragmented frame with timestamp 48193 and dimensions 1920x1080
+Frame with timestamp 48193 sent to GUI successfully.
+Evicted frame with timestam 48193 
+Frame with timestamp 48596 is complete and has all packets. Length: 14
+Attempting to decode frame with timestamp 48596 and 14 packets
+Decoding frame of size: 15720
+Received a frame of size: 6220800
+Decoded full fragmented frame with timestamp 48596 and dimensions 1920x1080
+Frame with timestamp 48596 sent to GUI successfully.
+Evicted frame with timestam 48596 
+Frame with timestamp 49004 is complete and has all packets. Length: 15
+Attempting to decode frame with timestamp 49004 and 15 packets
+Decoding frame of size: 17470
+Received a frame of size: 6220800
+Decoded full fragmented frame with timestamp 49004 and dimensions 1920x1080
+Frame with timestamp 49004 sent to GUI successfully.
+Evicted frame with timestam 49004 
+Frame with timestamp 49660 is complete and has all packets. Length: 13
+Attempting to decode frame with timestamp 49660 and 13 packets
+Decoding frame of size: 14649
+Received a frame of size: 6220800
+Decoded full fragmented frame with timestamp 49660 and dimensions 1920x1080
+Frame with timestamp 49660 sent to GUI successfully.
+Evicted frame with timestam 49660 
+Frame with timestamp 50012 is complete and has all packets. Length: 9
+Attempting to decode frame with timestamp 50012 and 9 packets
+Decoding frame of size: 10210
+Received a frame of size: 6220800
+Decoded full fragmented frame with timestamp 50012 and dimensions 1920x1080
+Frame with timestamp 50012 sent to GUI successfully.
+Evicted frame with timestam 50012 
+1 packets lost
+Sent IDR frame request to peer
+1 packets lost
+Received a frame of size: 6220800
+Frame with timestamp 51793 is complete and has all packets. Length: 74
+Attempting to decode frame with timestamp 51793 and 74 packets
+Decoding frame of size: 87163
+Decoded full fragmented frame with timestamp 51793 and dimensions 1920x1080
+Frame with timestamp 51793 sent to GUI successfully.
+Evicted frame with timestam 51793 
+Received a frame of size: 6220800
+Frame with timestamp 52626 is complete and has all packets. Length: 14
+Attempting to decode frame with timestamp 52626 and 14 packets
+Decoding frame of size: 15741
+Decoded full fragmented frame with timestamp 52626 and dimensions 1920x1080
+Frame with timestamp 52626 sent to GUI successfully.
+Evicted frame with timestam 52626 
+Received a frame of size: 6220800
+1 packets lost
+Sent IDR frame request to peer
+Frame with timestamp 54020 is complete and has all packets. Length: 75
+Attempting to decode frame with timestamp 54020 and 75 packets
+Decoding frame of size: 87653
+Decoded full fragmented frame with timestamp 54020 and dimensions 1920x1080
+Frame with timestamp 54020 sent to GUI successfully.
+Evicted frame with timestam 54020 
+Received a frame of size: 6220800
+Frame with timestamp 54919 is complete and has all packets. Length: 18
+Attempting to decode frame with timestamp 54919 and 18 packets
+Decoding frame of size: 21155
+Decoded full fragmented frame with timestamp 54919 and dimensions 1920x1080
+Frame with timestamp 54919 sent to GUI successfully.
+Evicted frame with timestam 54919 
+Received a frame of size: 6220800
+Frame with timestamp 55748 is complete and has all packets. Length: 12
+Attempting to decode frame with timestamp 55748 and 12 packets
+Decoding frame of size: 14061
+Decoded full fragmented frame with timestamp 55748 and dimensions 1920x1080
+Frame with timestamp 55748 sent to GUI successfully.
+Evicted frame with timestam 55748 
+Received a frame of size: 6220800
+Frame with timestamp 56282 is complete and has all packets. Length: 11
+Attempting to decode frame with timestamp 56282 and 11 packets
+Decoding frame of size: 12225
+Decoded full fragmented frame with timestamp 56282 and dimensions 1920x1080
+Frame with timestamp 56282 sent to GUI successfully.
+Evicted frame with timestam 56282 
+Frame with timestamp 56726 is complete and has all packets. Length: 13
+Attempting to decode frame with timestamp 56726 and 13 packets
+Decoding frame of size: 15128
+Received a frame of size: 6220800
+Decoded full fragmented frame with timestamp 56726 and dimensions 1920x1080
+Frame with timestamp 56726 sent to GUI successfully.
+Evicted frame with timestam 56726 
+Frame with timestamp 57229 is complete and has all packets. Length: 21
+Attempting to decode frame with timestamp 57229 and 21 packets
+Decoding frame of size: 24434
+Received a frame of size: 6220800
+Decoded full fragmented frame with timestamp 57229 and dimensions 1920x1080
+Frame with timestamp 57229 sent to GUI successfully.
+Evicted frame with timestam 57229 
+Frame with timestamp 57614 is complete and has all packets. Length: 11
+Attempting to decode frame with timestamp 57614 and 11 packets
+Decoding frame of size: 12037
+Received a frame of size: 6220800
+Decoded full fragmented frame with timestamp 57614 and dimensions 1920x1080
+Frame with timestamp 57614 sent to GUI successfully.
+Evicted frame with timestam 57614 
+Received a frame of size: 6220800
+Frame with timestamp 58373 is complete and has all packets. Length: 20
+Attempting to decode frame with timestamp 58373 and 20 packets
+Decoding frame of size: 23430
+Decoded full fragmented frame with timestamp 58373 and dimensions 1920x1080
+Frame with timestamp 58373 sent to GUI successfully.
+Evicted frame with timestam 58373 
+Frame with timestamp 58898 is complete and has all packets. Length: 12
+Attempting to decode frame with timestamp 58898 and 12 packets
+Decoding frame of size: 13253
+Received a frame of size: 6220800
+Decoded full fragmented frame with timestamp 58898 and dimensions 1920x1080
+Frame with timestamp 58898 sent to GUI successfully.
+Evicted frame with timestam 58898 
+Frame with timestamp 59303 is complete and has all packets. Length: 8
+Attempting to decode frame with timestamp 59303 and 8 packets
+Decoding frame of size: 8662
+Received a frame of size: 6220800
+Decoded full fragmented frame with timestamp 59303 and dimensions 1920x1080
+Frame with timestamp 59303 sent to GUI successfully.
+Evicted frame with timestam 59303 
+Received a frame of size: 6220800
+1 packets lost
+Sent IDR frame request to peer
+Frame with timestamp 60439 is complete and has all packets. Length: 75
+Attempting to decode frame with timestamp 60439 and 75 packets
+Decoding frame of size: 88124
+Decoded full fragmented frame with timestamp 60439 and dimensions 1920x1080
+Frame with timestamp 60439 sent to GUI successfully.
+Evicted frame with timestam 60439 
+Received a frame of size: 6220800
+Frame with timestamp 61244 is complete and has all packets. Length: 12
+Attempting to decode frame with timestamp 61244 and 12 packets
+Decoding frame of size: 13458
+Decoded full fragmented frame with timestamp 61244 and dimensions 1920x1080
+Frame with timestamp 61244 sent to GUI successfully.
+Evicted frame with timestam 61244 
+Received a frame of size: 6220800
+Frame with timestamp 61898 is complete and has all packets. Length: 14
+Attempting to decode frame with timestamp 61898 and 14 packets
+Decoding frame of size: 15716
+Decoded full fragmented frame with timestamp 61898 and dimensions 1920x1080
+Frame with timestamp 61898 sent to GUI successfully.
+Evicted frame with timestam 61898 
+Received a frame of size: 6220800
+Frame with timestamp 62271 is complete and has all packets. Length: 8
+Attempting to decode frame with timestamp 62271 and 8 packets
+Decoding frame of size: 9235
+Decoded full fragmented frame with timestamp 62271 and dimensions 1920x1080
+Frame with timestamp 62271 sent to GUI successfully.
+Evicted frame with timestam 62271 
+Received a frame of size: 6220800
+Frame with timestamp 62769 is complete and has all packets. Length: 11
+Attempting to decode frame with timestamp 62769 and 11 packets
+Decoding frame of size: 11916
+Decoded full fragmented frame with timestamp 62769 and dimensions 1920x1080
+Frame with timestamp 62769 sent to GUI successfully.
+Evicted frame with timestam 62769 
+Frame with timestamp 63283 is complete and has all packets. Length: 21
+Attempting to decode frame with timestamp 63283 and 21 packets
+Decoding frame of size: 23638
+Received a frame of size: 6220800
+Decoded full fragmented frame with timestamp 63283 and dimensions 1920x1080
+Frame with timestamp 63283 sent to GUI successfully.
+Evicted frame with timestam 63283 
+Frame with timestamp 63737 is complete and has all packets. Length: 11
+Attempting to decode frame with timestamp 63737 and 11 packets
+Decoding frame of size: 12216
+Received a frame of size: 6220800
+Decoded full fragmented frame with timestamp 63737 and dimensions 1920x1080
+Frame with timestamp 63737 sent to GUI successfully.
+Evicted frame with timestam 63737 
+Frame with timestamp 64249 is complete and has all packets. Length: 22
+Attempting to decode frame with timestamp 64249 and 22 packets
+Decoding frame of size: 25676
+Received a frame of size: 6220800
+Decoded full fragmented frame with timestamp 64249 and dimensions 1920x1080
+Frame with timestamp 64249 sent to GUI successfully.
+Evicted frame with timestam 64249 
+Received a frame of size: 6220800
+Frame with timestamp 65016 is complete and has all packets. Length: 17
+Attempting to decode frame with timestamp 65016 and 17 packets

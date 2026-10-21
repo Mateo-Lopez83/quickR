@@ -192,7 +192,7 @@ async fn request_idr(conn: Arc<UdpSocket>, timer: Instant) -> Result<(), Box<dyn
     Ok(())
 }
 
-fn drain_ready_frames(saved_frames_map: &mut BTreeMap<u32, FrameInProgress>, decoder: &mut Decoder, timer: Instant,enc_tx: frame_mpsc::SyncSender<RGBFrameData>, last_released: &mut Option<u32>, waiting_for_idr: &mut bool) -> Result<bool, Box<dyn Error>> {
+fn drain_ready_frames(saved_frames_map: &mut BTreeMap<u32, FrameInProgress>, decoder: &mut Decoder, timer: Instant,enc_tx: frame_mpsc::SyncSender<RGBFrameData>, last_released: &mut Option<u32>, waiting_for_idr: &mut bool, stats: SharedStats) -> Result<bool, Box<dyn Error>> {
     //returns true if it needs an IDR, either because the decoding failed for some reason or the 
     let mut loop_remove_stales: bool = true;
     let mut should_request_idr: bool = false;
@@ -258,9 +258,10 @@ fn drain_ready_frames(saved_frames_map: &mut BTreeMap<u32, FrameInProgress>, dec
             }
 
             if should_remove {
-                println!("Evicted frame with timestam {} ", key);
+                println!("Evicted frame with timestamp {} ", key);
                 *last_released = Some(key);
                 saved_frames_map.remove(&key);
+                stats.frames_dropped.fetch_add(1, Ordering::Relaxed);
                 }
         }
         else{
@@ -288,7 +289,7 @@ pub async fn receiving_process(conn: Arc<UdpSocket>,timer: Instant, enc_tx: fram
     loop {
         tokio::select! {
             _ = interval.tick() => {
-                needs_idr = drain_ready_frames(&mut saved_frames_map, &mut decoder, timer, enc_tx.clone(), &mut last_released, &mut waiting_for_idr)?;
+                needs_idr = drain_ready_frames(&mut saved_frames_map, &mut decoder, timer, enc_tx.clone(), &mut last_released, &mut waiting_for_idr, stats.clone())?;
                 //si se necesita el IDR y ha pasado mas de 1 segundo desde el ultimo IDR, se solicita
                 if needs_idr || waiting_for_idr {
                             let due = last_idr_request
@@ -302,7 +303,7 @@ pub async fn receiving_process(conn: Arc<UdpSocket>,timer: Instant, enc_tx: fram
             }
             result = socket.recv(&mut buf) => {
                 let len = result?;
-                println!("Received {} bytes from connection",len);
+                //println!("Received {} bytes from connection",len);
                 let mut received = Bytes::copy_from_slice(&buf[..len]);
                 match Header::unserialize(&mut received) {
                     Ok(header)=>{
@@ -402,7 +403,7 @@ pub async fn receiving_process(conn: Arc<UdpSocket>,timer: Instant, enc_tx: fram
                             }
                             saved_frames_map.insert(curr_timestamp, new_frame);
                         }
-                        needs_idr = drain_ready_frames(&mut saved_frames_map, &mut decoder, timer, enc_tx.clone(), &mut last_released, &mut waiting_for_idr)?;
+                        needs_idr = drain_ready_frames(&mut saved_frames_map, &mut decoder, timer, enc_tx.clone(), &mut last_released, &mut waiting_for_idr, stats.clone())?;
                         if needs_idr || waiting_for_idr {
                             let due = last_idr_request
                                 .map_or(true, |t| t.elapsed() >= Duration::from_secs(1));
@@ -504,7 +505,7 @@ pub async fn advanced_hole_punching(conn: Arc<UdpSocket>,timer: Instant)
                 }
                 match Header::unserialize(&mut Bytes::copy_from_slice(&buf[..HEADERSIZE])){
                     Ok(header) => {
-                        println!("Received {} bytes", len);
+                        //println!("Received {} bytes", len);
 
                         if header.channel == ChannelType::Sync {
                             println!("Received correct control packet. Initiating communication");

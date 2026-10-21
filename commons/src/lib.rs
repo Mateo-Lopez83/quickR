@@ -30,6 +30,8 @@ pub struct RGBFrameData{
 pub struct PacketStats {
     pub packets_received: AtomicU64,
     pub packets_lost: AtomicU64,
+    pub frames_shown: AtomicU64,
+    pub frames_dropped: AtomicU64,
 }
 pub type SharedStats = Arc<PacketStats>;
 
