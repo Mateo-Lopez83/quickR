@@ -22,7 +22,7 @@ pub mod encoder_p{
         Ok(YUVBuffer::from_bgra8_source(bgra))
     }
 
-
+    const IDR_COOLDOWN_MS: u64 = 2000;
     //rx recibe de windows-capture, envía a tx el encoded bytestream
     pub fn run_encoder(enc_rx: enc_mpsc::Receiver<RawStreamData>, udp_tx: udp_mpsc::Sender<Bytes>, timer: Instant, receiver_idr_request: Arc<AtomicBool> ) {
         let encoder_config = EncoderConfig::new()
@@ -38,10 +38,8 @@ pub mod encoder_p{
             match bytes_to_yub(raw_frame){
                 Ok(yubytes) => {
                     if receiver_idr_request.swap(false, Ordering::SeqCst) {
-                        //si han pasado menos de 150ms desde el último request recibido
-                        //de IDR, se ignora para no llenar el buffer
                         let cooled = last_forced_idr
-                            .map_or(true, |t| t.elapsed() >= Duration::from_millis(150));
+                            .map_or(true, |t| t.elapsed() >= Duration::from_millis(IDR_COOLDOWN_MS));
                         if cooled {
                             println!("Sending IDR frame due to request");
                             encoder.force_intra_frame();

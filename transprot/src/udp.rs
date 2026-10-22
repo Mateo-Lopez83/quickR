@@ -105,8 +105,8 @@ pub mod packet_gen{
 }
 
 
-const IDR_RETRY_GAPS_MS: [u64; 4] = [250, 250, 500, 1000];
-const NUM_ENVIO_BURST_IDR: usize = 3;     
+const IDR_RETRY_GAPS_MS: [u64; 4] = [1200, 1800, 2500, 3500];
+const NUM_ENVIO_BURST_IDR: usize = 3; 
 struct IdrRetry {
     last: Option<Instant>,
     attempts: usize,
@@ -115,7 +115,6 @@ impl IdrRetry {
     fn new() -> Self { Self { last: None, attempts: 0 } }
 
     async fn maybe_request(&mut self, conn: &Arc<UdpSocket>, timer: Instant, wanted: bool) {
-        //reinicia el conteo de tiempos si no se necesita pedir el IDR
         if !wanted {
             self.attempts = 0;
             return;
@@ -123,10 +122,14 @@ impl IdrRetry {
 
         let gap = Duration::from_millis(IDR_RETRY_GAPS_MS[self.attempts.min(IDR_RETRY_GAPS_MS.len() - 1)]);
         if self.last.map_or(true, |t| t.elapsed() >= gap) {
+            // one line per DECISION to request, independent of how many
+            // copies get sent — this is the number to compare run-to-run
+            println!("IDR burst triggered (decision #{})", self.attempts + 1);
+
             for i in 0..NUM_ENVIO_BURST_IDR {
                 let _ = request_idr(conn.clone(), timer).await;
                 if i + 1 < NUM_ENVIO_BURST_IDR {
-                    time::sleep(Duration::from_millis(5)).await; // spread copies so one burst isn't dropped together
+                    time::sleep(Duration::from_millis(5)).await;
                 }
             }
             self.last = Some(Instant::now());
@@ -204,7 +207,6 @@ pub async fn main_sending_process(conn: Arc<UdpSocket>, timer: Instant) -> Resul
 async fn request_idr(conn: Arc<UdpSocket>, timer: Instant) -> Result<(), Box<dyn Error>>{
     let ctrl_datagram =packet_gen::generate_control_datagram(timer);
     conn.send(&ctrl_datagram).await?;
-    println!("Sent IDR frame request to peer");
     Ok(())
 }
 
@@ -419,7 +421,6 @@ pub async fn receiving_process(conn: Arc<UdpSocket>,timer: Instant, enc_tx: fram
                             }
                             saved_frames_map.insert(curr_timestamp, new_frame);
                         }
-                        needs_idr = drain_ready_frames(&mut saved_frames_map, &mut decoder, timer, enc_tx.clone(), &mut last_released, &mut waiting_for_idr, stats.clone())?;
                         needs_idr = drain_ready_frames(&mut saved_frames_map, &mut decoder, timer, enc_tx.clone(), &mut last_released, &mut waiting_for_idr, stats.clone())?;
                         idr.maybe_request(&conn, timer, needs_idr || waiting_for_idr).await;
                     }
