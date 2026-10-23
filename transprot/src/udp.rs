@@ -5,7 +5,7 @@ use std::sync::atomic::Ordering::SeqCst;
 use std::time::Instant;
 use std::collections::{BTreeMap};
 use commons::{FrameInProgress, RGBFrameData, SharedStats};
-use commons::MAXDATAGRAMSIZE;
+use commons::{MAXDATAGRAMSIZE, wall_us};
 use commons::frame_decoder::decode_btree_frame;
 use tokio::net::UdpSocket;
 use tokio::time::{self, Duration};
@@ -149,8 +149,15 @@ async fn channel_consumer(mut rx: mpsc::Receiver<Bytes>, socket: Arc<UdpSocket>)
         if let Err(e) = socket.send(&payload).await {
             eprintln!("send failed: {e}");
             }
-        else{
-            println!("packet sent successfully")
+        //solo para logs: una línea al enviar el primer y el último fragmento de cada frame
+        //(fragment type: 1=Start, 3=End, 4=Unfragmented)
+        else if let Ok(h) = Header::unserialize(&mut payload.clone()) {
+            if matches!(h.fragment, FragmentType::Start | FragmentType::Unfragmented) {
+                println!("SEND_FIRST ts={} seq={} queue={} wall_us={}", h.timestamp, h.sequence_number, rx.len(), wall_us());
+            }
+            if matches!(h.fragment, FragmentType::End | FragmentType::Unfragmented) {
+                println!("SEND_LAST ts={} seq={} queue={} wall_us={}", h.timestamp, h.sequence_number, rx.len(), wall_us());
+            }
         }
         //el primer byte de cada paquete es el fragment type.
         //solo añade delays si es un frame fragmentado
@@ -172,18 +179,21 @@ async fn idr_request_listener(conn: Arc<UdpSocket>, received_idr_request: Arc<At
     let socket = conn.clone();
     loop {
         let result = socket.recv(&mut buf);
-        println!("Received something from receiver. Possible IDR request");
             let len = result.await.unwrap();
             let mut received = Bytes::copy_from_slice(&buf[..len]);
             match Header::unserialize(&mut received) {
                 Ok(header) => match header.channel {
                     ChannelType::Control => {
+                        println!("RX_IDR_REQUEST wall_us={}", wall_us());
                         received_idr_request.store(true, Ordering::SeqCst);
                     }
                     ChannelType::IdrAck => {
+                        println!("RX_IDR_ACK wall_us={}", wall_us());
                         idr_in_flight.store(false, Ordering::SeqCst);
                     }
-                    _ => {}
+                    other => {
+                        println!("RX_OTHER channel={:?} wall_us={}", other, wall_us());
+                    }
             },
                 Err(_) => {
                     println!("Failed to parse header from received packet from client. Ignoring packet.");
@@ -215,11 +225,14 @@ pub async fn main_sending_process(conn: Arc<UdpSocket>, timer: Instant) -> Resul
 async fn request_idr(conn: Arc<UdpSocket>, timer: Instant) -> Result<(), Box<dyn Error>>{
     let ctrl_datagram =packet_gen::generate_control_datagram(timer);
     conn.send(&ctrl_datagram).await?;
+    //script.py cuenta esta línea exacta ("^Sent IDR frame request")
+    println!("Sent IDR frame request to peer");
     Ok(())
 }
 async fn send_idr_ack(conn: Arc<UdpSocket>, timer: Instant) -> Result<(), Box<dyn Error>>{
-    let ctrl_datagram =packet_gen::generate_control_datagram(timer);
+    let ctrl_datagram =packet_gen::generate_idr_ack_datagram(timer);
     conn.send(&ctrl_datagram).await?;
+    println!("Sent IDR ack");
     Ok(())
 }
 
@@ -336,6 +349,7 @@ pub async fn receiving_process(conn: Arc<UdpSocket>,timer: Instant, enc_tx: fram
                 idr.maybe_request(&conn, timer, needs_idr || waiting_for_idr).await;
                 if idr_recovered_now {
                     let _ = send_idr_ack(conn.clone(), timer).await;
+                    idr_recovered_now = false;
                 }
                 
             }
@@ -445,6 +459,7 @@ pub async fn receiving_process(conn: Arc<UdpSocket>,timer: Instant, enc_tx: fram
                         idr.maybe_request(&conn, timer, needs_idr || waiting_for_idr).await;
                         if idr_recovered_now {
                             let _ = send_idr_ack(conn.clone(), timer).await;
+                            idr_recovered_now = false;
                         }
                     }
                     Err(e)=>{

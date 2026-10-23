@@ -8,7 +8,8 @@ pub mod encoder_p{
     use std::sync::atomic::{AtomicBool, Ordering};
     use std::sync::{Arc, mpsc as enc_mpsc};
     use std::time::{Duration, Instant};
-    use bytes::Bytes;    
+    use bytes::Bytes;
+    use commons::{wall_us, PAYLOADSIZE};
     use crate::{RawStreamData, udp_connect};
 
     
@@ -45,6 +46,7 @@ pub mod encoder_p{
         const IDR_ACK_TIMEOUT_MS: u64 = 3000;
 
         while let Ok(raw_frame) = enc_rx.recv() {
+            let t_in = Instant::now(); //solo para logs: mide conversión + encode
             match bytes_to_yub(raw_frame){
                 Ok(yubytes) => {
                     if receiver_idr_request.swap(false, Ordering::SeqCst) {
@@ -52,17 +54,20 @@ pub mod encoder_p{
                         let timed_out = last_forced_idr.map_or(false, |t| t.elapsed() >= Duration::from_millis(IDR_ACK_TIMEOUT_MS));
                         //si llegó una solicitud de IDR y no se ha mandado ya o ya pasó tiempo desde el ultimo requesr, se manda IDR
                         if !already_in_flight || timed_out {
-                            println!("Sending IDR frame due to request");
+                            println!("IDR_FORCED in_flight={} timed_out={} wall_us={}", already_in_flight, timed_out, wall_us());
                             encoder.force_intra_frame();
                             idr_in_flight.store(true, Ordering::SeqCst);
                             last_forced_idr = Some(Instant::now());
                         } else {
-                            println!("Rescue IDR already in flight, ignoring duplicate request");
+                            println!("IDR_IGNORED wall_us={}", wall_us());
                         }
                     }
                 let encoded = encoder.encode(&yubytes).unwrap();
                 let encoded_bytes = Bytes::from(encoded.to_vec());
                 let timestamp = timer.elapsed().as_millis() as u32;
+                println!("ENC ts={} type={:?} bytes={} frags={} seq_start={} enc_ms={:.2} wall_us={}",
+                    timestamp, encoded.frame_type(), encoded_bytes.len(), encoded_bytes.len().div_ceil(PAYLOADSIZE),
+                    sequence_num, t_in.elapsed().as_secs_f64() * 1000.0, wall_us());
                 match encoded.frame_type() {
                     FrameType::I => {
                         match udp_connect::frame_send(false, encoded_bytes, &udp_tx, &mut sequence_num, timestamp){
@@ -79,23 +84,19 @@ pub mod encoder_p{
                         }
                     }
                     FrameType::IDR => {
-                        println!("_____IDR frame created. Sending frame______");
                         match udp_connect::frame_send(true, encoded_bytes, &udp_tx, &mut sequence_num, timestamp){
                             Ok(_) => {},
                             //TODO: mejorar el comportamiento con errores de envio 
                             Err(e) => return ,
                         }
                     }
-                    FrameType::Skip => {
-                        println!("_____Skip frame created. Not sent______");
-                    }
-                    FrameType::Invalid => {
-                        println!("_____Invalid frame created. Not sent______");
-                    }
-                    FrameType::IPMixed => {
-                        println!("_____IPMixed frame created. Not sent______");
-                    }
+                    //Skip, Invalid e IPMixed no se envían; el tipo queda en la línea ENC
+                    FrameType::Skip => {}
+                    FrameType::Invalid => {}
+                    FrameType::IPMixed => {}
                 }
+                //fin del envío al canal; la diferencia con ENC es el tiempo bloqueado en blocking_send
+                println!("ENC_QUEUED ts={} wall_us={}", timestamp, wall_us());
                 },
                 Err(_) => {
                     println!("algo raro con la conversión de bytes a BGRA a YUB");

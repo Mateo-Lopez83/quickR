@@ -5,6 +5,7 @@ use windows_capture::{
     graphics_capture_api::InternalCaptureControl,
 };
 use bytes::Bytes;
+use commons::wall_us;
 
 use crate::RawStreamData;
 
@@ -45,6 +46,10 @@ impl GraphicsCaptureApiHandler for ScreenCapture {
         // try_send will drop frames when the queue is full. 
         if self.enc_tx.try_send(full_payload).is_err() {
             //Do nothing if the queue is full
+            println!("CAP drop wall_us={}", wall_us());
+        }
+        else {
+            println!("CAP ok wall_us={}", wall_us());
         }
 
         Ok(())

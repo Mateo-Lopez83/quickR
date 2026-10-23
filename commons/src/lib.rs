@@ -35,6 +35,14 @@ pub struct PacketStats {
 }
 pub type SharedStats = Arc<PacketStats>;
 
+//solo para logs: reloj del sistema en microsegundos, comparable entre hilos del mismo dispositivo
+pub fn wall_us() -> u128 {
+    std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .map(|d| d.as_micros())
+        .unwrap_or(0)
+}
+
 
 #[cfg(test)]
 mod tests {
