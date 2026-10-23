@@ -24,7 +24,13 @@ pub mod encoder_p{
 
     const IDR_COOLDOWN_MS: u64 = 2000;
     //rx recibe de windows-capture, envía a tx el encoded bytestream
-    pub fn run_encoder(enc_rx: enc_mpsc::Receiver<RawStreamData>, udp_tx: udp_mpsc::Sender<Bytes>, timer: Instant, receiver_idr_request: Arc<AtomicBool> ) {
+    pub fn run_encoder(
+            enc_rx: enc_mpsc::Receiver<RawStreamData>, 
+            udp_tx: udp_mpsc::Sender<Bytes>, 
+            timer: Instant, 
+            receiver_idr_request: Arc<AtomicBool>,
+            idr_in_flight: Arc<AtomicBool>) {
+
         let encoder_config = EncoderConfig::new()
             .bitrate(BitRate::from_bps(1_500_000))  //TODO: optimizar el valor de este atributo
             .max_frame_rate(FrameRate::from_hz(30.0))
@@ -34,16 +40,23 @@ pub mod encoder_p{
         let mut encoder = Encoder::with_api_config(openh264::OpenH264API::from_source(), encoder_config).unwrap();
         let mut sequence_num: u16 = 0;
         let mut last_forced_idr: Option<Instant> = None;
+        //si se pierde el IDR ACK se fallbackea a un timeout
+        const IDR_ACK_TIMEOUT_MS: u64 = 3000;
+
         while let Ok(raw_frame) = enc_rx.recv() {
             match bytes_to_yub(raw_frame){
                 Ok(yubytes) => {
                     if receiver_idr_request.swap(false, Ordering::SeqCst) {
-                        let cooled = last_forced_idr
-                            .map_or(true, |t| t.elapsed() >= Duration::from_millis(IDR_COOLDOWN_MS));
-                        if cooled {
+                        let already_in_flight = idr_in_flight.load(Ordering::SeqCst);
+                        let timed_out = last_forced_idr.map_or(false, |t| t.elapsed() >= Duration::from_millis(IDR_ACK_TIMEOUT_MS));
+                        //si llegó una solicitud de IDR y no se ha mandado ya o ya pasó tiempo desde el ultimo requesr, se manda IDR
+                        if !already_in_flight || timed_out {
                             println!("Sending IDR frame due to request");
                             encoder.force_intra_frame();
+                            idr_in_flight.store(true, Ordering::SeqCst);
                             last_forced_idr = Some(Instant::now());
+                        } else {
+                            println!("Rescue IDR already in flight, ignoring duplicate request");
                         }
                     }
                 let encoded = encoder.encode(&yubytes).unwrap();

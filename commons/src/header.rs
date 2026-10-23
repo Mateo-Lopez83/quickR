@@ -10,7 +10,8 @@ pub const HEADERSIZE:usize = 17;
         Video = 1,
         Audio = 2,
         Control = 3,
-        Sync = 4,
+        Sync = 4, //used for establishing connection between 2 devices
+        IdrAck = 5,
     }
     impl TryFrom<u8> for ChannelType {
     type Error = PacketError;
@@ -21,6 +22,7 @@ pub const HEADERSIZE:usize = 17;
             2 => Ok(ChannelType::Audio),
             3 => Ok(ChannelType::Control),
             4 => Ok(ChannelType::Sync),
+            5 => Ok(ChannelType::IdrAck),
             _ => Err(PacketError::InvalidChannel(value)),
         }
     }
@@ -80,7 +82,10 @@ pub const HEADERSIZE:usize = 17;
        
         
         pub fn serialize (&self)-> BytesMut{
-            //función para transformar un struct de Header en una cadena de bytes del struct Bytes
+            /*
+                función para transformar un struct de Header en una cadena de bytes del struct Bytes
+                con tamaño fijo de HEADERSIZE
+            */
             let mut buf = BytesMut::with_capacity(HEADERSIZE);
             buf.put_u8(self.fragment as u8);
             buf.put_u8(self.version);

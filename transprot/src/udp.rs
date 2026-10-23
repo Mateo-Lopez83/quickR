@@ -102,6 +102,12 @@ pub mod packet_gen{
 
         generate_header(4, 2, false, 3,true, 0,18,time_now,1).serialize().freeze()
     }
+    //for idr request and confirmation purposes
+    pub fn generate_idr_ack_datagram(timer: Instant)->Bytes{
+        let time_now = timer.elapsed().as_millis() as u32;
+
+        generate_header(4, 2, false, 5,true, 0,18,time_now,1).serialize().freeze()
+    }
 }
 
 
@@ -157,7 +163,7 @@ async fn channel_consumer(mut rx: mpsc::Receiver<Bytes>, socket: Arc<UdpSocket>)
 }
 
 
-async fn idr_request_listener(conn: Arc<UdpSocket>, received_idr_request: Arc<AtomicBool>){
+async fn idr_request_listener(conn: Arc<UdpSocket>, received_idr_request: Arc<AtomicBool>, idr_in_flight: Arc<AtomicBool>){
     /*
         Listener that loops forever on the sender to be actively listening for any
         control packets sent by the receiver.
@@ -170,14 +176,15 @@ async fn idr_request_listener(conn: Arc<UdpSocket>, received_idr_request: Arc<At
             let len = result.await.unwrap();
             let mut received = Bytes::copy_from_slice(&buf[..len]);
             match Header::unserialize(&mut received) {
-                Ok(header) => {
-                    //por ahora el unico control packet es para pedir IDR
-                    //TODO: expandir esto para handlear más control packets
-                    if header.channel == ChannelType::Control {
-                        println!("Received IDR frame request");
-                        received_idr_request.store(true, SeqCst);
+                Ok(header) => match header.channel {
+                    ChannelType::Control => {
+                        received_idr_request.store(true, Ordering::SeqCst);
                     }
-                }
+                    ChannelType::IdrAck => {
+                        idr_in_flight.store(false, Ordering::SeqCst);
+                    }
+                    _ => {}
+            },
                 Err(_) => {
                     println!("Failed to parse header from received packet from client. Ignoring packet.");
                     continue;
@@ -189,11 +196,12 @@ async fn idr_request_listener(conn: Arc<UdpSocket>, received_idr_request: Arc<At
 
 pub async fn main_sending_process(conn: Arc<UdpSocket>, timer: Instant) -> Result<(), Box<dyn Error>> {
     let received_idr_request = Arc::new(AtomicBool::new(false));
+    let idr_in_flight = Arc::new(AtomicBool::new(false));
     //TODO: revisar que tanto importa el tamaño de este buffer
     let (tx, rx) = mpsc::channel::<Bytes>(90);
     let socket = conn.clone();
-    let _idr_listener_handle = tokio::spawn(idr_request_listener(conn.clone(), received_idr_request.clone()));
-    let _= capture::start_capture(tx, timer, received_idr_request.clone());
+    let _idr_listener_handle = tokio::spawn(idr_request_listener(conn.clone(), received_idr_request.clone(), idr_in_flight.clone()));
+    let _= capture::start_capture(tx, timer, received_idr_request.clone(), idr_in_flight.clone());
     let consumer_handle = tokio::spawn(channel_consumer(rx, socket));
 
     let _ = consumer_handle.await;
@@ -209,8 +217,13 @@ async fn request_idr(conn: Arc<UdpSocket>, timer: Instant) -> Result<(), Box<dyn
     conn.send(&ctrl_datagram).await?;
     Ok(())
 }
+async fn send_idr_ack(conn: Arc<UdpSocket>, timer: Instant) -> Result<(), Box<dyn Error>>{
+    let ctrl_datagram =packet_gen::generate_control_datagram(timer);
+    conn.send(&ctrl_datagram).await?;
+    Ok(())
+}
 
-fn drain_ready_frames(saved_frames_map: &mut BTreeMap<u32, FrameInProgress>, decoder: &mut Decoder, timer: Instant,enc_tx: frame_mpsc::SyncSender<RGBFrameData>, last_released: &mut Option<u32>, waiting_for_idr: &mut bool, stats: SharedStats) -> Result<bool, Box<dyn Error>> {
+fn drain_ready_frames(saved_frames_map: &mut BTreeMap<u32, FrameInProgress>, decoder: &mut Decoder, timer: Instant,enc_tx: frame_mpsc::SyncSender<RGBFrameData>, last_released: &mut Option<u32>, waiting_for_idr: &mut bool, stats: SharedStats, idr_recovered_now: &mut bool) -> Result<bool, Box<dyn Error>> {
     //returns true if it needs an IDR, either because the decoding failed for some reason or the 
     let mut loop_remove_stales: bool = true;
     let mut should_request_idr: bool = false;
@@ -231,6 +244,9 @@ fn drain_ready_frames(saved_frames_map: &mut BTreeMap<u32, FrameInProgress>, dec
                     println!("Attempting to decode frame with timestamp {} and {} packets", key, value.map.len());
                     match decode_btree_frame(&mut value.map, decoder) {
                         Ok(rgb_frame_data) => {
+                            if *waiting_for_idr {
+                                *idr_recovered_now = true; // permite enviar el ACK del IDR
+                            }
                             *waiting_for_idr = false; 
                             println!("Decoded full fragmented frame with timestamp {} and dimensions {}x{}", key, rgb_frame_data.width, rgb_frame_data.height);
 
@@ -304,6 +320,7 @@ pub async fn receiving_process(conn: Arc<UdpSocket>,timer: Instant, enc_tx: fram
     let mut idr_check = time::interval(Duration::from_millis(50));
     let mut needs_idr: bool;
     let mut waiting_for_idr: bool = true;
+    let mut idr_recovered_now = false;
     let mut last_released: Option<u32> = None;
     loop {
         tokio::select! {
@@ -314,9 +331,12 @@ pub async fn receiving_process(conn: Arc<UdpSocket>,timer: Instant, enc_tx: fram
                 }
             }
             _ = interval.tick() => {
-                needs_idr = drain_ready_frames(&mut saved_frames_map, &mut decoder, timer, enc_tx.clone(), &mut last_released, &mut waiting_for_idr, stats.clone())?;
+                needs_idr = drain_ready_frames(&mut saved_frames_map, &mut decoder, timer, enc_tx.clone(), &mut last_released, &mut waiting_for_idr, stats.clone(), &mut idr_recovered_now)?;
                 //si se necesita el IDR y ha pasado mas de 800 ms desde el ultimo IDR, se solicita
                 idr.maybe_request(&conn, timer, needs_idr || waiting_for_idr).await;
+                if idr_recovered_now {
+                    let _ = send_idr_ack(conn.clone(), timer).await;
+                }
                 
             }
             result = socket.recv(&mut buf) => {
@@ -421,8 +441,11 @@ pub async fn receiving_process(conn: Arc<UdpSocket>,timer: Instant, enc_tx: fram
                             }
                             saved_frames_map.insert(curr_timestamp, new_frame);
                         }
-                        needs_idr = drain_ready_frames(&mut saved_frames_map, &mut decoder, timer, enc_tx.clone(), &mut last_released, &mut waiting_for_idr, stats.clone())?;
+                        needs_idr = drain_ready_frames(&mut saved_frames_map, &mut decoder, timer, enc_tx.clone(), &mut last_released, &mut waiting_for_idr, stats.clone(), &mut idr_recovered_now)?;
                         idr.maybe_request(&conn, timer, needs_idr || waiting_for_idr).await;
+                        if idr_recovered_now {
+                            let _ = send_idr_ack(conn.clone(), timer).await;
+                        }
                     }
                     Err(e)=>{
                         eprintln!("Failed to parse header: {:?}", e);

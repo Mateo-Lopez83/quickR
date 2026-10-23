@@ -1,6 +1,7 @@
 mod encoder_p;
 mod udp_connect;
 pub mod capturetry;
+pub mod audio_capture;
 use std::sync::atomic::AtomicBool;
 use std::{sync::Arc, time::Instant};
 use std::sync::mpsc as enc_mpsc;
@@ -22,7 +23,7 @@ pub struct RawStreamData{
     pub height: usize,
 }
 
-pub fn start_capture(udp_tx: udp_mpsc::Sender<Bytes>, timer: Instant, received_idr_request: Arc<AtomicBool>) {
+pub fn start_capture(udp_tx: udp_mpsc::Sender<Bytes>, timer: Instant, received_idr_request: Arc<AtomicBool>, idr_in_flight: Arc<AtomicBool>) {
 
     let (enc_tx, enc_rx) = enc_mpsc::sync_channel::<RawStreamData>(1);
     thread::spawn(move || {
@@ -45,7 +46,7 @@ pub fn start_capture(udp_tx: udp_mpsc::Sender<Bytes>, timer: Instant, received_i
     thread::spawn(move || {
         //encoder recibe el actual receiver del std channel (rx) y a donde enviar
         //el bytestream(udp_tx)
-        run_encoder(enc_rx, udp_tx, timer, received_idr_request);
+        run_encoder(enc_rx, udp_tx, timer, received_idr_request, idr_in_flight);
     });
     
 
