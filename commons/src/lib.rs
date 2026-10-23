@@ -73,7 +73,7 @@ mod tests {
         wrong_serial.put_u8(2);
         wrong_serial.put_u8(0);
         //can be numbers 1-5, nothing else
-        wrong_serial.put_u8(5);
+        wrong_serial.put_u8(10);
         wrong_serial.put_u8(0);
         //seq number
         wrong_serial.put_u16(rng.random());

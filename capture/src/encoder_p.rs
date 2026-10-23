@@ -22,7 +22,8 @@ pub mod encoder_p{
         Ok(YUVBuffer::from_bgra8_source(bgra))
     }
 
-    const IDR_COOLDOWN_MS: u64 = 2000;
+    
+
     //rx recibe de windows-capture, envía a tx el encoded bytestream
     pub fn run_encoder(
             enc_rx: enc_mpsc::Receiver<RawStreamData>, 
