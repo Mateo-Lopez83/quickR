@@ -147,6 +147,14 @@ impl eframe::App for MyApp {
             while let Ok(frame) = self.frame_rx.try_recv() {
                 // Process the received frame
                 println!("Received a frame of size: {}", frame.data.len());
+                // log A/V: ts del frame vs ts del audio que está sonando (mismo reloj del emisor)
+                // audio_age_ms = ms desde la última actualización del reloj de audio (-1 = aún no hay audio)
+                let now_ms = (commons::wall_us() / 1000) as u64;
+                let upd_ms = self.audio_clock.updated_ms.load(Ordering::Relaxed);
+                let audio_age_ms: i64 = if upd_ms == 0 { -1 } else { now_ms.saturating_sub(upd_ms) as i64 };
+                println!("AV video_ts={} audio_ts={} audio_age_ms={} underruns={} wall_us={}",
+                         frame.ts, self.audio_clock.ts.load(Ordering::Relaxed), audio_age_ms,
+                         self.audio_clock.underruns.load(Ordering::Relaxed), commons::wall_us());
                 let image = ColorImage::from_rgb(
                     [frame.width as usize, frame.height as usize],
                     &frame.data,

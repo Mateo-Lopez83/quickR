@@ -25,7 +25,11 @@ pub fn start_audio_playback(queue: AudioQueue, clock: Arc<AudioClock>) {
                     if current.is_none() {
                         match q.pop_front() {
                             Some(c) => current = Some((c, 0)),
-                            None => { out[i..].fill(0.0); started = false; break; } // underrun: re-buffer
+                            None => { // underrun: re-buffer
+                                out[i..].fill(0.0); started = false;
+                                clock.underruns.fetch_add(1, Ordering::Relaxed); // sin println en el callback de audio
+                                break;
+                            }
                         }
                     }
                     let (chunk, pos) = current.as_mut().unwrap();

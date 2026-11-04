@@ -8,9 +8,9 @@
 
 ## To execute, run on CMD: 
 ### For sender/streamer: 
-"cargo run -- send > ..\outputs\sender1.out 2>&1"
+`cargo run -- send > ..\outputs\sender1.out 2>&1`
 ### For client/receiver: 
-"cargo run -- receive > ..\outputs\receiver1.out 2>&1"
+`cargo run -- receive > ..\outputs\receiver1.out 2>&1`
 
 
 ## Dependencies (early draft, needs checking and updating):

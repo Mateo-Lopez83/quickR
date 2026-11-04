@@ -56,6 +56,7 @@ pub fn start_audio_capture(udp_tx: Sender<Bytes>, clock_start: Instant) {
         let mut pending_start_ts: u32 = 0; // ts del primer sample en `pending`
         let mut out_buf = [0u8; PAYLOADSIZE]; // garantiza que el paquete cabe en un datagrama
         let mut seq: u16 = 0;
+        let (mut tx_pkts, mut tx_drops): (u64, u64) = (0, 0); // solo logs: paquetes generados / descartados por cola llena
 
         while let Ok((arrival_ts, chunk)) = pcm_rx.recv() {
             // a estéreo (mono -> duplicar, >2 canales -> primeros dos)
@@ -87,8 +88,12 @@ pub fn start_audio_capture(udp_tx: Sender<Bytes>, clock_start: Instant) {
 
                 match udp_tx.try_send(combined.freeze()) {
                     Ok(()) => {}
-                    Err(TrySendError::Full(_)) => println!("AUD drop_full ts={}", ts),
+                    Err(TrySendError::Full(_)) => { tx_drops += 1; println!("AUD drop_full ts={}", ts) }
                     Err(TrySendError::Closed(_)) => return,
+                }
+                tx_pkts += 1;
+                if tx_pkts % 250 == 0 { // ~5 s
+                    println!("AUD_TX pkts={} drops={} wall_us={}", tx_pkts, tx_drops, commons::wall_us());
                 }
             }
         }

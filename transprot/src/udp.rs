@@ -144,34 +144,49 @@ impl IdrRetry {
 }
 
 
-struct AudioReceiver { decoder: opus::Decoder, prev_seq: Option<u16>, pcm: Vec<f32>, queue: AudioQueue }
+//contadores acumulados de audio, solo para logs (se imprimen cada AUD_LOG_EVERY paquetes)
+#[derive(Default)]
+struct AudioRxStats { pkts: u64, lost: u64, plc: u64, late: u64, dec_err: u64, trimmed: u64 }
+const AUD_LOG_EVERY: u64 = 250; // ~5 s con paquetes de 20 ms
+
+struct AudioReceiver { decoder: opus::Decoder, prev_seq: Option<u16>, pcm: Vec<f32>, queue: AudioQueue, stats: AudioRxStats }
 impl AudioReceiver {
     fn new(queue: AudioQueue) -> Self {
         Self { decoder: opus::Decoder::new(48_000, opus::Channels::Stereo).unwrap(),
-               prev_seq: None, pcm: vec![0.0; 5760 * 2], queue }
+               prev_seq: None, pcm: vec![0.0; 5760 * 2], queue, stats: AudioRxStats::default() }
     }
     fn on_packet(&mut self, header: &Header, payload: &[u8]) {
+        self.stats.pkts += 1;
+        if self.stats.pkts % AUD_LOG_EVERY == 0 { self.log_stats(); }
         if let Some(prev) = self.prev_seq {
             let gap = (header.sequence_number.wrapping_sub(prev) as i16) - 1;
-            if gap < 0 { return; } // tarde o duplicado
+            if gap < 0 { self.stats.late += 1; return; } // tarde o duplicado
+            self.stats.lost += gap as u64;
             // PLC de opus: slice vacío = paquete perdido (máx 3 para no inventar demasiado)
             for i in 0..gap.min(3) {
                 if let Ok(n) = self.decoder.decode_float(&[], &mut self.pcm, false) {
                     let ts = header.timestamp.wrapping_sub(((gap - i) as u32) * 20);
                     self.push(ts, n);
+                    self.stats.plc += 1;
                 }
             }
         }
         self.prev_seq = Some(header.sequence_number);
         match self.decoder.decode_float(payload, &mut self.pcm, false) {
             Ok(n) => self.push(header.timestamp, n), // n = samples POR CANAL
-            Err(e) => println!("AUD decode error: {e}"),
+            Err(e) => { self.stats.dec_err += 1; println!("AUD decode error: {e}"); }
         }
     }
     fn push(&mut self, ts: u32, n: usize) {
         let mut q = self.queue.lock().unwrap();
         q.push_back(AudioChunk { ts, samples: self.pcm[..n * 2].to_vec() });
-        while q.len() > 25 { q.pop_front(); } // tope ~500 ms
+        while q.len() > 25 { q.pop_front(); self.stats.trimmed += 1; } // tope ~500 ms
+    }
+    fn log_stats(&self) {
+        let qlen = self.queue.lock().unwrap().len();
+        let s = &self.stats;
+        println!("AUD_RX pkts={} lost={} plc={} late={} dec_err={} trimmed={} qlen={} wall_us={}",
+                 s.pkts, s.lost, s.plc, s.late, s.dec_err, s.trimmed, qlen, wall_us());
     }
 }
 
@@ -319,7 +334,8 @@ fn drain_ready_frames(saved_frames_map: &mut BTreeMap<u32, FrameInProgress>, dec
                 if is_complete {
                     println!("Attempting to decode frame with timestamp {} and {} packets", key, value.map.len());
                     match decode_btree_frame(&mut value.map, decoder) {
-                        Ok(rgb_frame_data) => {
+                        Ok(mut rgb_frame_data) => {
+                            rgb_frame_data.ts = key; // para el log AV de la GUI
                             if *waiting_for_idr {
                                 *idr_recovered_now = true; // permite enviar el ACK del IDR
                             }

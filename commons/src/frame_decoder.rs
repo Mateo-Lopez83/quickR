@@ -15,7 +15,7 @@ pub fn decode_btree_frame(map: &mut BTreeMap<u16, Bytes>, decoder: &mut Decoder)
             let (width, height) = yuv.dimensions();
             let mut rgb_raw = vec![0u8; yuv.rgb8_len()];
             yuv.write_rgb8(&mut rgb_raw);
-            Ok(RGBFrameData { data: rgb_raw, width, height })
+            Ok(RGBFrameData { data: rgb_raw, width, height, ts: 0 }) // ts lo llena drain_ready_frames
         }
         Ok(None) => Err("No frame data returned".into()),
         Err(e) => Err(format!("Failed to decode frame: {}", e).into()),

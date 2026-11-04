@@ -30,6 +30,7 @@ pub type AudioQueue = Arc<std::sync::Mutex<std::collections::VecDeque<AudioChunk
 pub struct AudioClock {
     pub ts: std::sync::atomic::AtomicU32,          // ts (del emisor) del sample que suena
     pub updated_ms: std::sync::atomic::AtomicU64,  // wall_us()/1000 de la última actualización
+    pub underruns: std::sync::atomic::AtomicU64,   // veces que la cola se vació durante la reproducción (solo logs)
 }
 
 
@@ -37,6 +38,7 @@ pub struct RGBFrameData{
     pub data: Vec<u8>,
     pub width: usize,
     pub height: usize,
+    pub ts: u32, // timestamp del emisor (header) del frame; solo para logs A/V
 }
 
 #[derive(Default)]
