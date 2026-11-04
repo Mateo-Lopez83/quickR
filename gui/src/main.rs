@@ -1,8 +1,9 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")] // hide console window on Windows in release
 #![expect(rustdoc::missing_crate_level_docs)] // it's an example
 mod frame_builder;
+mod audio_playback;
 use std::{env, net::SocketAddr, sync::{Arc, atomic::Ordering}, time::{Duration, Instant}};
-use commons::RGBFrameData;
+use commons::{AudioClock, AudioQueue, RGBFrameData};
 use eframe::egui;
 use egui::{ColorImage, Id, frame};
 use tokio::{net::UdpSocket, runtime::Runtime};
@@ -36,6 +37,8 @@ struct MyApp {
     fps_window_start: Instant,
     fps_frame_count: u32,
     current_fps: f32,
+    audio_queue: AudioQueue,
+    audio_clock: Arc<AudioClock>,
 
 }
 
@@ -64,6 +67,8 @@ impl MyApp {
             fps_window_start: timer.clone(),
             fps_frame_count:0,
             current_fps:0.0,
+            audio_queue: Arc::new(std::sync::Mutex::new(std::collections::VecDeque::new())),
+            audio_clock: Arc::new(AudioClock::default()),
             
 
         }
@@ -77,13 +82,15 @@ async fn udp_main_process(frame_tx: frame_mpsc::SyncSender<RGBFrameData>,
                           //runtime: Arc<Runtime>, 
                           conn: Arc<UdpSocket>, 
                           timer: Instant,
-                          stats: SharedStats) {
+                          stats: SharedStats,
+                          audio_queue: AudioQueue) {
     match devtype.as_str() {
         "send"=>{
             let _ = main_sending_process(conn, timer).await;
         }
         "receive"=>{
-            let _ = receiving_process(conn, timer, frame_tx, stats).await;
+            //let audioqueue = Arc::new(std::sync::Mutex::new(std::collections::VecDeque::<commons::AudioChunk>::new()));
+            let _ = receiving_process(conn, timer, frame_tx, stats, audio_queue).await;
         }
         othe =>{
             println!("No command associated with {}",othe);
@@ -173,11 +180,16 @@ impl eframe::App for MyApp {
         while let Ok(result) = self.status_rx.try_recv() {
             self.connecting = false;
             match result {
-                Ok(()) => {
-                    self.connected = true;
-                    let stats = Arc::clone(&self.stats);
-                    self.runtime.spawn(udp_main_process(self.frame_tx.clone(), self.devtype.clone(), self.conn.clone(), self.timer, stats ));
+               Ok(()) => {
+                self.connected = true;
+                let stats = Arc::clone(&self.stats);
+                if self.devtype == "receive" {
+                    audio_playback::start_audio_playback(self.audio_queue.clone(), self.audio_clock.clone());
                 }
+                self.runtime.spawn(udp_main_process(self.frame_tx.clone(), self.devtype.clone(),
+                    self.conn.clone(), self.timer, stats, self.audio_queue.clone()));
+            }
+
                 Err(message) => {
                     self.error = Some(message);
                 }

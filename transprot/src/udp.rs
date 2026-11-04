@@ -1,10 +1,9 @@
 use std::error::Error;
 use std::sync::Arc;
 use std::sync::atomic::{AtomicBool, Ordering};
-use std::sync::atomic::Ordering::SeqCst;
 use std::time::Instant;
 use std::collections::{BTreeMap};
-use commons::{FrameInProgress, RGBFrameData, SharedStats};
+use commons::{AudioChunk, AudioQueue, FrameInProgress, RGBFrameData, SharedStats};
 use commons::{MAXDATAGRAMSIZE, wall_us};
 use commons::frame_decoder::decode_btree_frame;
 use tokio::net::UdpSocket;
@@ -144,28 +143,86 @@ impl IdrRetry {
     }
 }
 
-async fn channel_consumer(mut rx: mpsc::Receiver<Bytes>, socket: Arc<UdpSocket>){
-    while let Some(payload) = rx.recv().await {
-        if let Err(e) = socket.send(&payload).await {
-            eprintln!("send failed: {e}");
-            }
-        //solo para logs: una línea al enviar el primer y el último fragmento de cada frame
-        //(fragment type: 1=Start, 3=End, 4=Unfragmented)
-        else if let Ok(h) = Header::unserialize(&mut payload.clone()) {
-            if matches!(h.fragment, FragmentType::Start | FragmentType::Unfragmented) {
-                println!("SEND_FIRST ts={} seq={} queue={} wall_us={}", h.timestamp, h.sequence_number, rx.len(), wall_us());
-            }
-            if matches!(h.fragment, FragmentType::End | FragmentType::Unfragmented) {
-                println!("SEND_LAST ts={} seq={} queue={} wall_us={}", h.timestamp, h.sequence_number, rx.len(), wall_us());
+
+struct AudioReceiver { decoder: opus::Decoder, prev_seq: Option<u16>, pcm: Vec<f32>, queue: AudioQueue }
+impl AudioReceiver {
+    fn new(queue: AudioQueue) -> Self {
+        Self { decoder: opus::Decoder::new(48_000, opus::Channels::Stereo).unwrap(),
+               prev_seq: None, pcm: vec![0.0; 5760 * 2], queue }
+    }
+    fn on_packet(&mut self, header: &Header, payload: &[u8]) {
+        if let Some(prev) = self.prev_seq {
+            let gap = (header.sequence_number.wrapping_sub(prev) as i16) - 1;
+            if gap < 0 { return; } // tarde o duplicado
+            // PLC de opus: slice vacío = paquete perdido (máx 3 para no inventar demasiado)
+            for i in 0..gap.min(3) {
+                if let Ok(n) = self.decoder.decode_float(&[], &mut self.pcm, false) {
+                    let ts = header.timestamp.wrapping_sub(((gap - i) as u32) * 20);
+                    self.push(ts, n);
+                }
             }
         }
-        //el primer byte de cada paquete es el fragment type.
-        //solo añade delays si es un frame fragmentado
-        // if matches!(payload.first(), Some(1 | 2 | 3)) {
-        //     tokio::time::sleep(Duration::from_micros(300)).await;
-        // }
+        self.prev_seq = Some(header.sequence_number);
+        match self.decoder.decode_float(payload, &mut self.pcm, false) {
+            Ok(n) => self.push(header.timestamp, n), // n = samples POR CANAL
+            Err(e) => println!("AUD decode error: {e}"),
+        }
+    }
+    fn push(&mut self, ts: u32, n: usize) {
+        let mut q = self.queue.lock().unwrap();
+        q.push_back(AudioChunk { ts, samples: self.pcm[..n * 2].to_vec() });
+        while q.len() > 25 { q.pop_front(); } // tope ~500 ms
+    }
+}
+
+
+
+async fn channel_consumer(mut video_rx: mpsc::Receiver<Bytes>, mut audio_rx: mpsc::Receiver<Bytes>, socket: Arc<UdpSocket>){
+    
+    loop {
+        let payload = tokio::select! {
+            biased; //biased fuerza a que se seleccione primero el audio si tmb hay video en la cola
+            Some(a) = audio_rx.recv() => a,
+            Some(v) = video_rx.recv() => v,
+            else => break,
+        };
+        if let Err(e) = socket.send(&payload).await { eprintln!("send failed: {e}"); }
+        else if let Ok(h) = Header::unserialize(&mut payload.clone()) {
+            if h.channel == ChannelType::Video { 
+                if matches!(h.fragment, FragmentType::Start | FragmentType::Unfragmented) {
+                    println!("SEND_FIRST ts={} seq={} queue={} wall_us={}", h.timestamp, h.sequence_number, video_rx.len(), wall_us());
+                }
+                if matches!(h.fragment, FragmentType::End | FragmentType::Unfragmented) {
+                    println!("SEND_LAST ts={} seq={} queue={} wall_us={}", h.timestamp, h.sequence_number, video_rx.len(), wall_us());
+                }
+             }
+        }
     }
     println!("channel closed, no more senders");
+    
+    // CAMBIOS REALIZADOS POST LOGICA DE AUDIO 
+
+    // while let Some(payload) = video_rx.recv().await {
+    //     if let Err(e) = socket.send(&payload).await {
+    //         eprintln!("send failed: {e}");
+    //         }
+    //     //solo para logs: una línea al enviar el primer y el último fragmento de cada frame
+    //     //(fragment type: 1=Start, 3=End, 4=Unfragmented)
+    //     else if let Ok(h) = Header::unserialize(&mut payload.clone()) {
+    //         if matches!(h.fragment, FragmentType::Start | FragmentType::Unfragmented) {
+    //             println!("SEND_FIRST ts={} seq={} queue={} wall_us={}", h.timestamp, h.sequence_number, video_rx.len(), wall_us());
+    //         }
+    //         if matches!(h.fragment, FragmentType::End | FragmentType::Unfragmented) {
+    //             println!("SEND_LAST ts={} seq={} queue={} wall_us={}", h.timestamp, h.sequence_number, video_rx.len(), wall_us());
+    //         }
+    //     }
+    //     //el primer byte de cada paquete es el fragment type.
+    //     //solo añade delays si es un frame fragmentado
+    //     // if matches!(payload.first(), Some(1 | 2 | 3)) {
+    //     //     tokio::time::sleep(Duration::from_micros(300)).await;
+    //     // }
+    // }
+    // println!("channel closed, no more senders");
     
 }
 
@@ -207,12 +264,18 @@ async fn idr_request_listener(conn: Arc<UdpSocket>, received_idr_request: Arc<At
 pub async fn main_sending_process(conn: Arc<UdpSocket>, timer: Instant) -> Result<(), Box<dyn Error>> {
     let received_idr_request = Arc::new(AtomicBool::new(false));
     let idr_in_flight = Arc::new(AtomicBool::new(false));
+
+    //MPSC de audio
+    let (audio_tx, audio_rx) = mpsc::channel::<Bytes>(50); // ~1 s de audio
+    capture::audio_capture::start_audio_capture(audio_tx, timer);
+    
+    //MPSC de frames de video    
     //TODO: revisar que tanto importa el tamaño de este buffer
     let (tx, rx) = mpsc::channel::<Bytes>(90);
     let socket = conn.clone();
     let _idr_listener_handle = tokio::spawn(idr_request_listener(conn.clone(), received_idr_request.clone(), idr_in_flight.clone()));
     let _= capture::start_capture(tx, timer, received_idr_request.clone(), idr_in_flight.clone());
-    let consumer_handle = tokio::spawn(channel_consumer(rx, socket));
+    let consumer_handle = tokio::spawn(channel_consumer(rx, audio_rx, socket));
 
     let _ = consumer_handle.await;
     
@@ -319,8 +382,9 @@ fn drain_ready_frames(saved_frames_map: &mut BTreeMap<u32, FrameInProgress>, dec
     Ok(should_request_idr)
 }
 
-pub async fn receiving_process(conn: Arc<UdpSocket>,timer: Instant, enc_tx: frame_mpsc::SyncSender<RGBFrameData>, stats: SharedStats,)->Result<(), Box<dyn Error>>{   
+pub async fn receiving_process(conn: Arc<UdpSocket>,timer: Instant, enc_tx: frame_mpsc::SyncSender<RGBFrameData>, stats: SharedStats,audio_queue: AudioQueue)->Result<(), Box<dyn Error>>{   
     let mut decoder = Decoder::new().unwrap(); 
+    let mut audio_receiver = AudioReceiver::new(audio_queue);
     let socket = conn.clone();
     let mut saved_frames_map: BTreeMap<u32, FrameInProgress> = BTreeMap::new();
     let mut first_packet:bool = true;
@@ -361,6 +425,11 @@ pub async fn receiving_process(conn: Arc<UdpSocket>,timer: Instant, enc_tx: fram
                     Ok(header)=>{
                         stats.packets_received.fetch_add(1, Ordering::Relaxed);
                         //*packets_received+=1;
+                        if header.channel == ChannelType::Audio {
+                            audio_receiver.on_packet(&header, &received); // `received` ya es solo el payload
+                            continue;
+                        }
+
                         actual_seqnum = header.sequence_number;
                         if first_packet{
                             prev_seqnum = actual_seqnum;

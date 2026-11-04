@@ -20,6 +20,19 @@ pub struct FrameInProgress{
     pub last_updated: u32
 }
 
+pub struct AudioChunk { 
+    pub ts: u32, 
+    pub samples: Vec<f32> 
+} // estéreo intercalado, 48 kHz
+
+pub type AudioQueue = Arc<std::sync::Mutex<std::collections::VecDeque<AudioChunk>>>;
+#[derive(Default)]
+pub struct AudioClock {
+    pub ts: std::sync::atomic::AtomicU32,          // ts (del emisor) del sample que suena
+    pub updated_ms: std::sync::atomic::AtomicU64,  // wall_us()/1000 de la última actualización
+}
+
+
 pub struct RGBFrameData{
     pub data: Vec<u8>,
     pub width: usize,

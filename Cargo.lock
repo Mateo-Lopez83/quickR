@@ -1536,6 +1536,7 @@ version = "0.1.0"
 dependencies = [
  "capture",
  "commons",
+ "cpal",
  "eframe",
  "egui",
  "openh264",
@@ -3658,6 +3659,7 @@ dependencies = [
  "capture",
  "commons",
  "openh264",
+ "opus",
  "rand 0.10.2",
  "stun",
  "tokio",
