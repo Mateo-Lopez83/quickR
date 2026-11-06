@@ -1,7 +1,7 @@
 
 
 pub mod encoder_p{
-    use openh264::encoder::{BitRate, Encoder, EncoderConfig, FrameRate, FrameType, IntraFramePeriod, RateControlMode};
+    use openh264::{encoder::{BitRate, Encoder, EncoderConfig, FrameRate, FrameType, IntraFramePeriod, RateControlMode},Timestamp};
     use openh264::formats::{BgraSliceU8, YUVBuffer};
     use tokio::sync::mpsc as udp_mpsc;
     use std::error::Error;
@@ -62,7 +62,9 @@ pub mod encoder_p{
                             println!("IDR_IGNORED wall_us={}", wall_us());
                         }
                     }
-                let encoded = encoder.encode(&yubytes).unwrap();
+                //let encoded = encoder.encode(&yubytes).unwrap();
+                let encoded = encoder.encode_at(&yubytes, Timestamp::from_millis(timer.elapsed().as_millis() as u64)).unwrap();
+                
                 let encoded_bytes = Bytes::from(encoded.to_vec());
                 let timestamp = timer.elapsed().as_millis() as u32;
                 println!("ENC ts={} type={:?} bytes={} frags={} seq_start={} enc_ms={:.2} wall_us={}",
