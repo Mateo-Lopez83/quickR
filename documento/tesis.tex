@@ -76,19 +76,36 @@
 
 \section{Introduction}
 \subsection{Context}
-Ever since the early 2000s, the internet has had a significant impact on global communication technologies. By the year 2000, 
+Ever since the turn of the millenium, the internet has had a significant impact on global communication technologies. By the year 2000, 
 51\% of global telecommunications networks were transmitted via the internet, a figure that rose to 97\% by 2007 (Hilbert \& López, 2011).
 This reliance on the internet has been steadily increasing over time, culminating in 2020 when quarantine and lockdown measures due to the pandemic 
 made the internet an essential part of daily life for most people worldwide. This drastic change in people's lives led to an all-time high demand for 
 applications that connect different individuals through digital means, such as Meta's Metaverse, the increased demand for virtual meeting software 
 (Zoom, Google Meet, Microsoft Teams), and mass communication services like Discord and Slack.
 
-It is in this context, where in-person activities take a secondary role compared to online activities, that the need arises to adapt these daily activities to a new digital environment; in this case, broadcasting and sharing multimedia content via streaming from one device for others to view on their devices in real time, regardless of their geographical location. This streaming became popular through formal/academic means such as Zoom and Microsoft Teams, while the more casual media streaming needs were dominated by platforms like Twitch and Discord (the latter, although primarily used as a social messaging platform, also offers VoIP and video streaming services, 
-These services are the main focus of this paper). However, the rapid expansion of video traffic on the internet has created a strong need to develop robust protocols that work efficiently under suboptimal connectivity conditions, as well as infrastructures that are sufficiently robust and scalable to meet the demand for these transmissions.
+It is in this context that the need to adapt these daily activities to a new digital environment arises; in this case, broadcasting and sharing multimedia 
+content via streaming from one device (host) for others to view on their devices in real time, regardless of their geographical location.
+Media streaming became popular through formal or academic means such as Zoom and Microsoft Teams, while the more casual media streaming needs were 
+dominated by platforms like Twitch and Discord (the latter, although primarily used as a social messaging platform, also offers VoIP and video 
+streaming services, which is the relevant service for this paper). The rapid expansion of video traffic on the internet, coupled with the staggering amount
+of users of these services, has created a strong need to develop robust protocols that work quickly and efficiently under any type of connectivity conditions, as well 
+as infrastructures that are sufficiently robust and scalable to meet the demand for these transmissions. 
 
-Es en este contexto, donde las actividades presenciales toman un rol secundario comparado a actividades en línea, surge la necesidad de adaptar estas actividades que previamente eran cotidianas a un nuevo ambiente digital; en este caso el transmitir contenido multimedia de forma de streaming desde un dispositivo para que otras personas lo vean desde sus dispositivos en tiempo real. Este  streaming se popularizó mediante medios formales/académicos como Zoom y Microsoft Teams, mientras que los medios informales de streaming fueron dominados por plataformas como Twitch y Discord (este último, aunque principalmente usado como plataforma social de mensajería, también ofrece servicios de VoIP y transmisión de video, que son los que se deben enfatizar para este proyecto). Sin embargo, la rápida expansión del tráfico de vídeo en internet ha generado una fuerte necesidad de desarrollar protocolos robustos que funcionen de forma eficiente en condiciones de conectividad subóptimas, así como de infraestructuras lo suficientemente sólidas y escalables para satisfacer la demanda de estas transmisiones. 
+This has led to an interest by developers to restrict in certain ways some functionalities and features offered by these streaming services in a way that is 
+actually profitable. Paywalls and subscription models are some of the most common ways companies and services implement a restriction that solves multiple problems at the
+same time: first of all, it limits the number of users that can use the service at any given moment, which reduces maintenance costs and bandwidth usage; second, it produces
+a source of income for the service provider, which can be used to improve the service and infrastructure; and third, it helps create a sense of exclusivity to the paying user. 
+Some services that include these kinds of subscriptions are Discord, Google Meet, and Zoom. In the case of Discord, the service offers a subscription called Nitro that, besides
+other benefits, allows the user to upgrade the stream quality from the free tier cap of 720p x 30fps to a maximum of 4k x 60fps, with a monthly cost of \$9.99 USD (as of November 2026). With Google Meet, 
+the free tier besides allowing a call for only up to 60 minutes, hard limits the stream quality to 720p x 30fps, while any of Google's subscriptions allows for a maximum of 1080p x 30fps. Zoom, on the other hand, 
+does not really restrict the stream quality, allowing content to be shared in the native resolution at 30fps for no extra cost, but it does recommend downscaling to 1080p to save on bandwith. It also limits the free 
+tier to 40 minutes per call, restricting the user not by the quality of the stream, but by the time they can use it.
 
-Estas necesidades, acompañadas de la cantidad masiva de usuarios a nivel global que usan estos servicios, ha llevado a una necesidad por parte de los proveedores de estos servicios a restringir algunas funcionalidades y características del servicio detrás de Paywalls, como por ejemplo Discord, que no permite hacer una transmisión de más de 720p x 30fps sin pagar la subscripción mensual de Nitro (\%9.99 al mes para Agosto de 2026). Sin embargo, esto genera un contraste interesante respecto de la relación entre oferta y demanda de estos servicios de streaming. La demanda de estos servicios de streaming, exacerbada por la pandemia, es suplida casi exclusivamente por proveedores de servicios con suscripciones y tarifas limitadas, lo cual resulta un tanto desconcertante. Ante este panorama de uso cotidiano e intensivo a nivel global, sería razonable contar con una oferta lo suficientemente amplia para democratizar el acceso libre a estos servicios, sin depender de un único proveedor. Esto implica que, entre más oferta haya, más posibilidades tiene el usuario de elegir por su cuenta y no depender de un único modelo.
+Given the context of these service models with their constraints, it becomes apparent that users, even though there are multiple options for meeting their streaming needs, are still limited by the restrictions imposed
+by these companies. Open source alternatives to these services, although existing, are not as widespread and used as the commercial ones, which reduces the appeal to the average user. 
+
+\subsection{Motivation}
+
 
 
 

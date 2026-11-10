@@ -1,7 +1,9 @@
 # Fdb version 4
-["pdflatex"] 1789994973.35397 "c:/Users/57304/Documents/Mateo Lopez/tesis/quikr/documento/tesis.tex" "tesis.pdf" "tesis" 1789994975.40096 0
+["pdflatex"] 1794285980.78647 "c:/Users/57304/Documents/Mateo Lopez/tesis/quikr/documento/tesis.tex" "tesis.pdf" "tesis" 1794285981.90489 0
   "C:/Users/57304/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map" 1789249995.47093 80909 eab91d9745dd2edfd62a31d53cd5fe15 ""
+  "C:/Users/57304/AppData/Local/MiKTeX/fonts/pk/ljfour/jknappen/ec/dpi600/tcrm1200.pk" 1794285255.61413 14064 27d89571588b703e6c51a1f701028c23 ""
   "C:/Users/57304/AppData/Local/MiKTeX/miktex/data/le/pdftex/pdflatex.fmt" 1788276204.40919 13373064 ec2b69524576835f1a891649806f75d2 ""
+  "C:/Users/57304/AppData/Local/Programs/MiKTeX/fonts/tfm/jknappen/ec/tcrm1200.tfm" 993062508 1444 95ffe0f19b974d50849790c8225c7ef7 ""
   "C:/Users/57304/AppData/Local/Programs/MiKTeX/fonts/tfm/public/cm/cmbx12.tfm" 1136765053 1324 c910af8c371558dc20f2d7822f66fe64 ""
   "C:/Users/57304/AppData/Local/Programs/MiKTeX/fonts/tfm/public/cm/cmmi12.tfm" 1136765053 1524 4414a8315f39513458b80dfc63bff03a ""
   "C:/Users/57304/AppData/Local/Programs/MiKTeX/fonts/tfm/public/cm/cmmi6.tfm" 1136765053 1512 f21f83efb36853c0b70002322c1ab3ad ""
@@ -29,9 +31,9 @@
   "C:/Users/57304/AppData/Local/Programs/MiKTeX/tex/latex/l3kernel/l3backend-pdftex.def" 1786970739 31615 2ca990bd5ca4d9a48b0fffd073e6d6fe ""
   "C:/Users/57304/AppData/Local/Programs/MiKTeX/tex/latex/tree-dvips/lingmacros.sty" 777848923 9506 61acecab9b335babd29e060f0011610b ""
   "C:/Users/57304/AppData/Local/Programs/MiKTeX/tex/latex/tree-dvips/tree-dvips.sty" 800661747 8552 b7db3c0732f761d31db398a8f3dca316 ""
-  "c:/Users/57304/Documents/Mateo Lopez/tesis/quikr/documento/tesis.tex" 1789994953.72472 5311 be1d2d1843e5e1ebb23d64a9ebacaedd ""
-  "tesis.aux" 1789994975.05046 232 1b2cc312e70b8fb64a73fc7d7a5b789e "pdflatex"
-  "tesis.toc" 1789994975.06632 118 61d1fdca429cd813593e04783a6fe07b "pdflatex"
+  "c:/Users/57304/Documents/Mateo Lopez/tesis/quikr/documento/tesis.tex" 1794285979.55173 5115 9d4189b7126b04854cf78bf7ce59abba ""
+  "tesis.aux" 1794285981.69775 335 987529a1d972a5f0cee045d2ad2382b4 "pdflatex"
+  "tesis.toc" 1794285981.70083 180 3c36b41f561e6d95811557c5db883716 "pdflatex"
   "uniandeslogo.png" 1789528925.76044 22106 6b4a71c91d8d99566edaafef6f1cc7da ""
   (generated)
   "tesis.aux"

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (MiKTeX 26.5) (preloaded format=pdflatex 2026.9.1)  21 SEP 2026 07:49
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (MiKTeX 26.5) (preloaded format=pdflatex 2026.9.1)  9 NOV 2026 23:46
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -133,16 +133,16 @@ L3 programming layer <2026-08-10>
  ) 
 Here is how much of TeX's memory you used:
  1471 strings out of 467441
- 24512 string characters out of 5407592
+ 24518 string characters out of 5407592
  443799 words of memory out of 5000000
- 30805 multiletter control sequences out of 15000+600000
- 632581 words of font info for 56 fonts, out of 8000000 for 9000
+ 30804 multiletter control sequences out of 15000+600000
+ 632918 words of font info for 57 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 57i,6n,65p,1231b,303s stack positions out of 10000i,1000n,20000p,200000b,200000s
-<C:/Users/57304/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Users/57304/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr12.pfb>
-Output written on tesis.pdf (4 pages, 65663 bytes).
+ 57i,6n,65p,309b,303s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ <C:\Users\57304\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm1200.pk><C:/Users/57304/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Users/57304/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr12.pfb>
+Output written on tesis.pdf (4 pages, 67031 bytes).
 PDF statistics:
- 28 PDF objects out of 1000 (max. 8388607)
+ 33 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  6 words of extra memory for PDF output out of 10000 (max. 10000000)
 
