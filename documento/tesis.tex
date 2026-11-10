@@ -2,6 +2,9 @@
 \usepackage{lingmacros}
 \usepackage{tree-dvips}
 \usepackage{graphicx}
+\usepackage[backend=biber, style=ieee]{biblatex}
+\addbibresource{references.bib}
+
 
 \begin{document}
 
@@ -102,11 +105,17 @@ does not really restrict the stream quality, allowing content to be shared in th
 tier to 40 minutes per call, restricting the user not by the quality of the stream, but by the time they can use it.
 
 Given the context of these service models with their constraints, it becomes apparent that users, even though there are multiple options for meeting their streaming needs, are still limited by the restrictions imposed
-by these companies. Open source alternatives to these services, although existing, are not as widespread and used as the commercial ones, which reduces the appeal to the average user. 
+by these companies. Open source alternatives to these services, although existing, are not as widespread and used as the commercial ones, which reduces the appeal to the average user. This situation gives developers 
+both an intrinsic and extrinsic motivation to create a new service that improves over existing alternatives while also being open source and free of use. 
 
 \subsection{Motivation}
+The protocol is inspired by RTP \cite{rfc3550}. as
 
 
 
 
+
+
+
+\printbibliography
 \end{document}
