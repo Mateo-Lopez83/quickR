@@ -19,50 +19,75 @@
 
 \refsection{0}
   \datalist[entry]{none/global//global/global/global}
-    \entry{rfc3550}{misc}{}{}
-      \name{author}{4}{}{%
-        {{hash=d1a88d51d716baffb544899f6833bbcf}{%
-           family={Schulzrinne},
-           familyi={S\bibinitperiod},
-           given={H.},
-           giveni={H\bibinitperiod}}}%
-        {{hash=5db3cb2b3e4eedc12b966e5f29af1b3e}{%
-           family={Casner},
-           familyi={C\bibinitperiod},
-           given={S.},
-           giveni={S\bibinitperiod}}}%
-        {{hash=1a51796bc1fecc9fbfbdbdf671e0700a}{%
-           family={Frederick},
-           familyi={F\bibinitperiod},
-           given={R.},
-           giveni={R\bibinitperiod}}}%
-        {{hash=a25d21ec614ebedb82800ec385049ac1}{%
-           family={Jacobson},
-           familyi={J\bibinitperiod},
-           given={V.},
-           giveni={V\bibinitperiod}}}%
+    \entry{open_source_benefits}{online}{}{}
+      \name{author}{2}{}{%
+        {{hash=fc65a6ab2f14f6c3543f8592edbbb516}{%
+           family={Madge},
+           familyi={M\bibinitperiod},
+           given={J.},
+           giveni={J\bibinitperiod}}}%
+        {{hash=5f39963be08d6a3f0d2ed5a2204af768}{%
+           family={Bennett},
+           familyi={B\bibinitperiod},
+           given={A.},
+           giveni={A\bibinitperiod}}}%
       }
-      \strng{namehash}{1a754bcf5d9cd90173a337a301a95971}
-      \strng{fullhash}{1a3c37cb2bc85d38c2e59fab09ff0b42}
-      \strng{fullhashraw}{1a3c37cb2bc85d38c2e59fab09ff0b42}
-      \strng{bibnamehash}{1a3c37cb2bc85d38c2e59fab09ff0b42}
-      \strng{authorbibnamehash}{1a3c37cb2bc85d38c2e59fab09ff0b42}
-      \strng{authornamehash}{1a754bcf5d9cd90173a337a301a95971}
-      \strng{authorfullhash}{1a3c37cb2bc85d38c2e59fab09ff0b42}
-      \strng{authorfullhashraw}{1a3c37cb2bc85d38c2e59fab09ff0b42}
+      \list{organization}{1}{%
+        {The Alan Turing Institute Blog}%
+      }
+      \strng{namehash}{3c5b5450fda5bdcae73a3b69e7ce6ff9}
+      \strng{fullhash}{3c5b5450fda5bdcae73a3b69e7ce6ff9}
+      \strng{fullhashraw}{3c5b5450fda5bdcae73a3b69e7ce6ff9}
+      \strng{bibnamehash}{3c5b5450fda5bdcae73a3b69e7ce6ff9}
+      \strng{authorbibnamehash}{3c5b5450fda5bdcae73a3b69e7ce6ff9}
+      \strng{authornamehash}{3c5b5450fda5bdcae73a3b69e7ce6ff9}
+      \strng{authorfullhash}{3c5b5450fda5bdcae73a3b69e7ce6ff9}
+      \strng{authorfullhashraw}{3c5b5450fda5bdcae73a3b69e7ce6ff9}
       \field{sortinit}{1}
       \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{howpublished}{RFC 3550}
-      \field{title}{{RTP}: A Transport Protocol for Real-Time Applications}
-      \field{year}{2003}
+      \field{title}{Open-source software: why it matters and how to get involved}
+      \field{year}{2024}
       \verb{urlraw}
-      \verb https://www.rfc-editor.org/rfc/rfc3550
+      \verb https://www.turing.ac.uk/blog/open-source-software-why-it-matters-and-how-get-involved
       \endverb
       \verb{url}
-      \verb https://www.rfc-editor.org/rfc/rfc3550
+      \verb https://www.turing.ac.uk/blog/open-source-software-why-it-matters-and-how-get-involved
       \endverb
+    \endentry
+    \entry{hausberg2020open}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=e6076ccb1aa332bc47084bc9377c8ca6}{%
+           family={Hausberg},
+           familyi={H\bibinitperiod},
+           given={J.\bibnamedelimi Piet},
+           giveni={J\bibinitperiod\bibinitdelim P\bibinitperiod}}}%
+        {{hash=f842ce9af6405fb013a41292b797655e}{%
+           family={Spaeth},
+           familyi={S\bibinitperiod},
+           given={Sebastian},
+           giveni={S\bibinitperiod}}}%
+      }
+      \strng{namehash}{ad9c80b7375cc55f86016e79fd715d00}
+      \strng{fullhash}{ad9c80b7375cc55f86016e79fd715d00}
+      \strng{fullhashraw}{ad9c80b7375cc55f86016e79fd715d00}
+      \strng{bibnamehash}{ad9c80b7375cc55f86016e79fd715d00}
+      \strng{authorbibnamehash}{ad9c80b7375cc55f86016e79fd715d00}
+      \strng{authornamehash}{ad9c80b7375cc55f86016e79fd715d00}
+      \strng{authorfullhash}{ad9c80b7375cc55f86016e79fd715d00}
+      \strng{authorfullhashraw}{ad9c80b7375cc55f86016e79fd715d00}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{R \& D management}
+      \field{number}{1}
+      \field{title}{Why makers make what they make: motivations to contribute to open source hardware development}
+      \field{volume}{50}
+      \field{year}{2020}
+      \field{pages}{75\bibrangedash 77}
+      \range{pages}{3}
     \endentry
   \enddatalist
 \endrefsection
