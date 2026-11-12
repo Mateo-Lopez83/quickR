@@ -19,6 +19,52 @@
 
 \refsection{0}
   \datalist[entry]{none/global//global/global/global}
+    \entry{tech_capacity}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=d6d70547b5fd0405774d5bedbf82bcd8}{%
+           family={Hilbert},
+           familyi={H\bibinitperiod},
+           given={Martin},
+           giveni={M\bibinitperiod}}}%
+        {{hash=27e7c9db1a4437456f07c10c0a43b490}{%
+           family={López},
+           familyi={L\bibinitperiod},
+           given={Priscila},
+           giveni={P\bibinitperiod}}}%
+      }
+      \strng{namehash}{cefa2ffe0fe9ee61a7dff47409c5fa68}
+      \strng{fullhash}{cefa2ffe0fe9ee61a7dff47409c5fa68}
+      \strng{fullhashraw}{cefa2ffe0fe9ee61a7dff47409c5fa68}
+      \strng{bibnamehash}{cefa2ffe0fe9ee61a7dff47409c5fa68}
+      \strng{authorbibnamehash}{cefa2ffe0fe9ee61a7dff47409c5fa68}
+      \strng{authornamehash}{cefa2ffe0fe9ee61a7dff47409c5fa68}
+      \strng{authorfullhash}{cefa2ffe0fe9ee61a7dff47409c5fa68}
+      \strng{authorfullhashraw}{cefa2ffe0fe9ee61a7dff47409c5fa68}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{An inventory of the world's technological capacity from 1986 to 2007 reveals the evolution from analog to digital technologies. We estimated the world’s technological capacity to store, communicate, and compute information, tracking 60 analog and digital technologies during the period from 1986 to 2007. In 2007, humankind was able to store 2.9 × 1020 optimally compressed bytes, communicate almost 2 × 1021 bytes, and carry out 6.4 × 1018 instructions per second on general-purpose computers. General-purpose computing capacity grew at an annual rate of 58\%. The world’s capacity for bidirectional telecommunication grew at 28\% per year, closely followed by the increase in globally stored information (23\%). Humankind’s capacity for unidirectional information diffusion through broadcasting channels has experienced comparatively modest annual growth (6\%). Telecommunication has been dominated by digital technologies since 1990 (99.9\% in digital format in 2007), and the majority of our technological memory has been in digital format since the early 2000s (94\% digital in 2007).}
+      \field{journaltitle}{Science}
+      \field{number}{6025}
+      \field{title}{The World's Technological Capacity to Store, Communicate, and Compute Information}
+      \field{volume}{332}
+      \field{year}{2011}
+      \field{pages}{60\bibrangedash 65}
+      \range{pages}{6}
+      \verb{doi}
+      \verb 10.1126/science.1200970
+      \endverb
+      \verb{eprint}
+      \verb https://www.science.org/doi/pdf/10.1126/science.1200970
+      \endverb
+      \verb{urlraw}
+      \verb https://www.science.org/doi/abs/10.1126/science.1200970
+      \endverb
+      \verb{url}
+      \verb https://www.science.org/doi/abs/10.1126/science.1200970
+      \endverb
+    \endentry
     \entry{open_source_benefits}{online}{}{}
       \name{author}{2}{}{%
         {{hash=fc65a6ab2f14f6c3543f8592edbbb516}{%
@@ -43,8 +89,8 @@
       \strng{authornamehash}{3c5b5450fda5bdcae73a3b69e7ce6ff9}
       \strng{authorfullhash}{3c5b5450fda5bdcae73a3b69e7ce6ff9}
       \strng{authorfullhashraw}{3c5b5450fda5bdcae73a3b69e7ce6ff9}
-      \field{sortinit}{1}
-      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{title}{Open-source software: why it matters and how to get involved}
@@ -77,8 +123,8 @@
       \strng{authornamehash}{ad9c80b7375cc55f86016e79fd715d00}
       \strng{authorfullhash}{ad9c80b7375cc55f86016e79fd715d00}
       \strng{authorfullhashraw}{ad9c80b7375cc55f86016e79fd715d00}
-      \field{sortinit}{2}
-      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{R \& D management}

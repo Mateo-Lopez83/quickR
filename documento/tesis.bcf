@@ -2374,8 +2374,9 @@
     <bcf:datasource type="file" datatype="bibtex" glob="false">references.bib</bcf:datasource>
   </bcf:bibdata>
   <bcf:section number="0">
-    <bcf:citekey order="1" intorder="1">open_source_benefits</bcf:citekey>
-    <bcf:citekey order="2" intorder="1">hausberg2020open</bcf:citekey>
+    <bcf:citekey order="1" intorder="1">tech_capacity</bcf:citekey>
+    <bcf:citekey order="2" intorder="1">open_source_benefits</bcf:citekey>
+    <bcf:citekey order="3" intorder="1">hausberg2020open</bcf:citekey>
   </bcf:section>
   <!-- SORTING TEMPLATES -->
   <bcf:sortingtemplate name="none">

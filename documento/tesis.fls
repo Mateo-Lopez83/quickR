@@ -139,8 +139,8 @@ INPUT C:\Users\57304\AppData\Local\Programs\MiKTeX\fonts\tfm\public\cm\cmsy8.tfm
 INPUT C:\Users\57304\AppData\Local\Programs\MiKTeX\fonts\tfm\public\cm\cmsy6.tfm
 OUTPUT tesis.toc
 INPUT C:\Users\57304\AppData\Local\Programs\MiKTeX\fonts\tfm\jknappen\ec\tcrm1200.tfm
-INPUT C:\Users\57304\AppData\Local\Programs\MiKTeX\fonts\tfm\public\cm\cmtt12.tfm
 INPUT C:\Users\57304\AppData\Local\Programs\MiKTeX\fonts\tfm\public\cm\cmti12.tfm
+INPUT C:\Users\57304\AppData\Local\Programs\MiKTeX\fonts\tfm\public\cm\cmtt12.tfm
 INPUT tesis.aux
 INPUT tesis.run.xml
 OUTPUT tesis.run.xml
