@@ -1,12 +1,12 @@
 # Fdb version 4
-["biber tesis"] 1794453576.7037 "tesis.bcf" "tesis.bbl" "tesis" 1794453587.47831 0
-  "references.bib" 1794453547.40476 6090 aab82cb9ae971f294e829eac9e990527 ""
-  "tesis.bcf" 1794453587.15938 108016 0deaa770696fdd1dbeb0770a9fc00632 "pdflatex"
+["biber tesis"] 1794594113.41049 "tesis.bcf" "tesis.bbl" "tesis" 1794594816.99443 0
+  "references.bib" 1794509653.25623 7067 9a2fd90b8d46a6a31921a7808de9c98d ""
+  "tesis.bcf" 1794594816.66527 108159 bcbbf552b441683a553f1f0991433609 "pdflatex"
   (generated)
   "tesis.bbl"
   "tesis.blg"
   (rewritten before read)
-["pdflatex"] 1794453585.36701 "c:/Users/57304/Documents/Mateo Lopez/tesis/quikr/documento/tesis.tex" "tesis.pdf" "tesis" 1794453587.48107 0
+["pdflatex"] 1794594814.70885 "c:/Users/57304/Documents/Mateo Lopez/tesis/quikr/documento/tesis.tex" "tesis.pdf" "tesis" 1794594816.99733 0
   "C:/Users/57304/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map" 1794333401.6053 80909 eab91d9745dd2edfd62a31d53cd5fe15 ""
   "C:/Users/57304/AppData/Local/MiKTeX/fonts/pk/ljfour/jknappen/ec/dpi600/tcrm1200.pk" 1794285255.61413 14064 27d89571588b703e6c51a1f701028c23 ""
   "C:/Users/57304/AppData/Local/MiKTeX/miktex/data/le/pdftex/pdflatex.fmt" 1788276204.40919 13373064 ec2b69524576835f1a891649806f75d2 ""
@@ -25,7 +25,9 @@
   "C:/Users/57304/AppData/Local/Programs/MiKTeX/fonts/tfm/public/cm/cmti12.tfm" 1136765053 1484 ed72f8f5cf654cda15ecc8e32bfcbee5 ""
   "C:/Users/57304/AppData/Local/Programs/MiKTeX/fonts/tfm/public/cm/cmtt12.tfm" 1136765053 772 9a936b7f5e2ff0557fce0f62822f0bbf ""
   "C:/Users/57304/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx12.pfb" 1247596666 32080 340ef9bf63678554ee606688e7b5339d ""
+  "C:/Users/57304/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi12.pfb" 1247596667 36741 fa121aac0049305630cf160b86157ee4 ""
   "C:/Users/57304/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr12.pfb" 1247596667 32722 d7379af29a190c3f453aba36302ff5a9 ""
+  "C:/Users/57304/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb" 1247596667 32569 5e5ddc8df908dea60932f3c484a54c0d ""
   "C:/Users/57304/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti12.pfb" 1247596667 36118 fad905eba93cff5bce1e185fe980a177 ""
   "C:/Users/57304/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmtt12.pfb" 1247596666 24252 1e4e051947e12dfb50fee0b7f4e26e3a ""
   "C:/Users/57304/AppData/Local/Programs/MiKTeX/tex/context/base/mkii/supp-pdf.mkii" 1580390158 71627 94eb9990bed73c364d7f53f960cc8c5b ""
@@ -68,11 +70,11 @@
   "C:/Users/57304/AppData/Local/Programs/MiKTeX/tex/latex/tree-dvips/lingmacros.sty" 777848923 9506 61acecab9b335babd29e060f0011610b ""
   "C:/Users/57304/AppData/Local/Programs/MiKTeX/tex/latex/tree-dvips/tree-dvips.sty" 800661747 8552 b7db3c0732f761d31db398a8f3dca316 ""
   "C:/Users/57304/AppData/Local/Programs/MiKTeX/tex/latex/url/url.sty" 1388490452 12796 8edb7d69a20b857904dd0ea757c14ec9 ""
-  "c:/Users/57304/Documents/Mateo Lopez/tesis/quikr/documento/tesis.tex" 1794453573.04274 10208 2a3554cd8a3e69e26e7cf4b5ddca1ef2 ""
-  "tesis.aux" 1794453587.1533 2087 ca36bf24529070b7cf0082a56c3922b8 "pdflatex"
-  "tesis.bbl" 1794453580.872 6615 9c5ecdaffc2e6737f59204f85f4895b3 "biber tesis"
-  "tesis.run.xml" 1794453587.16238 2409 18509dead3c041eb141557e28c5a8758 "pdflatex"
-  "tesis.toc" 1794453587.16338 893 cdca71631d3835d050ea6ffde8c2c886 "pdflatex"
+  "c:/Users/57304/Documents/Mateo Lopez/tesis/quikr/documento/tesis.tex" 1794594810.8878 17892 9fb7974df94c8dcacb1b59c14a3f90a9 ""
+  "tesis.aux" 1794594816.66527 2403 813386fe4fd83435b21d94889b659eb7 "pdflatex"
+  "tesis.bbl" 1794594118.16226 8840 c0f6512c6ad43ff651849348c743d642 "biber tesis"
+  "tesis.run.xml" 1794594816.66527 2409 18509dead3c041eb141557e28c5a8758 "pdflatex"
+  "tesis.toc" 1794594816.66527 893 43c1cf402e241899d1a23ffbbb1bce92 "pdflatex"
   "uniandeslogo.png" 1789528925.76044 22106 6b4a71c91d8d99566edaafef6f1cc7da ""
   (generated)
   "tesis.aux"

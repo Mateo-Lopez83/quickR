@@ -145,6 +145,59 @@ The secondary or auxiliary objectives are the following:
 For the development of this project, the methodology will start with a review of the state-of-the-art streaming tools and protocols, exploring the solutions that are already on the market. After that, the next step will be the design and eventual implementation of the
 application, to be followed by a series of tests and performance comparisons agains the existing alternatives using packet analysis tools such as Wireshark.  
 \subsection{State of the Art}
+\begin{itemize}
+    \item \textbf{Parsec: } Parsec is a desktop application whose main goal is to allow for a seamless experience using remote desktop connections, with online gaming as the primary focus, but allowing for connections to cloud devices and personal computers as well.
+        According to the information provided by the official Parsec Team (including 2 different blog posts and a talk at Code Driven NYC), this application's streaming logic was built based these
+        priorities in the following order of importance: \textbf{latency, then frame rate, then video quality}\cite{parsec_streaming}. To achieve the goal set on reducing latency to the absolute minimum, many standard technologies were
+        tested, starting with both UDP and TCP protocols. The developers took both protocols and decided which attributes were desirable to bring over to a new, proprietary protocol that met all of the needs necessary for Parsec to provide a seamless video game streaming experience:
+        
+        \textbf{TCP:} 
+            \begin{enumerate}
+                \item Reliability and reordering.
+                \item Stream Semantics
+                \item Connection state and handshake via DTLS
+                \item ACK to confirm packet reception 
+            \end{enumerate}
+        
+        \textbf{UDP:} 
+            \begin{enumerate}
+                \item Stateless hole-punching
+            \end{enumerate}
+        Due to the necessity of bringing some (but not all) characteristics of each protocol, the Parsec team developed their own protocol called BUD (Better User Datagrams) for their service. This protocol works by diverging from the standard
+        TCP behavior of working in any network condition
+        by throttling the performance to give priority to the correct delivery of the packets. Instead, it assumes the user has more bandwidth than a tested minimum (not a concrete value, but according to the Code Driven NYC talk, it is $\sim30$ Mbps with less than 50 ping).
+        By using this assumption, the algorithm does not have to concern itself with cases of poor connection but rather works with known stable connections. 
+        
+        The most important characteristics regarding the BUD protocol are the following:
+        \begin{itemize}
+            \item NAT traversal by hole punching: To bypass firewalls blocking incoming requests by the incoming device, the protocol uses a staple functionality from UDP to establish direct Peer to Peer connection.
+            \item Congestion control not done via internal packet sending limits, but instead via the encoder. Using H.264 as the main video encoder, Parsec controls its bitrate frequently depending on the network congestion and RTT (Round-Trip Time). 
+            By varying the bitrate, the algorithm can reduce load on the bandwidth without halting packet sending, so that the client can still receive data and show live updates on the screen without any added latency. 
+            \item Fast packet retransmission: By having ACK packets and a buffer that loads packets and updates them at runtime (which is another benefit of never having to reallocate memory), the algorithm can notice quickly if a packet $N$ hasn't received an ACK while packet $N+1$ already received
+            its own ACK. When this happens, it triggers a quick retransmission of packet $N$ to avoid any delays. There is also a slow retransmition as a failsafe.
+            \item A very concise and small packet header with Sequence Number, Data Type and Payload.
+        \end{itemize}
+        With these characteristics, BUD is able to perform with an exceptional quality in various environments. During live showcases, Parsec was able to perform at near 30 fps with packet loss between 5 and 10\%. Nonetheless, the documents state the software still falls behind on
+        symmetric NATs (they restrict the hole punching method needed for the first connection establishment), degraded networks are still not contemplated for the algorithm's performance, and creating a protocol with custom tools brings a great deal of technical debt and issues that have to be
+        solved in-house.  
+    \item \textbf{Discord: } 
+    Although the Discord Application offers a myriad of services, mainly focused on instant messaging and VoIP communications, it also includes a feature called \textit{Go Live}, which is the company's feature for screen sharing inside of the app's voice channel. 
+    According to the blog detailing this service's inner workings, \textit{Go Live} works with a pipeline that relies on three different but interconnected components: \textbf{Screen capture, data encoding, and transport.} \cite{discord_streaming}
+    \begin{enumerate}
+        \item \textbf{Capture:} For capture to go as smooth as possible, the algorithm checks available capture methods the device's operating system provides, and picks the best one available at the moment. If that capture method fails, the system falls back 
+        into the next best alternative to keep the stream going without any issues. Some of the mentioned methods include the OS's own APIs, or injecting a DLL into the game to read what the screen renders and sending it directly to the pipeline. For the audio component, 
+        the app captures the audio of the window that was selected for sharing, but no audio is sent if the entire device's screen gets selected. No definite reasoning is provided for this, but a reasonable explanation would be that, since the main goal of screen sharing is to be used
+        inside of VoIP calls, sharing the entire device's audio would probably mirror the other participants' voice audio, worsening the experience for the clients that are watching the screen stream. 
+        \item \textbf{Encoding:} Since a single 1080p frame can be as large as 6MB, an encoder is completely necessary to avoid bottlenecking the network socket and to allow frames to be sent at a faster rate. Every time a \textit{Go Live} session is iniciated, all clients negotiate a
+        codec that can be used to decode the packets by every participant of the call. The algorithm prioritizes hardware encoders (from GPUs) over software encoders whenever possible to attempt to reduce CPU load. The more commonly available codecs are VP8 and H.264, with HEVC and
+        AV1 being available on some devices. When the network quality degrades, the algorithm drops frames to relieve congestion until it improves.  
+        \item  \textbf{Data Transmission: } Unlike Parsec's system, \textit{Go Live} is not Peer-to-Peer. Instead, it relies on Discord's own servers and CDNs to get each participant's IP address and relaying the data packets to the correct recipients at all points of the process. This is primarily done
+        due to privacy purposes, as users do not get access to others' private information even if they are on the same call. This transport is built over WebRTC with video and audio packets being sent separately. The sending rate is dynamically capped by the user with the slowest network, so everyone gets 
+        the same experience.
+    \end{enumerate}
+    When the receiver gets the video and audio packets, it is them who synchronize both of these streams on the client device before showing it to the user. A known issue based on the technical decisions taken for this approach is that the VoIP audio and the stream are not synchronized, as they are managed by 
+    different systems. This puts pressure on the developers to reduce stream latency as much as possible to avoid degrading the users' experience with the service.
+\end{itemize}
 
 \subsection{QuickR}
 

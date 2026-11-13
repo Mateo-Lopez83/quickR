@@ -135,6 +135,57 @@
       \field{pages}{75\bibrangedash 77}
       \range{pages}{3}
     \endentry
+    \entry{parsec_streaming}{online}{}{}
+      \list{organization}{1}{%
+        {Parsec Team}%
+      }
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{labeltitlesource}{title}
+      \field{title}{A Networking Protocol Built For The Lowest Latency Interactive Game Streaming}
+      \field{urlday}{12}
+      \field{urlmonth}{11}
+      \field{urlyear}{2026}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://parsec.app/blog/a-networking-protocol-built-for-the-lowest-latency-interactive-game-streaming-1fd5a03a6007
+      \endverb
+      \verb{url}
+      \verb https://parsec.app/blog/a-networking-protocol-built-for-the-lowest-latency-interactive-game-streaming-1fd5a03a6007
+      \endverb
+    \endentry
+    \entry{discord_streaming}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=48b3b5e8380986588b7cc22033031fba}{%
+           family={J.},
+           familyi={J\bibinitperiod},
+           given={Stratton},
+           giveni={S\bibinitperiod}}}%
+      }
+      \list{organization}{1}{%
+        {Discord Engineering \& Developers Blog}%
+      }
+      \strng{namehash}{48b3b5e8380986588b7cc22033031fba}
+      \strng{fullhash}{48b3b5e8380986588b7cc22033031fba}
+      \strng{fullhashraw}{48b3b5e8380986588b7cc22033031fba}
+      \strng{bibnamehash}{48b3b5e8380986588b7cc22033031fba}
+      \strng{authorbibnamehash}{48b3b5e8380986588b7cc22033031fba}
+      \strng{authornamehash}{48b3b5e8380986588b7cc22033031fba}
+      \strng{authorfullhash}{48b3b5e8380986588b7cc22033031fba}
+      \strng{authorfullhashraw}{48b3b5e8380986588b7cc22033031fba}
+      \field{sortinit}{5}
+      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{How It All Goes Live: An Overview of Discord's Streaming Technology}
+      \field{year}{2024}
+      \verb{urlraw}
+      \verb https://discord.com/blog/how-it-all-goes-live-an-overview-of-discords-streaming-technology
+      \endverb
+      \verb{url}
+      \verb https://discord.com/blog/how-it-all-goes-live-an-overview-of-discords-streaming-technology
+      \endverb
+    \endentry
   \enddatalist
 \endrefsection
 \endinput
