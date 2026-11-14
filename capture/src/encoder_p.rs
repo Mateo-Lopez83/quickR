@@ -37,6 +37,8 @@ pub mod encoder_p{
             .bitrate(BitRate::from_bps(1_500_000))  //TODO: optimizar el valor de este atributo
             .max_frame_rate(FrameRate::from_hz(30.0))
             .rate_control_mode(RateControlMode::Bitrate)
+            .complexity(openh264::encoder::Complexity::Low)
+            .usage_type(openh264::encoder::UsageType::ScreenContentRealTime)
             .intra_frame_period(IntraFramePeriod::from_num_frames(60)); // hard cap de cada cuanto mandar un IDR
                 
         let mut encoder = Encoder::with_api_config(openh264::OpenH264API::from_source(), encoder_config).unwrap();
@@ -63,10 +65,11 @@ pub mod encoder_p{
                         }
                     }
                 //let encoded = encoder.encode(&yubytes).unwrap();
-                let encoded = encoder.encode_at(&yubytes, Timestamp::from_millis(timer.elapsed().as_millis() as u64)).unwrap();
+                let timestamp = timer.elapsed().as_millis() as u32;
+                let encoded = encoder.encode_at(&yubytes, Timestamp::from_millis(timestamp as u64)).unwrap();
                 
                 let encoded_bytes = Bytes::from(encoded.to_vec());
-                let timestamp = timer.elapsed().as_millis() as u32;
+                
                 println!("ENC ts={} type={:?} bytes={} frags={} seq_start={} enc_ms={:.2} wall_us={}",
                     timestamp, encoded.frame_type(), encoded_bytes.len(), encoded_bytes.len().div_ceil(PAYLOADSIZE),
                     sequence_num, t_in.elapsed().as_secs_f64() * 1000.0, wall_us());

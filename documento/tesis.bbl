@@ -44,7 +44,6 @@
       \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{abstract}{An inventory of the world's technological capacity from 1986 to 2007 reveals the evolution from analog to digital technologies. We estimated the world’s technological capacity to store, communicate, and compute information, tracking 60 analog and digital technologies during the period from 1986 to 2007. In 2007, humankind was able to store 2.9 × 1020 optimally compressed bytes, communicate almost 2 × 1021 bytes, and carry out 6.4 × 1018 instructions per second on general-purpose computers. General-purpose computing capacity grew at an annual rate of 58\%. The world’s capacity for bidirectional telecommunication grew at 28\% per year, closely followed by the increase in globally stored information (23\%). Humankind’s capacity for unidirectional information diffusion through broadcasting channels has experienced comparatively modest annual growth (6\%). Telecommunication has been dominated by digital technologies since 1990 (99.9\% in digital format in 2007), and the majority of our technological memory has been in digital format since the early 2000s (94\% digital in 2007).}
       \field{journaltitle}{Science}
       \field{number}{6025}
       \field{title}{The World's Technological Capacity to Store, Communicate, and Compute Information}
@@ -54,9 +53,6 @@
       \range{pages}{6}
       \verb{doi}
       \verb 10.1126/science.1200970
-      \endverb
-      \verb{eprint}
-      \verb https://www.science.org/doi/pdf/10.1126/science.1200970
       \endverb
       \verb{urlraw}
       \verb https://www.science.org/doi/abs/10.1126/science.1200970
@@ -127,7 +123,7 @@
       \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{journaltitle}{R \& D management}
+      \field{journaltitle}{R \&D Management}
       \field{number}{1}
       \field{title}{Why makers make what they make: motivations to contribute to open source hardware development}
       \field{volume}{50}
@@ -146,6 +142,7 @@
       \field{urlday}{12}
       \field{urlmonth}{11}
       \field{urlyear}{2026}
+      \field{year}{2019}
       \field{urldateera}{ce}
       \verb{urlraw}
       \verb https://parsec.app/blog/a-networking-protocol-built-for-the-lowest-latency-interactive-game-streaming-1fd5a03a6007
@@ -154,25 +151,103 @@
       \verb https://parsec.app/blog/a-networking-protocol-built-for-the-lowest-latency-interactive-game-streaming-1fd5a03a6007
       \endverb
     \endentry
+    \entry{parsec_udp_primer}{online}{}{}
+      \name{author}{2}{}{%
+        {{hash=ded130e1bfcf926927d9ec79644d4abf}{%
+           family={Dickson},
+           familyi={D\bibinitperiod},
+           given={Chris},
+           giveni={C\bibinitperiod}}}%
+        {{hash=64c9d0bbc05a3c14f67334c142db59c7}{%
+           family={Boxer},
+           familyi={B\bibinitperiod},
+           given={Benjy},
+           giveni={B\bibinitperiod}}}%
+      }
+      \list{organization}{1}{%
+        {Parsec Blog}%
+      }
+      \strng{namehash}{08586ae073bb061dbf96083e027ca829}
+      \strng{fullhash}{08586ae073bb061dbf96083e027ca829}
+      \strng{fullhashraw}{08586ae073bb061dbf96083e027ca829}
+      \strng{bibnamehash}{08586ae073bb061dbf96083e027ca829}
+      \strng{authorbibnamehash}{08586ae073bb061dbf96083e027ca829}
+      \strng{authornamehash}{08586ae073bb061dbf96083e027ca829}
+      \strng{authorfullhash}{08586ae073bb061dbf96083e027ca829}
+      \strng{authorfullhashraw}{08586ae073bb061dbf96083e027ca829}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{A Primer on Building {UDP} Networking Protocols: How We Deliver Low Latency Cloud Gaming}
+      \field{urlday}{12}
+      \field{urlmonth}{11}
+      \field{urlyear}{2026}
+      \field{year}{2019}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://parsec.app/blog/a-primer-on-building-udp-networking-protocols-how-we-deliver-low-latency-cloud-gaming-1987806feb62
+      \endverb
+      \verb{url}
+      \verb https://parsec.app/blog/a-primer-on-building-udp-networking-protocols-how-we-deliver-low-latency-cloud-gaming-1987806feb62
+      \endverb
+    \endentry
+    \entry{parsec_udp_slides}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=ded130e1bfcf926927d9ec79644d4abf}{%
+           family={Dickson},
+           familyi={D\bibinitperiod},
+           given={Chris},
+           giveni={C\bibinitperiod}}}%
+      }
+      \list{organization}{1}{%
+        {SlideShare}%
+      }
+      \strng{namehash}{ded130e1bfcf926927d9ec79644d4abf}
+      \strng{fullhash}{ded130e1bfcf926927d9ec79644d4abf}
+      \strng{fullhashraw}{ded130e1bfcf926927d9ec79644d4abf}
+      \strng{bibnamehash}{ded130e1bfcf926927d9ec79644d4abf}
+      \strng{authorbibnamehash}{ded130e1bfcf926927d9ec79644d4abf}
+      \strng{authornamehash}{ded130e1bfcf926927d9ec79644d4abf}
+      \strng{authorfullhash}{ded130e1bfcf926927d9ec79644d4abf}
+      \strng{authorfullhashraw}{ded130e1bfcf926927d9ec79644d4abf}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{Presented at Code Driven NYC}
+      \field{title}{Building a {UDP} Protocol for Cloud Gaming}
+      \field{urlday}{12}
+      \field{urlmonth}{11}
+      \field{urlyear}{2026}
+      \field{year}{2018}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.slideshare.net/slideshow/building-a-udp-protocol-for-cloud-gaming/73546584
+      \endverb
+      \verb{url}
+      \verb https://www.slideshare.net/slideshow/building-a-udp-protocol-for-cloud-gaming/73546584
+      \endverb
+    \endentry
     \entry{discord_streaming}{online}{}{}
       \name{author}{1}{}{%
-        {{hash=48b3b5e8380986588b7cc22033031fba}{%
-           family={J.},
-           familyi={J\bibinitperiod},
-           given={Stratton},
-           giveni={S\bibinitperiod}}}%
+        {{hash=56683c7ce69cf1d984c1c67d95996cde}{%
+           family={Stratton},
+           familyi={S\bibinitperiod},
+           given={J.},
+           giveni={J\bibinitperiod}}}%
       }
       \list{organization}{1}{%
         {Discord Engineering \& Developers Blog}%
       }
-      \strng{namehash}{48b3b5e8380986588b7cc22033031fba}
-      \strng{fullhash}{48b3b5e8380986588b7cc22033031fba}
-      \strng{fullhashraw}{48b3b5e8380986588b7cc22033031fba}
-      \strng{bibnamehash}{48b3b5e8380986588b7cc22033031fba}
-      \strng{authorbibnamehash}{48b3b5e8380986588b7cc22033031fba}
-      \strng{authornamehash}{48b3b5e8380986588b7cc22033031fba}
-      \strng{authorfullhash}{48b3b5e8380986588b7cc22033031fba}
-      \strng{authorfullhashraw}{48b3b5e8380986588b7cc22033031fba}
+      \strng{namehash}{56683c7ce69cf1d984c1c67d95996cde}
+      \strng{fullhash}{56683c7ce69cf1d984c1c67d95996cde}
+      \strng{fullhashraw}{56683c7ce69cf1d984c1c67d95996cde}
+      \strng{bibnamehash}{56683c7ce69cf1d984c1c67d95996cde}
+      \strng{authorbibnamehash}{56683c7ce69cf1d984c1c67d95996cde}
+      \strng{authornamehash}{56683c7ce69cf1d984c1c67d95996cde}
+      \strng{authorfullhash}{56683c7ce69cf1d984c1c67d95996cde}
+      \strng{authorfullhashraw}{56683c7ce69cf1d984c1c67d95996cde}
       \field{sortinit}{5}
       \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
       \field{labelnamesource}{author}

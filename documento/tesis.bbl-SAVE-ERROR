@@ -1,0 +1,267 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.3 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{none/global//global/global/global}
+    \entry{tech_capacity}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=d6d70547b5fd0405774d5bedbf82bcd8}{%
+           family={Hilbert},
+           familyi={H\bibinitperiod},
+           given={Martin},
+           giveni={M\bibinitperiod}}}%
+        {{hash=27e7c9db1a4437456f07c10c0a43b490}{%
+           family={López},
+           familyi={L\bibinitperiod},
+           given={Priscila},
+           giveni={P\bibinitperiod}}}%
+      }
+      \strng{namehash}{cefa2ffe0fe9ee61a7dff47409c5fa68}
+      \strng{fullhash}{cefa2ffe0fe9ee61a7dff47409c5fa68}
+      \strng{fullhashraw}{cefa2ffe0fe9ee61a7dff47409c5fa68}
+      \strng{bibnamehash}{cefa2ffe0fe9ee61a7dff47409c5fa68}
+      \strng{authorbibnamehash}{cefa2ffe0fe9ee61a7dff47409c5fa68}
+      \strng{authornamehash}{cefa2ffe0fe9ee61a7dff47409c5fa68}
+      \strng{authorfullhash}{cefa2ffe0fe9ee61a7dff47409c5fa68}
+      \strng{authorfullhashraw}{cefa2ffe0fe9ee61a7dff47409c5fa68}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Science}
+      \field{number}{6025}
+      \field{title}{The World's Technological Capacity to Store, Communicate, and Compute Information}
+      \field{volume}{332}
+      \field{year}{2011}
+      \field{pages}{60\bibrangedash 65}
+      \range{pages}{6}
+      \verb{doi}
+      \verb 10.1126/science.1200970
+      \endverb
+      \verb{urlraw}
+      \verb https://www.science.org/doi/abs/10.1126/science.1200970
+      \endverb
+      \verb{url}
+      \verb https://www.science.org/doi/abs/10.1126/science.1200970
+      \endverb
+    \endentry
+    \entry{open_source_benefits}{online}{}{}
+      \name{author}{2}{}{%
+        {{hash=fc65a6ab2f14f6c3543f8592edbbb516}{%
+           family={Madge},
+           familyi={M\bibinitperiod},
+           given={J.},
+           giveni={J\bibinitperiod}}}%
+        {{hash=5f39963be08d6a3f0d2ed5a2204af768}{%
+           family={Bennett},
+           familyi={B\bibinitperiod},
+           given={A.},
+           giveni={A\bibinitperiod}}}%
+      }
+      \list{organization}{1}{%
+        {The Alan Turing Institute Blog}%
+      }
+      \strng{namehash}{3c5b5450fda5bdcae73a3b69e7ce6ff9}
+      \strng{fullhash}{3c5b5450fda5bdcae73a3b69e7ce6ff9}
+      \strng{fullhashraw}{3c5b5450fda5bdcae73a3b69e7ce6ff9}
+      \strng{bibnamehash}{3c5b5450fda5bdcae73a3b69e7ce6ff9}
+      \strng{authorbibnamehash}{3c5b5450fda5bdcae73a3b69e7ce6ff9}
+      \strng{authornamehash}{3c5b5450fda5bdcae73a3b69e7ce6ff9}
+      \strng{authorfullhash}{3c5b5450fda5bdcae73a3b69e7ce6ff9}
+      \strng{authorfullhashraw}{3c5b5450fda5bdcae73a3b69e7ce6ff9}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Open-source software: why it matters and how to get involved}
+      \field{year}{2024}
+      \verb{urlraw}
+      \verb https://www.turing.ac.uk/blog/open-source-software-why-it-matters-and-how-get-involved
+      \endverb
+      \verb{url}
+      \verb https://www.turing.ac.uk/blog/open-source-software-why-it-matters-and-how-get-involved
+      \endverb
+    \endentry
+    \entry{hausberg2020open}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=e6076ccb1aa332bc47084bc9377c8ca6}{%
+           family={Hausberg},
+           familyi={H\bibinitperiod},
+           given={J.\bibnamedelimi Piet},
+           giveni={J\bibinitperiod\bibinitdelim P\bibinitperiod}}}%
+        {{hash=f842ce9af6405fb013a41292b797655e}{%
+           family={Spaeth},
+           familyi={S\bibinitperiod},
+           given={Sebastian},
+           giveni={S\bibinitperiod}}}%
+      }
+      \strng{namehash}{ad9c80b7375cc55f86016e79fd715d00}
+      \strng{fullhash}{ad9c80b7375cc55f86016e79fd715d00}
+      \strng{fullhashraw}{ad9c80b7375cc55f86016e79fd715d00}
+      \strng{bibnamehash}{ad9c80b7375cc55f86016e79fd715d00}
+      \strng{authorbibnamehash}{ad9c80b7375cc55f86016e79fd715d00}
+      \strng{authornamehash}{ad9c80b7375cc55f86016e79fd715d00}
+      \strng{authorfullhash}{ad9c80b7375cc55f86016e79fd715d00}
+      \strng{authorfullhashraw}{ad9c80b7375cc55f86016e79fd715d00}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{R \&D Management}
+      \field{number}{1}
+      \field{title}{Why makers make what they make: motivations to contribute to open source hardware development}
+      \field{volume}{50}
+      \field{year}{2020}
+      \field{pages}{75\bibrangedash 77}
+      \range{pages}{3}
+    \endentry
+    \entry{parsec_streaming}{online}{}{}
+      \list{organization}{1}{%
+        {Parsec Team}%
+      }
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{labeltitlesource}{title}
+      \field{title}{A Networking Protocol Built For The Lowest Latency Interactive Game Streaming}
+      \field{urlday}{12}
+      \field{urlmonth}{11}
+      \field{urlyear}{2026}
+      \field{year}{2019}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://parsec.app/blog/a-networking-protocol-built-for-the-lowest-latency-interactive-game-streaming-1fd5a03a6007
+      \endverb
+      \verb{url}
+      \verb https://parsec.app/blog/a-networking-protocol-built-for-the-lowest-latency-interactive-game-streaming-1fd5a03a6007
+      \endverb
+    \endentry
+    \entry{parsec_udp_primer}{online}{}{}
+      \name{author}{2}{}{%
+        {{hash=ded130e1bfcf926927d9ec79644d4abf}{%
+           family={Dickson},
+           familyi={D\bibinitperiod},
+           given={Chris},
+           giveni={C\bibinitperiod}}}%
+        {{hash=64c9d0bbc05a3c14f67334c142db59c7}{%
+           family={Boxer},
+           familyi={B\bibinitperiod},
+           given={Benjy},
+           giveni={B\bibinitperiod}}}%
+      }
+      \list{organization}{1}{%
+        {Parsec Blog}%
+      }
+      \strng{namehash}{08586ae073bb061dbf96083e027ca829}
+      \strng{fullhash}{08586ae073bb061dbf96083e027ca829}
+      \strng{fullhashraw}{08586ae073bb061dbf96083e027ca829}
+      \strng{bibnamehash}{08586ae073bb061dbf96083e027ca829}
+      \strng{authorbibnamehash}{08586ae073bb061dbf96083e027ca829}
+      \strng{authornamehash}{08586ae073bb061dbf96083e027ca829}
+      \strng{authorfullhash}{08586ae073bb061dbf96083e027ca829}
+      \strng{authorfullhashraw}{08586ae073bb061dbf96083e027ca829}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{A Primer on Building {UDP} Networking Protocols: How We Deliver Low Latency Cloud Gaming}
+      \field{urlday}{12}
+      \field{urlmonth}{11}
+      \field{urlyear}{2026}
+      \field{year}{2019}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://parsec.app/blog/a-primer-on-building-udp-networking-protocols-how-we-deliver-low-latency-cloud-gaming-1987806feb62
+      \endverb
+      \verb{url}
+      \verb https://parsec.app/blog/a-primer-on-building-udp-networking-protocols-how-we-deliver-low-latency-cloud-gaming-1987806feb62
+      \endverb
+    \endentry
+    \entry{parsec_udp_slides}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=ded130e1bfcf926927d9ec79644d4abf}{%
+           family={Dickson},
+           familyi={D\bibinitperiod},
+           given={Chris},
+           giveni={C\bibinitperiod}}}%
+      }
+      \list{organization}{1}{%
+        {SlideShare}%
+      }
+      \strng{namehash}{ded130e1bfcf926927d9ec79644d4abf}
+      \strng{fullhash}{ded130e1bfcf926927d9ec79644d4abf}
+      \strng{fullhashraw}{ded130e1bfcf926927d9ec79644d4abf}
+      \strng{bibnamehash}{ded130e1bfcf926927d9ec79644d4abf}
+      \strng{authorbibnamehash}{ded130e1bfcf926927d9ec79644d4abf}
+      \strng{authornamehash}{ded130e1bfcf926927d9ec79644d4abf}
+      \strng{authorfullhash}{ded130e1bfcf926927d9ec79644d4abf}
+      \strng{authorfullhashraw}{ded130e1bfcf926927d9ec79644d4abf}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{Presented at Code Driven NYC}
+      \field{title}{Building a {UDP} Protocol for Cloud Gaming}
+      \field{urlday}{12}
+      \field{urlmonth}{11}
+      \field{urlyear}{2026}
+      \field{year}{2018}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.slideshare.net/slideshow/building-a-udp-protocol-for-cloud-gaming/73546584
+      \endverb
+      \verb{url}
+      \verb https://www.slideshare.net/slideshow/building-a-udp-protocol-for-cloud-gaming/73546584
+      \endverb
+    \endentry
+    \entry{discord_streaming}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=56683c7ce69cf1d984c1c67d95996cde}{%
+           family={Stratton},
+           familyi={S\bibinitperiod},
+           given={J.},
+           giveni={J\bibinitperiod}}}%
+      }
+      \list{organization}{1}{%
+        {Discord Engineering \& Developers Blog}%
+      }
+      \strng{namehash}{56683c7ce69cf1d984c1c67d95996cde}
+      \strng{fullhash}{56683c7ce69cf1d984c1c67d95996cde}
+      \strng{fullhashraw}{56683c7ce69cf1d984c1c67d95996cde}
+      \strng{bibnamehash}{56683c7ce69cf1d984c1c67d95996cde}
+      \strng{authorbibnamehash}{56683c7ce69cf1d984c1c67d95996cde}
+      \strng{authornamehash}{56683c7ce69cf1d984c1c67d95996cde}
+      \strng{authorfullhash}{56683c7ce69cf1d984c1c67d95996cde}
+      \strng{authorfullhashraw}{56683c7ce69cf1d984c1c67d95996cde}
+      \field{sortinit}{5}
+      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{How It All Goes Live: An Overview of Discord's Streaming Technology}
+      \field{year}{2024}
+      \verb{urlraw}
+      \verb https://discord.com/blog/how-it-all-goes-live-an-overview-of-discords-streaming-technology
+      \endverb
+      \verb{url}
+      \verb https://discord.com/blog/how-it-all-goes-live-an-overview-of-discords-streaming-technology
+      \endverb
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+

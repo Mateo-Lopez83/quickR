@@ -2378,6 +2378,8 @@
     <bcf:citekey order="2" intorder="1">open_source_benefits</bcf:citekey>
     <bcf:citekey order="3" intorder="1">hausberg2020open</bcf:citekey>
     <bcf:citekey order="4" intorder="1">parsec_streaming</bcf:citekey>
+    <bcf:citekey order="4" intorder="2">parsec_udp_primer</bcf:citekey>
+    <bcf:citekey order="4" intorder="3">parsec_udp_slides</bcf:citekey>
     <bcf:citekey order="5" intorder="1">discord_streaming</bcf:citekey>
   </bcf:section>
   <!-- SORTING TEMPLATES -->

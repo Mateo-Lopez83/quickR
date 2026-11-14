@@ -1,6 +1,5 @@
 \documentclass[12pt]{article}
-\usepackage{lingmacros}
-\usepackage{tree-dvips}
+\usepackage{hyperref}
 \usepackage{graphicx}
 \usepackage[backend=biber, style=ieee]{biblatex}
 \addbibresource{references.bib}
@@ -35,17 +34,16 @@
 
 \vspace{0.3cm}
 
-% {\normalsize ISIS3510 - Mobile Applications Development}
 
 % \vspace{3cm}
 
 % Report title
-{\LARGE\textbf{Proyecto de Grado 2026-20}}
+{\LARGE\textbf{Undergraduate Thesis}}
 
 \vspace{3cm}
 
 % App name
-{\Large\textbf{QuickR}}
+{\Large\textbf{QuickR: A P2P Media Sharing Application}}
 \vspace{0.3cm}
 
 \vspace{1cm}
@@ -79,16 +77,9 @@
 
 \section{Introduction}
 
-\subsection{Definitions}
-\begin{itemize}
-    \item \textbf{Streaming:} The process of transmitting and/or receiving media content over the internet in real time and in a continuous manner.
-    \item \textbf{Open Source Program:} Software and its source code for which it is publicly available to view, use, distribute, and modify without restriction.
-    \item \textbf{Closed Source Program:} Software whose source code is either partially or fully restricted from public access, which is usually developed and maintained by a private company or organization.
-\end{itemize}
-
 \subsection{Context}
-Ever since the turn of the millenium, the internet has had a significant impact on global communication technologies. By the year 2000, 
-51\% of global telecommunications networks were transmitted via the internet, a figure that rose to 97\% by 2007 \cite{tech_capacity}.
+Ever since the turn of the millennium, the internet has had a significant impact on global communication technologies. By the year 2000, 
+51\% of global telecommunications networks were transmitted via the internet, a figure that rose to 97\% by 2007~\cite{tech_capacity}.
 This reliance on the internet has been steadily increasing over time, culminating in 2020 when quarantine and lockdown measures due to the pandemic 
 made the internet an essential part of daily life for most people worldwide. This drastic change in people's lives led to an all-time high demand for 
 applications that connect different individuals through digital means, such as Meta's Metaverse, the increased demand for virtual meeting software 
@@ -102,102 +93,139 @@ streaming services, which is the relevant service for this paper). The rapid exp
 of users of these services, has created a strong need to develop robust protocols that work quickly and efficiently under any type of connectivity conditions, as well 
 as infrastructures that are sufficiently robust and scalable to meet the demand for these transmissions. 
 
-This has led to an interest by developers to restrict in certain ways some functionalities and features offered by these streaming services in a way that is 
+This could be seen as a motivation by companies to restrict in certain ways some functionalities and features offered by these streaming services in a way that is 
 actually profitable. Paywalls and subscription models are some of the most common ways companies and services implement a restriction that solves multiple problems at the
 same time: first of all, it limits the number of users that can use the service at any given moment, which reduces maintenance costs and bandwidth usage; second, it produces
 a source of income for the service provider, which can be used to improve the service and infrastructure; and third, it helps create a sense of exclusivity to the paying user. 
 Some services that include these kinds of subscriptions are Discord, Google Meet, and Zoom. In the case of Discord, the service offers a subscription called Nitro that, besides
-other benefits, allows the user to upgrade the stream quality from the free tier cap of 720p x 30fps to a maximum of 4k x 60fps, with a monthly cost of \$9.99 USD (as of November 2026). With Google Meet, 
+other benefits, allows the user to upgrade the stream quality from the free tier cap of 720p at 30fps to a maximum of 4K at 60fps, with a monthly cost of \$9.99 USD (as of November 2026). With Google Meet, 
 the free tier besides allowing a call for only up to 60 minutes, hard limits the stream quality to 720p x 30fps, while any of Google's subscriptions allows for a maximum of 1080p x 30fps. Zoom, on the other hand, 
-does not really restrict the stream quality, allowing content to be shared in the native resolution at 30fps for no extra cost, but it does recommend downscaling to 1080p to save on bandwith. It also limits the free 
+does not really restrict the stream quality, allowing content to be shared in the native resolution at 30fps for no extra cost, but it does recommend downscaling to 1080p to save on bandwidth. It also limits the free 
 tier to 40 minutes per call, restricting the user not by the quality of the stream, but by the time they can use it.
 
 Given the context of these service models with their constraints, it becomes apparent that users, even though there are multiple options for meeting their streaming needs, are still limited by the restrictions imposed
 by these companies. Open source projects are alternatives to these services, but even though they can be more beneficial than closed-source by improving security, allowing way more flexibility, and fostering
-community involvement by having collaborative development \cite{open_source_benefits}, there are many chases in which these alternativesare not as widespread and used as the commercial ones. This lower popularity directly reduces the appeal to the 
-common user to move onto these alternatives. Regardless, there exist a myriad of open source projects that act as cornerstones of the modern internet and computing as a whole. Some of the main examples typically include the Linux kernel, one of, if not the most, important 
-operating system kernels worldwide, the Apache web server, MySQL, and PHP, all four being the main components of the LAMP stack. And even outside of the scope of giant corporations running open source, even more projects exist that are maintained by small teams or even individuals.
-There are many cases of these projects existing without an explicit commercial or financial interest, but rather as a means to solve a specific need, desire or problem someone encountered. Hausberg et al. \cite{hausberg2020open} states how
-motivations behind OSS (Open Source Software) contributions stem from the individual's desire to contribute towards innovation that becomes a common good. It can be seen as the rational choice to provide a contribution for free, as the result afterwards becomes
+community involvement by having collaborative development~\cite{open_source_benefits}, there are many cases in which these alternatives are not as widespread and used as the commercial ones. This lower popularity directly reduces the appeal to the 
+common user to move onto these alternatives. Regardless, there exist a myriad of open source projects that act as cornerstones of the modern internet and computing as a whole, some of the main examples include the Linux kernel, the Apache web server, MySQL, and PHP.  And even outside of the scope of giant corporations running open source, even more projects exist that are maintained by small teams or even individuals.
+There are many cases of these projects existing without an explicit commercial or financial interest, but rather as a means to solve a specific need, desire or problem someone encountered. Hausberg and Spaeth~\cite{hausberg2020open} on their analysis comparing Open Source Software (OSS) versus Open Source Hardware (OSH), state how
+motivations behind OSS contributions stem from the individual's desire to contribute towards innovation that becomes a common good. It can be seen as the rational choice to provide a contribution for free, as the result afterwards becomes
 a private, ongoing benefit. It is through this reasoning that one may explain the reasoning behind these projects taking off and staying relevant, even in the face of competition from commercial alternatives.
+
+\subsection{Proposed Work: QuickR}
+On account of the previous context, the proposed project is an open-source, Windows-specific desktop application that allows for screen sharing / video streaming between clients. This app is called QuickR and it distinguishes itself from other similar products on the market by 
+combining the following characteristics into one desktop app:
+
+\begin{itemize}
+    \item No servers in between clients
+    \item No need for an account nor subscription models
+    \item No third parties relay nor store the stream
+    \item No time limit
+    \item Video quality determined by client's hardware and network conditions
+\end{itemize}
+
+These attributes allow the proposed application to stand out amongst the current market of remote desktop / live streaming / screen sharing options. It is published and free to use under the MIT License.
 
 \subsection{Motivation}
 
-Due to the large amount of corporate-maintained software on many aspects of every day technological life, there has always been an interest on open source software development and maintenance. The democratization of software  
+Due to the large amount of corporate-maintained software on many everyday technological aspects, there has always been an interest on open source software development and maintenance. The democratization of software  
 presents a unique opportunity for developers to create tailor-made solutions to their own problems or needs, benefitting from having a community of developers and users that can contribute to the project either by providing feedback, reporting bugs, contributing code, or by financially
-backing the project. Besides from the characteristic of it being a private or open source project, developing a streaming service application involves a considerable amount of technical knowledge and integration in order to provide a robust and efficient
+backing the project. Besides, the characteristic of it being a private or open source project, developing a streaming service application involves a considerable amount of technical knowledge and integration in order to provide a robust and efficient
 alternative for the user. Since it involves concepts of networking, video and audio encoding, synchronization, and UI/UX design, working on a streaming service application is a great way to learn by creating something tangible and useful, while also allowing a community of users to both
-support and benefit from it. Another motivation stems from more personal reasons, as the distaste of corporate software coupled with the desire to watch movies with people who are geographically far away made way for this project idea to be born. 
+support and benefit from it. Another motivation stems from more personal reasons, as the interest in serverless alternatives where users have full control, coupled with the desire to watch movies with people who are geographically far away made way for this project idea to be born. 
+
+
 
 \subsection{Objectives}
 For this project, there will be a single main objective and a set of secondary objectives: 
 \subsubsection{Main Objective}
-For this projetc, the main objetive is to design and develop a desktop application that implements a video streaming protocol that allows users to share real-time video and audio between devices from scratch.  
+For this project, the main objective is to design and develop a \textbf{Windows}-specific desktop application that implements a video streaming protocol that allows users to share real-time video and audio between devices from scratch.
 \subsubsection{Secondary Objectives}
 The secondary or auxiliary objectives are the following:
 \begin{itemize}
     \item Develop a Peer-to-Peer (P2P) architecture that allows users to communicate between each other's devices.
-    \item Implement a full transmission pipeline over UDP that allows for a reliable packet transmission.
+    \item Implement a full transmission pipeline over UDP that allows for a \textbf{loss-tolerant} packet transmission.
     \item Build a user interface that shows received video and audio streams in real time.
-    \item Compare the performance between state-of-the-art streaming tools and the developed application.  
+    \item Compare the performance between existing alternatives (Google Meets, Microsoft Teams, Discord and Parsec) streaming tools and the developed application with measurable metrics such as end-to-end latency, framerate, bitrate, and CPU usage.
+    \item For RTP-based services, compare the developed application in regards to packet loss and freeze percentage metrics. 
 \end{itemize}
+
 \section{Methodology}
-For the development of this project, the methodology will start with a review of the state-of-the-art streaming tools and protocols, exploring the solutions that are already on the market. After that, the next step will be the design and eventual implementation of the
-application, to be followed by a series of tests and performance comparisons agains the existing alternatives using packet analysis tools such as Wireshark.  
-\subsection{State of the Art}
+For the development of this project, the methodology commences with a section of definitions and background knowledge that will elaborate on necessary concepts. After that, it does a review of the state-of-the-art streaming tools and protocols, exploring the solutions that are already 
+on the market. Subsequently, the next step will be the design and eventual implementation of the
+application, to be followed by a series of tests and performance comparisons against the existing alternatives using packet analysis tools such as Wireshark.  
+
+
+\subsection{Definitions}
 \begin{itemize}
-    \item \textbf{Parsec: } Parsec is a desktop application whose main goal is to allow for a seamless experience using remote desktop connections, with online gaming as the primary focus, but allowing for connections to cloud devices and personal computers as well.
-        According to the information provided by the official Parsec Team (including 2 different blog posts and a talk at Code Driven NYC), this application's streaming logic was built based these
-        priorities in the following order of importance: \textbf{latency, then frame rate, then video quality}\cite{parsec_streaming}. To achieve the goal set on reducing latency to the absolute minimum, many standard technologies were
+    \item \textbf{Live Streaming:} The process of transmitting and/or receiving media content over the internet in real time and in a continuous manner.
+    \item \textbf{Open Source Program:} Software and its source code for which it is publicly available to view, use, distribute, and modify mostly without restriction. Uses Licenses to establish any type of limitations and freedoms in regards to its use and distribution.
+    \item \textbf{Closed Source Program:} Software whose source code is either partially or fully restricted from public access, which is usually developed and maintained by a private company or organization.
+    \item \textbf{Peer-to-Peer (P2P):} Type of network architecture in which every device (called peer or node) connects and shares resources without any centralized server. Every node inside of this network can be a consumer and/or provider of resources.
+    \item \textbf{Network Address Translation (NAT):} A networking service that maps private IP addresses to a public address for communication outside the local network.
+    \item \textbf{NAT Hole Punching:} Technique used to establish P2P connections in different networks. This technique works by having both nodes send a "dummy" packet to each other, thus opening a "hole" in the Firewall to that specific address. Any further packet from that address will be treated as a reply to the initial "dummy" packet and will be allowed through into the network.
+    \item \textbf{Full Cone NAT:} Defined under RFC 4787 as \textit{Endpoint-Independent Mapping}, Full Cone is a NAT service that maps an internal IP address and port to a single, static external IP address and port, allowing any external host on the internet to send packets to that external address and reach the internal device. This mapping is extremely permissive and maximizes compatibility for peer-to-peer applications at the expense of lower inbound security.
+    \item \textbf{Symmetric NAT:} Defined under RFC 4787 as \textit{Address and Port-Dependent Mapping}, Symmetric NAT is a NAT service that maps a distinct external port to each outgoing IP and port tuple. Since the external port mapping varies depending on each destination, this service prevents 
+    incoming traffic from external devices and thus turns Hole Punching useless.
+    \item \textbf{Latency:} 
+    \item \textbf{Frames Per Second (FPS):} Amount of 
+    \item \textbf{Codec:}
+    \item \textbf{KeyFrame:}
+    \item \textbf{DeltaFrame:}   
+\end{itemize}
+
+\subsection{State of the Art}
+    \subsubsection{Parsec} Parsec is a desktop application whose main goal is to allow for a seamless experience using remote desktop connections, with online gaming as the primary focus, but allowing for connections to cloud devices and personal computers as well.
+        According to the information provided by the official Parsec Team (including 2 different blog posts and a talk at Code Driven NYC~\cite{parsec_streaming,parsec_udp_primer,parsec_udp_slides}), this application's streaming logic was built based these
+        priorities in the following order of importance: \textbf{latency, then frame rate, then video quality}. To achieve the goal set on reducing latency to the absolute minimum, many standard technologies were
         tested, starting with both UDP and TCP protocols. The developers took both protocols and decided which attributes were desirable to bring over to a new, proprietary protocol that met all of the needs necessary for Parsec to provide a seamless video game streaming experience:
         
         \textbf{TCP:} 
             \begin{enumerate}
                 \item Reliability and reordering.
                 \item Stream Semantics
-                \item Connection state and handshake via DTLS
                 \item ACK to confirm packet reception 
             \end{enumerate}
         
         \textbf{UDP:} 
             \begin{enumerate}
                 \item Stateless hole-punching
+                \item Connection state and handshake via DTLS
             \end{enumerate}
         Due to the necessity of bringing some (but not all) characteristics of each protocol, the Parsec team developed their own protocol called BUD (Better User Datagrams) for their service. This protocol works by diverging from the standard
         TCP behavior of working in any network condition
-        by throttling the performance to give priority to the correct delivery of the packets. Instead, it assumes the user has more bandwidth than a tested minimum (not a concrete value, but according to the Code Driven NYC talk, it is $\sim30$ Mbps with less than 50 ping).
+        by throttling the performance to give priority to the correct delivery of the packets. Instead, it assumes the user has more bandwidth than a tested minimum (not a concrete value, but according to the Code Driven NYC talk, it is $\sim30$ Mbps with less than a 50ms RTT).
         By using this assumption, the algorithm does not have to concern itself with cases of poor connection but rather works with known stable connections. 
         
         The most important characteristics regarding the BUD protocol are the following:
         \begin{itemize}
-            \item NAT traversal by hole punching: To bypass firewalls blocking incoming requests by the incoming device, the protocol uses a staple functionality from UDP to establish direct Peer to Peer connection.
+            \item NAT traversal by hole punching: To bypass firewalls blocking incoming requests by the incoming device, the protocol uses a staple technique based on UDP's nature to establish direct Peer to Peer connection.
             \item Congestion control not done via internal packet sending limits, but instead via the encoder. Using H.264 as the main video encoder, Parsec controls its bitrate frequently depending on the network congestion and RTT (Round-Trip Time). 
             By varying the bitrate, the algorithm can reduce load on the bandwidth without halting packet sending, so that the client can still receive data and show live updates on the screen without any added latency. 
             \item Fast packet retransmission: By having ACK packets and a buffer that loads packets and updates them at runtime (which is another benefit of never having to reallocate memory), the algorithm can notice quickly if a packet $N$ hasn't received an ACK while packet $N+1$ already received
-            its own ACK. When this happens, it triggers a quick retransmission of packet $N$ to avoid any delays. There is also a slow retransmition as a failsafe.
+            its own ACK. When this happens, it triggers a quick retransmission of packet $N$ to avoid any delays. There is also a slow retransmission as a failsafe.
             \item A very concise and small packet header with Sequence Number, Data Type and Payload.
         \end{itemize}
         With these characteristics, BUD is able to perform with an exceptional quality in various environments. During live showcases, Parsec was able to perform at near 30 fps with packet loss between 5 and 10\%. Nonetheless, the documents state the software still falls behind on
         symmetric NATs (they restrict the hole punching method needed for the first connection establishment), degraded networks are still not contemplated for the algorithm's performance, and creating a protocol with custom tools brings a great deal of technical debt and issues that have to be
         solved in-house.  
-    \item \textbf{Discord: } 
+    \subsubsection{Discord} 
     Although the Discord Application offers a myriad of services, mainly focused on instant messaging and VoIP communications, it also includes a feature called \textit{Go Live}, which is the company's feature for screen sharing inside of the app's voice channel. 
-    According to the blog detailing this service's inner workings, \textit{Go Live} works with a pipeline that relies on three different but interconnected components: \textbf{Screen capture, data encoding, and transport.} \cite{discord_streaming}
+    According to the blog detailing this service's inner workings, \textit{Go Live} works with a pipeline that relies on three different but interconnected components: \textbf{Screen capture, data encoding, and transport.}~\cite{discord_streaming}
     \begin{enumerate}
         \item \textbf{Capture:} For capture to go as smooth as possible, the algorithm checks available capture methods the device's operating system provides, and picks the best one available at the moment. If that capture method fails, the system falls back 
         into the next best alternative to keep the stream going without any issues. Some of the mentioned methods include the OS's own APIs, or injecting a DLL into the game to read what the screen renders and sending it directly to the pipeline. For the audio component, 
         the app captures the audio of the window that was selected for sharing, but no audio is sent if the entire device's screen gets selected. No definite reasoning is provided for this, but a reasonable explanation would be that, since the main goal of screen sharing is to be used
         inside of VoIP calls, sharing the entire device's audio would probably mirror the other participants' voice audio, worsening the experience for the clients that are watching the screen stream. 
-        \item \textbf{Encoding:} Since a single 1080p frame can be as large as 6MB, an encoder is completely necessary to avoid bottlenecking the network socket and to allow frames to be sent at a faster rate. Every time a \textit{Go Live} session is iniciated, all clients negotiate a
+        \item \textbf{Encoding:} Since a single \textbf{uncompressed} 1080p frame can be as large as 6MB, an encoder is completely necessary to avoid bottlenecking the network socket and to allow frames to be sent at a faster rate. Every time a \textit{Go Live} session is initiated, all clients negotiate a
         codec that can be used to decode the packets by every participant of the call. The algorithm prioritizes hardware encoders (from GPUs) over software encoders whenever possible to attempt to reduce CPU load. The more commonly available codecs are VP8 and H.264, with HEVC and
         AV1 being available on some devices. When the network quality degrades, the algorithm drops frames to relieve congestion until it improves.  
-        \item  \textbf{Data Transmission: } Unlike Parsec's system, \textit{Go Live} is not Peer-to-Peer. Instead, it relies on Discord's own servers and CDNs to get each participant's IP address and relaying the data packets to the correct recipients at all points of the process. This is primarily done
+        \item  \textbf{Data Transmission: } Unlike Parsec's system, \textit{Go Live} is not Peer-to-Peer. Instead, it relies on Discord's own media relay servers to get each participant's IP address and relaying the data packets to the correct recipients at all points of the process. This is primarily done
         due to privacy purposes, as users do not get access to others' private information even if they are on the same call. This transport is built over WebRTC with video and audio packets being sent separately. The sending rate is dynamically capped by the user with the slowest network, so everyone gets 
         the same experience.
     \end{enumerate}
-    When the receiver gets the video and audio packets, it is them who synchronize both of these streams on the client device before showing it to the user. A known issue based on the technical decisions taken for this approach is that the VoIP audio and the stream are not synchronized, as they are managed by 
+    When the receiver gets the video and audio packets, the client synchronizes both of these streams on the client device before showing it to the user. A known issue based on the technical decisions taken for this approach is that the VoIP audio and the stream are not synchronized, as they are managed by 
     different systems. This puts pressure on the developers to reduce stream latency as much as possible to avoid degrading the users' experience with the service.
-\end{itemize}
+
 
 \subsection{QuickR}
 
