@@ -2,7 +2,7 @@
 #![expect(rustdoc::missing_crate_level_docs)] // it's an example
 mod frame_builder;
 mod audio_playback;
-use std::{env, net::SocketAddr, sync::{Arc, atomic::Ordering}, time::{Duration, Instant}};
+use std::{env, net::SocketAddr, sync::{Arc, atomic::{AtomicU32, Ordering}}, time::{Duration, Instant}};
 use commons::{AudioClock, AudioQueue, RGBFrameData};
 use eframe::egui;
 use egui::{ColorImage, Id, frame};
@@ -17,6 +17,9 @@ use commons::{
     ip_converter::{turn_code_to_ip, turn_ip_to_code},
     SharedStats, PacketStats
 };
+
+const QUALITY_OPTIONS: [(&str, u32); 4] = [("Native", 0), ("1080p", 1080), ("720p", 720), ("480p", 480)];
+
 
 struct MyApp {
     own_code: String,
@@ -39,6 +42,8 @@ struct MyApp {
     current_fps: f32,
     audio_queue: AudioQueue,
     audio_clock: Arc<AudioClock>,
+    target_height: Arc<AtomicU32>,  // compartido con el hilo del encoder
+    selected_height: u32,    
 
 }
 
@@ -69,6 +74,8 @@ impl MyApp {
             current_fps:0.0,
             audio_queue: Arc::new(std::sync::Mutex::new(std::collections::VecDeque::new())),
             audio_clock: Arc::new(AudioClock::default()),
+            target_height: Arc::new(AtomicU32::new(0)),
+            selected_height: 0,
             
 
         }
@@ -83,10 +90,11 @@ async fn udp_main_process(frame_tx: frame_mpsc::SyncSender<RGBFrameData>,
                           conn: Arc<UdpSocket>, 
                           timer: Instant,
                           stats: SharedStats,
-                          audio_queue: AudioQueue) {
+                          audio_queue: AudioQueue,
+                          target_height: Arc<AtomicU32>) {
     match devtype.as_str() {
         "send"=>{
-            let _ = main_sending_process(conn, timer).await;
+            let _ = main_sending_process(conn, timer, target_height).await;
         }
         "receive"=>{
             //let audioqueue = Arc::new(std::sync::Mutex::new(std::collections::VecDeque::<commons::AudioChunk>::new()));
@@ -195,7 +203,7 @@ impl eframe::App for MyApp {
                     audio_playback::start_audio_playback(self.audio_queue.clone(), self.audio_clock.clone());
                 }
                 self.runtime.spawn(udp_main_process(self.frame_tx.clone(), self.devtype.clone(),
-                    self.conn.clone(), self.timer, stats, self.audio_queue.clone()));
+                    self.conn.clone(), self.timer, stats, self.audio_queue.clone(), self.target_height.clone()));
             }
 
                 Err(message) => {
@@ -275,6 +283,24 @@ impl eframe::App for MyApp {
                     "{:.1} fps", 
                     self.current_fps));
             });
+            if self.devtype == "send" {
+                let before = self.selected_height;
+                let current_label = QUALITY_OPTIONS.iter()
+                    .find(|(_, h)| *h == self.selected_height)
+                    .map(|(l, _)| *l).unwrap_or("?");
+                egui::ComboBox::from_label("Quality")
+                    .selected_text(current_label)
+                    .show_ui(ui, |ui| {
+                        for &(label, h) in QUALITY_OPTIONS.iter() {
+                            ui.selectable_value(&mut self.selected_height, h, label);
+                        }
+                    });
+                if self.selected_height != before {
+                    self.target_height.store(self.selected_height, Ordering::Relaxed);
+                    println!("QUALITY target_height={} wall_us={}", self.selected_height, commons::wall_us());
+                }
+            }
+
             match &self.texture {
                 Some(tex) => {
                     ui.add(egui::Image::new(tex).shrink_to_fit());

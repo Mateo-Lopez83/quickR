@@ -21,7 +21,7 @@
 \vspace*{0.3cm}
 \begin{figure}
     \centering
-    \includegraphics[width=0.1\linewidth]{uniandeslogo.png}
+    \includegraphics[width=0.15\linewidth]{uniandeslogo.png}
 \end{figure}
 \vspace{0.3cm}
 
@@ -393,6 +393,18 @@ Having the design choice of excluding external helper servers from the scope of 
 Nonetheless, these are deliberate limitations to the scope of the current project, and would be addressed in future costs. The performance evaluation at Section~\ref{sec:results} shows the impact of having a minimal design in comparison to the alternatives. 
 
 \subsection{QuickR}
+
+QuickR is an application built entirely on the Rust programming language, using to its advantage the compiled nature of this language. This application has 3 interconnected core components whose functionalities interweave between each other to achieve the result of showcasing a real time stream: 
+\textbf{the Transport Protocol, the Screen Capture Logic, and the Graphical User Interface. } The following section delves into the details for each one of these main components.
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[height=0.75\textheight]{architecture2.pdf}
+    \caption{Overview of QuickR's architecture. Numbers indicate the connection steps;
+             control messages travel through the UDP sockets but are drawn directly for clarity.}
+    \label{fig:architecture}
+\end{figure}
+
+
 
 \subsection{Implementation}
 

@@ -1,4 +1,4 @@
-flowchart LR
+flowchart TB
     subgraph SENDER["Sender PC"]
         S_IDR["IDR request listener"]
         S_CAP["Screen capture<br/><i>windows-capture · BGRA</i>"]

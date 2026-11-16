@@ -1,6 +1,6 @@
 use std::error::Error;
 use std::sync::Arc;
-use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::atomic::{AtomicBool, AtomicU32, Ordering};
 use std::time::Instant;
 use std::collections::{BTreeMap};
 use commons::{AudioChunk, AudioQueue, FrameInProgress, RGBFrameData, SharedStats};
@@ -276,7 +276,7 @@ async fn idr_request_listener(conn: Arc<UdpSocket>, received_idr_request: Arc<At
 }
 }
 
-pub async fn main_sending_process(conn: Arc<UdpSocket>, timer: Instant) -> Result<(), Box<dyn Error>> {
+pub async fn main_sending_process(conn: Arc<UdpSocket>, timer: Instant, target_height: Arc<AtomicU32>) -> Result<(), Box<dyn Error>> {
     let received_idr_request = Arc::new(AtomicBool::new(false));
     let idr_in_flight = Arc::new(AtomicBool::new(false));
 
@@ -289,7 +289,7 @@ pub async fn main_sending_process(conn: Arc<UdpSocket>, timer: Instant) -> Resul
     let (tx, rx) = mpsc::channel::<Bytes>(90);
     let socket = conn.clone();
     let _idr_listener_handle = tokio::spawn(idr_request_listener(conn.clone(), received_idr_request.clone(), idr_in_flight.clone()));
-    let _= capture::start_capture(tx, timer, received_idr_request.clone(), idr_in_flight.clone());
+    let _= capture::start_capture(tx, timer, received_idr_request.clone(), idr_in_flight.clone(), target_height);
     let consumer_handle = tokio::spawn(channel_consumer(rx, audio_rx, socket));
 
     let _ = consumer_handle.await;

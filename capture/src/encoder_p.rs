@@ -5,7 +5,7 @@ pub mod encoder_p{
     use openh264::formats::{BgraSliceU8, YUVBuffer};
     use tokio::sync::mpsc as udp_mpsc;
     use std::error::Error;
-    use std::sync::atomic::{AtomicBool, Ordering};
+    use std::sync::atomic::{AtomicBool, Ordering, AtomicU32};
     use std::sync::{Arc, mpsc as enc_mpsc};
     use std::time::{Duration, Instant};
     use bytes::Bytes;
@@ -46,7 +46,8 @@ pub mod encoder_p{
             udp_tx: udp_mpsc::Sender<Bytes>, 
             timer: Instant, 
             receiver_idr_request: Arc<AtomicBool>,
-            idr_in_flight: Arc<AtomicBool>) {
+            idr_in_flight: Arc<AtomicBool>,
+            target_height: Arc<AtomicU32>) {
 
         let encoder_config = EncoderConfig::new()
             .bitrate(BitRate::from_bps(1_500_000))  //TODO: optimizar el valor de este atributo
@@ -64,6 +65,15 @@ pub mod encoder_p{
 
         while let Ok(raw_frame) = enc_rx.recv() {
             let t_in = Instant::now(); //solo para logs: mide conversión + encode
+            let target_h = target_height.load(Ordering::Relaxed) as usize;
+            let raw_frame = if target_h != 0 && target_h < raw_frame.height {
+                let dh = target_h & !1;                                   // I420 necesita dimensiones pares
+                let dw = (raw_frame.width * dh / raw_frame.height) & !1;  // mantiene la proporción
+                let data = downscale_bgra(&raw_frame.data, raw_frame.width, raw_frame.height, dw, dh);
+                RawStreamData { data: Bytes::from(data), width: dw, height: dh }
+            } else {
+                raw_frame
+            };
             match bytes_to_yub(raw_frame){
                 Ok(yubytes) => {
                     if receiver_idr_request.swap(false, Ordering::SeqCst) {

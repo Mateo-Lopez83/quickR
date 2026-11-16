@@ -13,8 +13,8 @@
 \contentsline {subsubsection}{\numberline {2.2.3}RustDesk}{10}{subsubsection.2.2.3}%
 \contentsline {subsubsection}{\numberline {2.2.4}WebRTC}{11}{subsubsection.2.2.4}%
 \contentsline {subsubsection}{\numberline {2.2.5}General comparison}{13}{subsubsection.2.2.5}%
-\contentsline {subsection}{\numberline {2.3}QuickR}{16}{subsection.2.3}%
-\contentsline {subsection}{\numberline {2.4}Implementation}{16}{subsection.2.4}%
-\contentsline {section}{\numberline {3}Results and Discussion}{16}{section.3}%
-\contentsline {subsection}{\numberline {3.1}Results}{16}{subsection.3.1}%
-\contentsline {subsection}{\numberline {3.2}Conclusion}{16}{subsection.3.2}%
+\contentsline {subsection}{\numberline {2.3}QuickR}{15}{subsection.2.3}%
+\contentsline {subsection}{\numberline {2.4}Implementation}{17}{subsection.2.4}%
+\contentsline {section}{\numberline {3}Results and Discussion}{17}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Results}{17}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Conclusion}{17}{subsection.3.2}%
