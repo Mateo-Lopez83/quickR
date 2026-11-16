@@ -261,6 +261,110 @@
       \verb https://discord.com/blog/how-it-all-goes-live-an-overview-of-discords-streaming-technology
       \endverb
     \endentry
+    \entry{rustdesk_repo}{online}{}{}
+      \list{organization}{1}{%
+        {RustDesk}%
+      }
+      \field{sortinit}{6}
+      \field{sortinithash}{b33bc299efb3c36abec520a4c896a66d}
+      \field{labeltitlesource}{title}
+      \field{note}{Licensed under AGPL-3.0}
+      \field{title}{{RustDesk}: An Open-Source Remote Desktop Application}
+      \field{urlday}{14}
+      \field{urlmonth}{11}
+      \field{urlyear}{2026}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://github.com/rustdesk/rustdesk
+      \endverb
+      \verb{url}
+      \verb https://github.com/rustdesk/rustdesk
+      \endverb
+    \endentry
+    \entry{rustdesk_server}{online}{}{}
+      \list{organization}{1}{%
+        {RustDesk}%
+      }
+      \field{sortinit}{7}
+      \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
+      \field{labeltitlesource}{title}
+      \field{title}{{RustDesk} Server ({hbbs}/{hbbr})}
+      \field{urlday}{14}
+      \field{urlmonth}{11}
+      \field{urlyear}{2026}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://github.com/rustdesk/rustdesk-server
+      \endverb
+      \verb{url}
+      \verb https://github.com/rustdesk/rustdesk-server
+      \endverb
+    \endentry
+    \entry{rfc8825}{misc}{}{}
+      \name{author}{1}{}{%
+        {{hash=b10776a96eae601402d41256723b11b2}{%
+           family={Alvestrand},
+           familyi={A\bibinitperiod},
+           given={H.},
+           giveni={H\bibinitperiod}}}%
+      }
+      \strng{namehash}{b10776a96eae601402d41256723b11b2}
+      \strng{fullhash}{b10776a96eae601402d41256723b11b2}
+      \strng{fullhashraw}{b10776a96eae601402d41256723b11b2}
+      \strng{bibnamehash}{b10776a96eae601402d41256723b11b2}
+      \strng{authorbibnamehash}{b10776a96eae601402d41256723b11b2}
+      \strng{authornamehash}{b10776a96eae601402d41256723b11b2}
+      \strng{authorfullhash}{b10776a96eae601402d41256723b11b2}
+      \strng{authorfullhashraw}{b10776a96eae601402d41256723b11b2}
+      \field{sortinit}{8}
+      \field{sortinithash}{a231b008ebf0ecbe0b4d96dcc159445f}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{howpublished}{RFC 8825}
+      \field{title}{Overview: Real-Time Protocols for Browser-Based Applications}
+      \field{year}{2021}
+      \verb{doi}
+      \verb 10.17487/RFC8825
+      \endverb
+      \verb{urlraw}
+      \verb https://www.rfc-editor.org/rfc/rfc8825
+      \endverb
+      \verb{url}
+      \verb https://www.rfc-editor.org/rfc/rfc8825
+      \endverb
+    \endentry
+    \entry{discord_DAVE}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=ca8b60387d1207d94011fd3ed780210f}{%
+           family={Birarda},
+           familyi={B\bibinitperiod},
+           given={S.},
+           giveni={S\bibinitperiod}}}%
+      }
+      \list{organization}{1}{%
+        {Discord Engineering \& Developers Blog}%
+      }
+      \strng{namehash}{ca8b60387d1207d94011fd3ed780210f}
+      \strng{fullhash}{ca8b60387d1207d94011fd3ed780210f}
+      \strng{fullhashraw}{ca8b60387d1207d94011fd3ed780210f}
+      \strng{bibnamehash}{ca8b60387d1207d94011fd3ed780210f}
+      \strng{authorbibnamehash}{ca8b60387d1207d94011fd3ed780210f}
+      \strng{authornamehash}{ca8b60387d1207d94011fd3ed780210f}
+      \strng{authorfullhash}{ca8b60387d1207d94011fd3ed780210f}
+      \strng{authorfullhashraw}{ca8b60387d1207d94011fd3ed780210f}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Meet {DAVE}: Discord's New End-to-End Encryption for Audio \& Video}
+      \field{year}{2024}
+      \verb{urlraw}
+      \verb https://discord.com/blog/meet-dave-e2ee-for-audio-video
+      \endverb
+      \verb{url}
+      \verb https://discord.com/blog/meet-dave-e2ee-for-audio-video
+      \endverb
+    \endentry
   \enddatalist
 \endrefsection
 \endinput

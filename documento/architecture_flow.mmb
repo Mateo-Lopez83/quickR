@@ -1,0 +1,45 @@
+flowchart LR
+    subgraph SENDER["Sender PC"]
+        S_IDR["IDR request listener"]
+        S_CAP["Screen capture<br/><i>windows-capture · BGRA</i>"]
+        S_ENC["H.264 encoder<br/><i>OpenH264</i>"]
+        S_PKT["Packetizer<br/><i>17-byte header · fragments ≤ 1180 B</i>"]
+        S_AUD["System audio + Opus encoder<br/><i>WASAPI loopback · 20 ms packets</i>"]
+        S_SOCK[("UDP socket<br/><i>audio sent before video</i>")]
+        S_CAP --> S_ENC --> S_PKT --> S_SOCK
+        S_AUD --> S_SOCK
+        S_IDR -.->|"force keyframe"| S_ENC
+    end
+
+    subgraph NET["Internet"]
+        STUN(["Public STUN server"])
+        CODE(["Room codes exchanged<br/>by the users"])
+    end
+
+    subgraph RECEIVER["Receiver PC"]
+        R_SOCK[("UDP socket")]
+        R_REAS["Frame reassembly<br/><i>by timestamp · loss detection</i>"]
+        R_DEC["H.264 decoder<br/><i>OpenH264</i>"]
+        R_GUI["Video display<br/><i>egui</i>"]
+        R_ADEC["Opus decoder<br/><i>+ loss concealment</i>"]
+        R_PLAY["Audio playback<br/><i>120 ms jitter buffer</i>"]
+        R_SOCK -->|"video"| R_REAS --> R_DEC --> R_GUI
+        R_SOCK -->|"audio"| R_ADEC --> R_PLAY
+    end
+
+    S_SOCK <-.->|"1. STUN request"| STUN
+    STUN <-.->|"1. STUN request"| R_SOCK
+    S_SOCK -.-|"2. share code"| CODE
+    CODE -.-|"2. share code"| R_SOCK
+    S_SOCK <-.->|"3. hole punching"| R_SOCK
+    S_SOCK ==>|"4. video + audio datagrams"| R_SOCK
+    S_IDR <-.->|"IDR request / ack"| R_REAS
+
+    classDef media fill:#fef3c7,stroke:#d97706,color:#78350f
+    classDef net fill:#dcfce7,stroke:#16a34a,color:#14532d
+    classDef play fill:#dbeafe,stroke:#2563eb,color:#172554
+    classDef ctrl fill:#ffe4e6,stroke:#e11d48,color:#881337
+    class S_CAP,S_ENC,S_PKT,S_AUD media
+    class S_SOCK,R_SOCK,STUN,CODE net
+    class R_REAS,R_DEC,R_GUI,R_ADEC,R_PLAY play
+    class S_IDR ctrl

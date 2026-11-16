@@ -1,0 +1,26 @@
+sequenceDiagram
+    actor UA as User A (sharer)
+    participant A as QuickR (send)
+    participant S as STUN server
+    participant B as QuickR (receive)
+    actor UB as User B (viewer)
+
+    A->>S: Binding request
+    S-->>A: Public IP:port of A
+    B->>S: Binding request
+    S-->>B: Public IP:port of B
+    A->>UA: Show room code (e.g. BA9B1283:c1a6)
+    B->>UB: Show room code
+    UA-->>UB: Exchange codes (chat, call…)
+    UA->>A: Enter B's code
+    UB->>B: Enter A's code
+
+    loop every 400 ms, up to 19 tries
+        A->>B: Sync
+        B->>A: Sync
+    end
+    Note over A,B: First Sync received → 5 more Sync at 100 ms intervals, NAT mappings open
+
+    A->>B: Video + audio datagrams
+    B-->>A: IDR request (when loss is detected)
+    A-->>B: IDR ack

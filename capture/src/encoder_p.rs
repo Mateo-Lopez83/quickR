@@ -23,6 +23,21 @@ pub mod encoder_p{
         Ok(YUVBuffer::from_bgra8_source(bgra))
     }
 
+    // Downscaling del BGRA a traves de metodo de nearest neighbor average
+    fn downscale_bgra(src: &[u8], sw: usize, sh: usize, dw: usize, dh: usize) -> Vec<u8> {
+        let mut dst = vec![0u8; dw * dh * 4];
+        let x_map: Vec<usize> = (0..dw).map(|x| (x * sw / dw) * 4).collect();
+        for y in 0..dh {
+            let src_row = &src[(y * sh / dh) * sw * 4..][..sw * 4];
+            let dst_row = &mut dst[y * dw * 4..][..dw * 4];
+            for (x, &sx) in x_map.iter().enumerate() {
+                dst_row[x * 4..x * 4 + 4].copy_from_slice(&src_row[sx..sx + 4]);
+            }
+        }
+        dst
+    }
+
+
     
 
     //rx recibe de windows-capture, envía a tx el encoded bytestream

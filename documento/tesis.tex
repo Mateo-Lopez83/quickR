@@ -1,6 +1,11 @@
 \documentclass[12pt]{article}
 \usepackage{hyperref}
+\usepackage{xurl}
 \usepackage{graphicx}
+\usepackage{xltabular}  % longtable + tabularx: wrapped columns that can break across pages
+\usepackage{array}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}  % wrapped column, left-aligned
+
 \usepackage[backend=biber, style=ieee]{biblatex}
 \addbibresource{references.bib}
 
@@ -8,6 +13,7 @@
 \begin{document}
 
 % Title page
+\pagenumbering{roman}
 \begin{titlepage}
 \begin{center}
 
@@ -72,14 +78,16 @@
 
 \newpage
 \tableofcontents
+
 \newpage
+\pagenumbering{arabic}
 \setlength{\parindent}{20pt}
 
 \section{Introduction}
 
 \subsection{Context}
-Ever since the turn of the millennium, the internet has had a significant impact on global communication technologies. By the year 2000, 
-51\% of global telecommunications networks were transmitted via the internet, a figure that rose to 97\% by 2007~\cite{tech_capacity}.
+Ever since the turn of the millennium, the internet has had a significant impact on global communication technologies. By the year 2000, the internet was
+already carrying 51\% of all information exchanged between any two-way communication networks, a figure that rose to 97\% by 2007~\cite{tech_capacity}.
 This reliance on the internet has been steadily increasing over time, culminating in 2020 when quarantine and lockdown measures due to the pandemic 
 made the internet an essential part of daily life for most people worldwide. This drastic change in people's lives led to an all-time high demand for 
 applications that connect different individuals through digital means, such as Meta's Metaverse, the increased demand for virtual meeting software 
@@ -138,14 +146,14 @@ support and benefit from it. Another motivation stems from more personal reasons
 \subsection{Objectives}
 For this project, there will be a single main objective and a set of secondary objectives: 
 \subsubsection{Main Objective}
-For this project, the main objective is to design and develop a \textbf{Windows}-specific desktop application that implements a video streaming protocol that allows users to share real-time video and audio between devices from scratch.
+The main objective is to design and develop a \textbf{Windows}-specific desktop application that implements a video streaming protocol that allows users to share real-time video and audio between devices from scratch.
 \subsubsection{Secondary Objectives}
 The secondary or auxiliary objectives are the following:
 \begin{itemize}
     \item Develop a Peer-to-Peer (P2P) architecture that allows users to communicate between each other's devices.
     \item Implement a full transmission pipeline over UDP that allows for a \textbf{loss-tolerant} packet transmission.
     \item Build a user interface that shows received video and audio streams in real time.
-    \item Compare the performance between existing alternatives (Google Meets, Microsoft Teams, Discord and Parsec) streaming tools and the developed application with measurable metrics such as end-to-end latency, framerate, bitrate, and CPU usage.
+    \item Compare the performance between existing alternatives (Google Meet, Microsoft Teams, Discord and Parsec) streaming tools and the developed application with measurable metrics such as end-to-end latency, framerate, bitrate, and CPU usage.
     \item For RTP-based services, compare the developed application in regards to packet loss and freeze percentage metrics. 
 \end{itemize}
 
@@ -166,11 +174,14 @@ application, to be followed by a series of tests and performance comparisons aga
     \item \textbf{Full Cone NAT:} Defined under RFC 4787 as \textit{Endpoint-Independent Mapping}, Full Cone is a NAT service that maps an internal IP address and port to a single, static external IP address and port, allowing any external host on the internet to send packets to that external address and reach the internal device. This mapping is extremely permissive and maximizes compatibility for peer-to-peer applications at the expense of lower inbound security.
     \item \textbf{Symmetric NAT:} Defined under RFC 4787 as \textit{Address and Port-Dependent Mapping}, Symmetric NAT is a NAT service that maps a distinct external port to each outgoing IP and port tuple. Since the external port mapping varies depending on each destination, this service prevents 
     incoming traffic from external devices and thus turns Hole Punching useless.
-    \item \textbf{Latency:} 
-    \item \textbf{Frames Per Second (FPS):} Amount of 
-    \item \textbf{Codec:}
-    \item \textbf{KeyFrame:}
-    \item \textbf{DeltaFrame:}   
+    \item \textbf{Session Traversal Utilities for NAT (STUN) servers:} Types of publicly accessible servers that allows devices living on private local networks to discover their public IP address and port number. When a device sends a request to one of these servers, the NAT modifies the packet header with the router's public IP and address, and the server sends a reply packet with that exact information as the answer. 
+    These servers are pivotal for P2P communications, but don't work for devices on a private network with a Symmetric NAT configuration.  
+    \item \textbf{Traversal Using Relays around NAT (TURN) server}: Types of publicly accessible servers that act as relays between P2P devices when the network restricts direct communication (most common case being Symmetric NAT). These servers should guarantee that they do not interfere with nor record any of the transmitted passages.
+    \item \textbf{Latency:} Streaming-based metric that measures the time delay between a piece of data (a frame) getting captured and the moment it arrives at the destination. In this case, it will be measured by comparing packets with the same sequence header by computing the difference between their timestamps.
+    \item \textbf{Frames Per Second (FPS):} Amount of distinct images (frames) the client screen can display, measured per second.
+    \item \textbf{Codec:} Process that can compress video into a smaller size and can afterwards decompress it using mathematical algorithms. Some common codecs that are mentioned in this document are H.264, H.265, VP9, AV1, among others.  
+    \item \textbf{KeyFrame:} In a codec-compressed video, KeyFrames are complete frames that store all of the frame's data by itself without a reference to any other frames. 
+    \item \textbf{DeltaFrame:} In a codec-compressed video, DeltaFrames are a type of frame that only contains the information of changes in regards to the previous frame. These frames are in most cases smaller than KeyFrames, but depend on the decoder having the exact previous frame as a reference to work properly.
 \end{itemize}
 
 \subsection{State of the Art}
@@ -208,6 +219,9 @@ application, to be followed by a series of tests and performance comparisons aga
         With these characteristics, BUD is able to perform with an exceptional quality in various environments. During live showcases, Parsec was able to perform at near 30 fps with packet loss between 5 and 10\%. Nonetheless, the documents state the software still falls behind on
         symmetric NATs (they restrict the hole punching method needed for the first connection establishment), degraded networks are still not contemplated for the algorithm's performance, and creating a protocol with custom tools brings a great deal of technical debt and issues that have to be
         solved in-house.  
+
+        \textbf{How it compares to QuickR:} Similar to QuickR, the BUD protocol was developed after realizing that using either TCP or UDP by themselves as a transport medium for quickly-changing data such as video streams will not be enough. It also uses hole punching similarly to how QuickR does to establish connections.
+        However, Parsec has many differences in its design logic and architecture, such as congestion control via a variable bitrate at runtime, a 'ring' buffer where frame data is allocated and overwritten by new frames to avoid memory reallocation, and end-to-end packet encryption.  
     \subsubsection{Discord} 
     Although the Discord Application offers a myriad of services, mainly focused on instant messaging and VoIP communications, it also includes a feature called \textit{Go Live}, which is the company's feature for screen sharing inside of the app's voice channel. 
     According to the blog detailing this service's inner workings, \textit{Go Live} works with a pipeline that relies on three different but interconnected components: \textbf{Screen capture, data encoding, and transport.}~\cite{discord_streaming}
@@ -226,14 +240,167 @@ application, to be followed by a series of tests and performance comparisons aga
     When the receiver gets the video and audio packets, the client synchronizes both of these streams on the client device before showing it to the user. A known issue based on the technical decisions taken for this approach is that the VoIP audio and the stream are not synchronized, as they are managed by 
     different systems. This puts pressure on the developers to reduce stream latency as much as possible to avoid degrading the users' experience with the service.
 
+    \textbf{How it compares to QuickR:} TODO
+
+    \subsubsection{RustDesk}
+    RustDesk~\cite{rustdesk_repo} is an open-source alternative to TeamViewer, providing remote desktop services. It is written in Rust, and it falls under the AGPL-3.0 License. Even though Rustdesk offers a remote desktop service instead of a strict video-streaming one, both services work under similar logic and architectures. 
+    The main characteristics of to be taken into consideration for this project are the following:
+    \begin{enumerate}
+        \item \textbf{Initial connection and TURN by the hbbs/hbbr servers:} Rustdesk provides a lightweight server called hbbs that holds IP and port information between devices that are attempting to connect, and coordinates the hole punching process to get a connection. If that process fails (for example, due to Symmetric NAT configurations), 
+        there is another server called hbbr that can act as a TURN server and relay messages between nodes.~\cite{rustdesk_server}
+        \item \textbf{Video and audio codecs:} Utilizes VP8,VP9, and AV1 software codecs for video compression and Opus for audio compression. It is stated to also have H.264/H.265 as hardware encoders as a fallback.
+        \item\textbf{End-to-end encryption:} Uses the NaCl library to provide end-to-end encryption not even the hbbs can access or tamper with during remote desktop sessions. Both nodes also use asymmetric encryption to check the authenticity of the hbbs server on connection start, using an Ed25519 key-pair. 
+    \end{enumerate}
+
+    \textbf{How it compares to QuickR:} Being an open-source, Rust-based real-time video streaming service, this is the closest resemblance to QuickR. As such, it presents a great amount of similarities in the architecture and design choices, but it also has some characteristics that QuickR lacks, such as a workaround to
+    Symmetric NATs (the TURN server on hbbr), automatic peer discovery via ID, and end-to-end encryption. Unfortunately, this incurs into some drawbacks as the trade-off for some of the advantages, such as needing an intermediary server for any and all communications (either for hole punching or for packet relay).
+    Also, it is important to note that since RustDesk is a remote desktop control service, it includes many other microservices necessary to fulfill that need, such as a more specialized UI, coupled with controller input detection logic (mouse movements, keyboard presses) that QuickR does not need to replicate or find an alternative for.   
+    
+    \subsubsection{WebRTC}
+    Although WebRTC is not a program nor app, it is a protocol standard, as defined by RFC 8825~\cite{rfc8825}, plus around 20 other RFCs that document many of its characteristics. This protocol is tailored for needs such as direct P2P audio and video transmission inside of desktop, web, and mobile apps natively. Some of its most important 
+    characteristics are:
+    \begin{itemize}
+        \item Allows for both STUN and TURN-based server use to establish and maintain connection between peers.
+        \item Mandatory encryption using DTLS-SRTP to generate symmetric keys and secure channels afterwards. Media gets sent over SRTP (Secure Real-time Transport Protocol).
+        \item Uses VP8 and H.264 for video codec, while using Opus and G.711 for audio codecs.
+        \item Advanced congestion control based on adjusting the encoder's bitrate to allow for a smoother transmission. This process is triggered by metrics such as delay changes via RTT and packet loss rates
+        \item Loss recovery by fast retransmissions based on the reception of NACKs (message indicating the packet was \textbf{not} received correctly). Forward error correction is also used for this standard, as it allows to use the extra parity bits to fix errors on received packets without needing a retransmission.
+        \item Audio / Video synchronization using Sender Report timestamps, which triggers jitter buffers to allow any of the 2 mediums to catch up to the other one.
+        \item Able to be used for a pure P2P service, but also extendible to have different types of servers in between nodes.
+        \item KeyFrame requests are sent via PLI (Picture Loss Indication) requests. When the decoder notices a critical error with the decoding or necessary frame context is missing, the receiver can send a PLI which forces the sender to send a fresh KeyFrame as soon as possible.
+    \end{itemize}
+
+    \textbf{How it compares to QuickR:} In contrast to QuickR, the WebRTC standard is extremely mature, has been audited, and in general purposes fulfills all requirements needed for QuickR to work, and even offers solutions for problems QuickR has yet to fix and/or implement. However, it is not used for this project because of these same reasons.
+    As a fully developed standard with a myriad of tested implementations on any framework or language (including a fully complete WebRTC implementation in Rust), all of these are very complex and contain many more services not needed for the requirements stated previously for the proposed app. Besides, using these already developed solutions obfuscates
+    many networking concepts, as they are already solved and taken into account. By working on developing a new protocol to fit the exact needs stated beforehand, the user has much more control over every layer of the networking stack plus every step of the streaming process. For this reason, this project prioritizes the learning process of building
+    a whole protocol with basic tools rather than having a solution that can solve all of the shortcomings of QuickR at the cost of limiting the learning experience building the app gives. 
+
+        \subsubsection{General comparison}
+    Taking into account the alternatives described above, Table~\ref{tab:comparison} summarizes the main architectural and design choices/attributes of each one, alongside those of QuickR.
+
+   \begingroup
+    \footnotesize
+    \renewcommand{\arraystretch}{1.3} 
+    \setlength{\tabcolsep}{4pt}
+        \begin{xltabular}{\textwidth}{|>{\raggedright\arraybackslash\bfseries}p{2.4cm}|Y|Y|Y|Y|Y|}
+            \caption{Comparison between the reviewed alternatives and QuickR.}
+            \label{tab:comparison}\\
+            \hline
+            & \textbf{Parsec} & \textbf{Discord (\textit{Go Live})} & \textbf{RustDesk} & \textbf{WebRTC} & \textbf{QuickR} \\
+            \hline
+            \endfirsthead
+            % --- header repeated on each following page ---
+            \multicolumn{6}{l}{\textit{Table~\thetable\ (continued)}} \\
+            \hline
+            & \textbf{Parsec} & \textbf{Discord (\textit{Go Live})} & \textbf{RustDesk} & \textbf{WebRTC} & \textbf{QuickR} \\
+            \hline
+            \endhead
+            % --- footer at the bottom of pages that continue ---
+            \multicolumn{6}{r}{\textit{Continued on next page}} \\
+            \endfoot
+            % --- footer of the last page (empty) ---
+            \endlastfoot
+
+            Type
+                & Proprietary app
+                & Proprietary app
+                & Open-source app
+                & Protocol standard
+                & Open-source app \\
+            \hline
+            Architecture
+                & Direct P2P
+                & Client--server (media relayed by Discord's servers)
+                & Direct P2P first, relay as fallback
+                & P2P, or through servers depending on the deployment
+                & Direct P2P only \\
+            \hline
+            NAT traversal
+                & UDP hole punching
+                & Not needed (clients connect to servers)
+                & UDP hole punching coordinated by hbbs
+                & ICE with STUN
+                & STUN + UDP hole punching \\
+            \hline
+            Relay fallback
+                & No
+                & Always relayed
+                & Yes (hbbr)
+                & Yes (TURN)
+                & No \\
+            \hline
+            Transport
+                & BUD (custom, over UDP)
+                & WebRTC (RTP over UDP)
+                & Custom (over UDP/TCP)
+                & RTP/RTCP over UDP
+                & Custom RTP-inspired protocol over UDP \\
+            \hline
+            Encryption
+                & DTLS
+                & Yes (DAVE protocol~\cite{discord_DAVE})
+                & End-to-end (NaCl)
+                & Mandatory DTLS-SRTP
+                & None (future work) \\
+            \hline
+            Video / audio codecs
+                & H.264 / No documentation on audio codecs
+                & VP8, H.264, HEVC, AV1 / Opus
+                & VP8, VP9, AV1, H.264, H.265 / Opus
+                & VP8, H.264 / Opus, G.711
+                & H.264 (OpenH264) / Opus \\
+            \hline
+            Congestion control
+                & Encoder bitrate adapted to RTT and congestion
+                & Rate capped by slowest viewer; frame dropping
+                & Adaptive quality
+                & Delay- and loss-based (GCC)
+                & Fixed bitrate cap \\
+            \hline
+            Loss recovery
+                & Fast and slow retransmission (ACK-based)
+                & Inherited from WebRTC
+                & --
+                & NACK + retransmission, FEC, keyframe requests
+                & Keyframe (IDR) requests \\
+            \hline
+            Open source
+                & No
+                & No
+                & Yes (AGPL-3.0)
+                & Yes (e.g.\ libwebrtc, webrtc-rs)
+                & Yes (MIT) \\
+            \hline
+            Servers required
+                & Yes (account and connection brokering)
+                & Yes (always)
+                & Yes (hbbs, self-hostable)
+                & Signaling server (+ TURN/SFU if used)
+                & Public STUN server only \\
+            \hline
+        \end{xltabular}
+    \endgroup
+
+Given the comparison with other modern solutions to the same problem, some similar answers to specific problems are obvious: all processes rely on UDP as a base to start the packet transfer, even if it is later improved by any of multiple additions (BUD, fast retransmissions, etc.). 
+Similarly, it is evident how all native P2P systems use hole punching to establish connections, plus using Opus as the preferred codec for all solutions that state their audio codec. Another solution to a very important problem, although not stated to be used by all systems, is the KeyFrame request. 
+Although only WebRTC explicitly describes using it, having logic determining how to ask for a keyframe when the decoder cannot decode any more for any reason is a sound answer to stream degradation due to the nature of UDP. All of these characteristics are shared with the proposed QuickR software.
+
+Besides similarities with QuickR, there are some details of attributes other applications implement but QuickR lacks, for example, symmetric NAT solutions, streamlined peer connection, and reactiveness to network congestion. Unfortunately, all of these are characteristics that demand at the very least
+dedicated servers to aid the clients. This incurs into a heavier need for more robust infrastructure and external services, which goes against QuickrR's goals. Although it complicates some of the elements of the app, having a functioning media streaming application that guarantees being open source, not
+needing an account nor other servers (excluding the public STUN server) cements the niche QuickR is trying to fill.
+
+Having the design choice of excluding external helper servers from the scope of the project certainly puts QuickR at a disadvantage against the already working services explained before, especially since it lacks providing a relay fallback, bypassing symmetric NAT, having dedicated packet encryption, and congestion control.
+Nonetheless, these are deliberate limitations to the scope of the current project, and would be addressed in future costs. The performance evaluation at Section~\ref{sec:results} shows the impact of having a minimal design in comparison to the alternatives. 
 
 \subsection{QuickR}
 
 \subsection{Implementation}
 
 \section{Results and Discussion}
+\label{sec:results}
 
 \subsection{Results}
+
 
 \subsection{Conclusion}
 
