@@ -54,7 +54,7 @@ pub mod encoder_p{
             .max_frame_rate(FrameRate::from_hz(30.0))
             .rate_control_mode(RateControlMode::Bitrate)
             .complexity(openh264::encoder::Complexity::Low)
-            .usage_type(openh264::encoder::UsageType::ScreenContentRealTime)
+            //.usage_type(openh264::encoder::UsageType::ScreenContentRealTime)
             .intra_frame_period(IntraFramePeriod::from_num_frames(60)); // hard cap de cada cuanto mandar un IDR
                 
         let mut encoder = Encoder::with_api_config(openh264::OpenH264API::from_source(), encoder_config).unwrap();
