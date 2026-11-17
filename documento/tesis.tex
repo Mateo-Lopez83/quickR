@@ -4,6 +4,7 @@
 \usepackage{graphicx}
 \usepackage{xltabular}  % longtable + tabularx: wrapped columns that can break across pages
 \usepackage{array}
+\usepackage{xcolor}
 \newcolumntype{Y}{>{\raggedright\arraybackslash}X}  % wrapped column, left-aligned
 
 \usepackage[backend=biber, style=ieee]{biblatex}
@@ -246,7 +247,7 @@ application, to be followed by a series of tests and performance comparisons aga
     When the receiver gets the video and audio packets, the client synchronizes both of these streams on the client device before showing it to the user. A known issue based on the technical decisions taken for this approach is that the VoIP audio and the stream are not synchronized, as they are managed by 
     different systems. This puts pressure on the developers to reduce stream latency as much as possible to avoid degrading the users' experience with the service.
 
-    \textbf{How it compares to QuickR:} TODO
+    \textbf{How it compares to QuickR:}  \colorbox{red!50}{TODO}
 
     \subsection{RustDesk}
     RustDesk~\cite{rustdesk_repo} is an open-source alternative to TeamViewer, providing remote desktop services. It is written in Rust, and it falls under the AGPL-3.0 License. Even though Rustdesk offers a remote desktop service instead of a strict video-streaming one, both services work under similar logic and architectures. 
@@ -400,7 +401,7 @@ Nonetheless, these are deliberate limitations to the scope of the current projec
 
 \section{Methodology}
 
-TODO
+\colorbox{red!50}{TODO}
 
 \section{QuickR: Design and Implementation}
 
@@ -451,10 +452,28 @@ Figure~\ref{fig:header} details another relevant aspect of the program's own dat
 \subsection{Connection Establishment}
 \label{sec:connection}
 
-For connection establishment, there are 3 main steps to successfully allow the two nodes/peers to send information between each other:
+For connection establishment, there are 4 main steps to successfully allow the two nodes/peers to send information between each other:
+\begin{enumerate}
+    \item STUN server request (on \colorbox{gray!20}{`/transprot/src/stuntry.rs`}): As soon as the program boots up, each peer sends a Binding Request (20-byte payload) to a hardcoded STUN server, in this case 'stun4.l.google.com:19302'. The server accepts the connection and the Binding Request and replies with a XOR Mapped Address. This address can be converted into the public IP Address + port tuple easily and loaded on local memory. 
+    \item Public Address to connection code conversion (on \newline \colorbox{gray!20}{`/commons/src/ip\_converter.rs`}): After receiving the public address tuple from the STUN server, internally the program converts both the IP address and port into a string by transforming each octet into its Hexadecimal representation (for example, 192 would become C0) plus dropping the periods (.) in between octets. The same process is done with the 
+    port number, but both address and port hexadecimal representations are separated by a colon. For example, if the original tuple is '186.155.19.201:29539', the connection code would be 'BA9B13C9:7363', which, although not the best compression method, does reduce character amount per code and makes it easier to share between peers. 
+    \item Connection code sharing: This step generates some friction, as the current implementation of QuickR does not offer any in-app methods to share these connection codes between the two devices. It is necessary for both users to use a different medium to share these codes and register them on the app. 
+    \item Hole Punching: Once both devices know each other's connection code, they revert it back to the IP address + port tuple, and send via UDP a packet containing only the header with ChannelType = 4, for a Sync Channel. These messages are sent 19 times with a delay of 400ms in between. This is because of the requirement of the other device to have already opened up the "hole" on their firewall so that the packet from the other peer gets delivered correctly, 
+    thus the need for multiple packets. Once any device gets a single Sync packet from the other peer, they have guaranteed the hole punching worked and there is a way to communicate with the other device. To make sure the other device has also received at least 1 packet to confirm connection, it sends 5 more Sync packets in quick succession (delay reduced to 100ms in between packets) but it itself starts discarding any leftover incoming Sync packet. After both devices send the 5 packets each, they are both
+    ready to start the transmission, and the receiver is ready to get packets with the Video and Audio ChannelTypes.
+\end{enumerate}
 
+Figure~\ref{fig:connseq} illustrates the step-by-step process of achieving the connection detailed above. 
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{conn_seq1.pdf}
+    \caption{QuickR's connection establishment sequence}
+    \label{fig:connseq}
+\end{figure}
 
 \subsection{Transport Logic}
+
 
 \subsection{Screen Capture Pipeline}
 \label{sec:screencap}
