@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (MiKTeX 26.5) (preloaded format=pdflatex 2026.9.1)  16 NOV 2026 16:31
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (MiKTeX 26.5) (preloaded format=pdflatex 2026.9.1)  16 NOV 2026 21:04
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -487,7 +487,7 @@ Package biblatex Info: ... file 'tesis.bbl' found.
  (tesis.bbl)
 Package biblatex Info: Reference section=0 on input line 13.
 Package biblatex Info: Reference segment=0 on input line 13.
-<uniandeslogo.png, id=83, 501.875pt x 596.2275pt>
+<uniandeslogo.png, id=115, 501.875pt x 596.2275pt>
 File: uniandeslogo.png Graphic file (type png)
 <use uniandeslogo.png>
 Package pdftex.def Info: uniandeslogo.png  used on input line 24.
@@ -510,40 +510,46 @@ pdfTeX warning (ext4): destination with the same identifier (name{page.i}) has b
 <to be read again> 
                    \relax 
 l.82 \newpage
-              [1] [1] [2] [3] [4] [5] [6] [7] [8] [9] [10] [11] [12] [13] [14]
-<architecture2.pdf, id=221, 602.25pt x 1091.03606pt>
+              [1] [1] [2] [3] [4] [5] [6] [7] [8] [9] [10] [11] [12] [13] [14] [15]
+<architecture2.pdf, id=266, 602.25pt x 1091.03606pt>
 File: architecture2.pdf Graphic file (type pdf)
 <use architecture2.pdf>
-Package pdftex.def Info: architecture2.pdf  used on input line 401.
+Package pdftex.def Info: architecture2.pdf  used on input line 415.
 (pdftex.def)             Requested size: 227.07458pt x 411.375pt.
- [15] [16 <./architecture2.pdf>]
-Overfull \hbox (1.17764pt too wide) in paragraph at lines 428--428
+ [16] [17 <./architecture2.pdf>]
+<header1.pdf, id=425, 602.25pt x 129.6042pt>
+File: header1.pdf Graphic file (type pdf)
+<use header1.pdf>
+Package pdftex.def Info: header1.pdf  used on input line 425.
+(pdftex.def)             Requested size: 390.0pt x 83.93123pt.
+ [18 <./header1.pdf>] [19]
+Overfull \hbox (1.17764pt too wide) in paragraph at lines 485--485
 \OT1/cmtt/m/n/12 the -[] lowest -[] latency -[] interactive -[] game -[] streaming -[] 1fd5a03a6007$[] 
  []
 
-[17] [18] (tesis.aux)
+[20] [21] (tesis.aux)
  ***********
 LaTeX2e <2026-06-01>
 L3 programming layer <2026-08-10>
  ***********
 Package rerunfilecheck Info: File `tesis.out' has not changed.
-(rerunfilecheck)             Checksum: BB88A5F09CE22119D5A0905F3B442BD3;2389.
+(rerunfilecheck)             Checksum: 7F804343A1FAB951B4E184925E22A87B;3814.
 Package logreq Info: Writing requests to 'tesis.run.xml'.
 \openout1 = `tesis.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 16339 strings out of 467441
- 293458 string characters out of 5407592
- 1167122 words of memory out of 5000000
- 45424 multiletter control sequences out of 15000+600000
+ 16380 strings out of 467441
+ 294076 string characters out of 5407592
+ 1169293 words of memory out of 5000000
+ 45447 multiletter control sequences out of 15000+600000
  634447 words of font info for 62 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 74i,7n,79p,1530b,1485s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 74i,7n,79p,1530b,1481s stack positions out of 10000i,1000n,20000p,200000b,200000s
  <C:\Users\57304\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm1200.pk><C:/Users/57304/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx10.pfb><C:/Users/57304/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Users/57304/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbxti10.pfb><C:/Users/57304/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi12.pfb><C:/Users/57304/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/57304/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Users/57304/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/57304/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti10.pfb><C:/Users/57304/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti12.pfb><C:/Users/57304/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmtt12.pfb>
-Output written on tesis.pdf (20 pages, 461281 bytes).
+Output written on tesis.pdf (23 pages, 494915 bytes).
 PDF statistics:
- 472 PDF objects out of 1000 (max. 8388607)
- 66 named destinations out of 1000 (max. 500000)
- 171 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 550 PDF objects out of 1000 (max. 8388607)
+ 84 named destinations out of 1000 (max. 500000)
+ 240 words of extra memory for PDF output out of 10000 (max. 10000000)
 

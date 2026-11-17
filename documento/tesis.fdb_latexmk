@@ -1,12 +1,12 @@
 # Fdb version 4
-["biber tesis"] 0 "tesis.bcf" "tesis.bbl" "tesis" 1794864695.66979 -1
+["biber tesis"] 0 "tesis.bcf" "tesis.bbl" "tesis" 1794881072.52835 -1
   "references.bib" 1794805986.72888 6196 6f3d8338051c69cd61281aba3beaa400 ""
-  "tesis.bcf" 1794864695.25055 108571 3de3d66e614f7ed941dc2010fcb36357 "pdflatex"
+  "tesis.bcf" 1794881071.93728 108634 d5c2e03649ed684fd7a1ae3ee2657bff "pdflatex"
   (generated)
   "tesis.bbl"
   "tesis.blg"
   (rewritten before read)
-["pdflatex"] 1794864692.28389 "c:/Users/57304/Documents/Mateo Lopez/tesis/quikr/documento/tesis.tex" "tesis.pdf" "tesis" 1794864695.67368 0
+["pdflatex"] 1794881067.83906 "c:/Users/57304/Documents/Mateo Lopez/tesis/quikr/documento/tesis.tex" "tesis.pdf" "tesis" 1794881072.53269 0
   "C:/Users/57304/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map" 1794805848.33259 80909 eab91d9745dd2edfd62a31d53cd5fe15 ""
   "C:/Users/57304/AppData/Local/MiKTeX/fonts/pk/ljfour/jknappen/ec/dpi600/tcrm1200.pk" 1794285255.61413 14064 27d89571588b703e6c51a1f701028c23 ""
   "C:/Users/57304/AppData/Local/MiKTeX/miktex/data/le/pdftex/pdflatex.fmt" 1788276204.40919 13373064 ec2b69524576835f1a891649806f75d2 ""
@@ -98,12 +98,13 @@
   "C:/Users/57304/AppData/Local/Programs/MiKTeX/tex/latex/xltabular/xltabular.sty" 1741086805 4020 2a8868abba10077001a8d63ade8a516c ""
   "C:/Users/57304/AppData/Local/Programs/MiKTeX/tex/latex/xurl/xurl.sty" 1641733940 4675 e4b8c405820368c2dfb03526e16d725a ""
   "architecture2.pdf" 1794861405.33954 227753 1abf21ef2a458536a7b376001c5e1cc7 ""
-  "c:/Users/57304/Documents/Mateo Lopez/tesis/quikr/documento/tesis.tex" 1794864688.26039 36993 0e70209364793ccaa6a8e8171e537ea4 ""
-  "tesis.aux" 1794864695.2338 5376 56512b3459dc83c9e2e790f7e1c302b6 "pdflatex"
-  "tesis.bbl" 1794805997.15526 14900 c41a27b370a436d79fe263a1aa46e818 "biber tesis"
-  "tesis.out" 1794864695.24215 2389 bb88a5f09ce22119d5a0905f3b442bd3 "pdflatex"
-  "tesis.run.xml" 1794864695.25537 2409 18509dead3c041eb141557e28c5a8758 "pdflatex"
-  "tesis.toc" 1794864695.25537 1604 2c6dd0c2f6e6393434587b13bf9221ca "pdflatex"
+  "c:/Users/57304/Documents/Mateo Lopez/tesis/quikr/documento/tesis.tex" 1794881062.45861 42161 e45770c41cf516ff4a5e1cba4c9703d3 ""
+  "header1.pdf" 1794869528.09672 27113 c64e5a8614800e10a6d197b837c909a7 ""
+  "tesis.aux" 1794881071.90117 6782 1ee951363c97aecc0bbce66d85415859 "pdflatex"
+  "tesis.bbl" 1794873165.87529 16712 a07616d20bfca2bd15b4a39bec52ecbf "biber tesis"
+  "tesis.out" 1794881071.91447 3814 7f804343a1fab951b4e184925e22a87b "pdflatex"
+  "tesis.run.xml" 1794881071.94066 2409 18509dead3c041eb141557e28c5a8758 "pdflatex"
+  "tesis.toc" 1794881071.94066 2260 b2de88976974e63b47d2b648b2b9dab5 "pdflatex"
   "uniandeslogo.png" 1789528925.76044 22106 6b4a71c91d8d99566edaafef6f1cc7da ""
   (generated)
   "tesis.aux"

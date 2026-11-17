@@ -157,13 +157,19 @@ The secondary or auxiliary objectives are the following:
     \item For RTP-based services, compare the developed application in regards to packet loss and freeze percentage metrics. 
 \end{itemize}
 
-\section{Methodology}
-For the development of this project, the methodology commences with a section of definitions and background knowledge that will elaborate on necessary concepts. After that, it does a review of the state-of-the-art streaming tools and protocols, exploring the solutions that are already 
-on the market. Subsequently, the next step will be the design and eventual implementation of the
+\subsection{Scope and Limitations}
+
+For this project, the proposed application is limited to only work on Windows 10 and Windows 11 devices, as it uses specific API calls to these Operating Systems. Besides from this, it is not designed to allow more than 2 people to be on the same streaming session, as there is only one
+broadcaster and one receiver. Encryption was not a consideration taken for the criteria of completing this project, as well as using a TURN server to help either by acting as a relay or a way to circunvent symmetric servers. This last characteristic also has a consequence of needing a separate 
+medium to share each peer's connection code (the peer's IP address +  port tuple encoded into a string of uppercase letters and numbers. For example: BA1F3871:df4a). 
+
+\subsection{Document Structure}
+To detail the entire history, achievements and results of the project, first goes a section of definitions and background knowledge that will elaborate on necessary concepts. After that, it does a review of the state-of-the-art streaming tools and protocols, exploring the solutions that are already 
+on the market. Subsequently, the next step will be the detail on the methodology taken for the design and implementation of the
 application, to be followed by a series of tests and performance comparisons against the existing alternatives using packet analysis tools such as Wireshark.  
 
 
-\subsection{Definitions}
+\section{Theoretical Background}
 \begin{itemize}
     \item \textbf{Live Streaming:} The process of transmitting and/or receiving media content over the internet in real time and in a continuous manner.
     \item \textbf{Open Source Program:} Software and its source code for which it is publicly available to view, use, distribute, and modify mostly without restriction. Uses Licenses to establish any type of limitations and freedoms in regards to its use and distribution.
@@ -184,8 +190,8 @@ application, to be followed by a series of tests and performance comparisons aga
     \item \textbf{DeltaFrame:} In a codec-compressed video, DeltaFrames are a type of frame that only contains the information of changes in regards to the previous frame. These frames are in most cases smaller than KeyFrames, but depend on the decoder having the exact previous frame as a reference to work properly.
 \end{itemize}
 
-\subsection{State of the Art}
-    \subsubsection{Parsec} Parsec is a desktop application whose main goal is to allow for a seamless experience using remote desktop connections, with online gaming as the primary focus, but allowing for connections to cloud devices and personal computers as well.
+\section{State of the Art}
+    \subsection{Parsec} Parsec is a desktop application whose main goal is to allow for a seamless experience using remote desktop connections, with online gaming as the primary focus, but allowing for connections to cloud devices and personal computers as well.
         According to the information provided by the official Parsec Team (including 2 different blog posts and a talk at Code Driven NYC~\cite{parsec_streaming,parsec_udp_primer,parsec_udp_slides}), this application's streaming logic was built based these
         priorities in the following order of importance: \textbf{latency, then frame rate, then video quality}. To achieve the goal set on reducing latency to the absolute minimum, many standard technologies were
         tested, starting with both UDP and TCP protocols. The developers took both protocols and decided which attributes were desirable to bring over to a new, proprietary protocol that met all of the needs necessary for Parsec to provide a seamless video game streaming experience:
@@ -222,7 +228,7 @@ application, to be followed by a series of tests and performance comparisons aga
 
         \textbf{How it compares to QuickR:} Similar to QuickR, the BUD protocol was developed after realizing that using either TCP or UDP by themselves as a transport medium for quickly-changing data such as video streams will not be enough. It also uses hole punching similarly to how QuickR does to establish connections.
         However, Parsec has many differences in its design logic and architecture, such as congestion control via a variable bitrate at runtime, a 'ring' buffer where frame data is allocated and overwritten by new frames to avoid memory reallocation, and end-to-end packet encryption.  
-    \subsubsection{Discord} 
+    \subsection{Discord} 
     Although the Discord Application offers a myriad of services, mainly focused on instant messaging and VoIP communications, it also includes a feature called \textit{Go Live}, which is the company's feature for screen sharing inside of the app's voice channel. 
     According to the blog detailing this service's inner workings, \textit{Go Live} works with a pipeline that relies on three different but interconnected components: \textbf{Screen capture, data encoding, and transport.}~\cite{discord_streaming}
     \begin{enumerate}
@@ -242,7 +248,7 @@ application, to be followed by a series of tests and performance comparisons aga
 
     \textbf{How it compares to QuickR:} TODO
 
-    \subsubsection{RustDesk}
+    \subsection{RustDesk}
     RustDesk~\cite{rustdesk_repo} is an open-source alternative to TeamViewer, providing remote desktop services. It is written in Rust, and it falls under the AGPL-3.0 License. Even though Rustdesk offers a remote desktop service instead of a strict video-streaming one, both services work under similar logic and architectures. 
     The main characteristics of to be taken into consideration for this project are the following:
     \begin{enumerate}
@@ -256,7 +262,7 @@ application, to be followed by a series of tests and performance comparisons aga
     Symmetric NATs (the TURN server on hbbr), automatic peer discovery via ID, and end-to-end encryption. Unfortunately, this incurs into some drawbacks as the trade-off for some of the advantages, such as needing an intermediary server for any and all communications (either for hole punching or for packet relay).
     Also, it is important to note that since RustDesk is a remote desktop control service, it includes many other microservices necessary to fulfill that need, such as a more specialized UI, coupled with controller input detection logic (mouse movements, keyboard presses) that QuickR does not need to replicate or find an alternative for.   
     
-    \subsubsection{WebRTC}
+    \subsection{WebRTC}
     Although WebRTC is not a program nor app, it is a protocol standard, as defined by RFC 8825~\cite{rfc8825}, plus around 20 other RFCs that document many of its characteristics. This protocol is tailored for needs such as direct P2P audio and video transmission inside of desktop, web, and mobile apps natively. Some of its most important 
     characteristics are:
     \begin{itemize}
@@ -275,7 +281,7 @@ application, to be followed by a series of tests and performance comparisons aga
     many networking concepts, as they are already solved and taken into account. By working on developing a new protocol to fit the exact needs stated beforehand, the user has much more control over every layer of the networking stack plus every step of the streaming process. For this reason, this project prioritizes the learning process of building
     a whole protocol with basic tools rather than having a solution that can solve all of the shortcomings of QuickR at the cost of limiting the learning experience building the app gives. 
 
-        \subsubsection{General comparison}
+    \subsection{General comparison}
     Taking into account the alternatives described above, Table~\ref{tab:comparison} summarizes the main architectural and design choices/attributes of each one, alongside those of QuickR.
 
    \begingroup
@@ -386,27 +392,78 @@ Similarly, it is evident how all native P2P systems use hole punching to establi
 Although only WebRTC explicitly describes using it, having logic determining how to ask for a keyframe when the decoder cannot decode any more for any reason is a sound answer to stream degradation due to the nature of UDP. All of these characteristics are shared with the proposed QuickR software.
 
 Besides similarities with QuickR, there are some details of attributes other applications implement but QuickR lacks, for example, symmetric NAT solutions, streamlined peer connection, and reactiveness to network congestion. Unfortunately, all of these are characteristics that demand at the very least
-dedicated servers to aid the clients. This incurs into a heavier need for more robust infrastructure and external services, which goes against QuickrR's goals. Although it complicates some of the elements of the app, having a functioning media streaming application that guarantees being open source, not
+dedicated servers to aid the clients. This incurs into a heavier need for more robust infrastructure and external services, which goes against QuickR's goals. Although it complicates some of the elements of the app, having a functioning media streaming application that guarantees being open source, not
 needing an account nor other servers (excluding the public STUN server) cements the niche QuickR is trying to fill.
 
 Having the design choice of excluding external helper servers from the scope of the project certainly puts QuickR at a disadvantage against the already working services explained before, especially since it lacks providing a relay fallback, bypassing symmetric NAT, having dedicated packet encryption, and congestion control.
-Nonetheless, these are deliberate limitations to the scope of the current project, and would be addressed in future costs. The performance evaluation at Section~\ref{sec:results} shows the impact of having a minimal design in comparison to the alternatives. 
+Nonetheless, these are deliberate limitations to the scope of the current project, and would be addressed in future work. The performance evaluation at Section~\ref{sec:results} shows the impact of having a minimal design in comparison to the alternatives. 
 
-\subsection{QuickR}
+\section{Methodology}
+
+TODO
+
+\section{QuickR: Design and Implementation}
 
 QuickR is an application built entirely on the Rust programming language, using to its advantage the compiled nature of this language. This application has 3 interconnected core components whose functionalities interweave between each other to achieve the result of showcasing a real time stream: 
-\textbf{the Transport Protocol, the Screen Capture Logic, and the Graphical User Interface. } The following section delves into the details for each one of these main components.
+\textbf{the Transport Protocol, the Screen/Audio Capture Logic, and the Graphical User Interface. } The following subsections delves into the details for each one of these main components.
+
+\subsection{Architectural Overview}
+Figure~\ref{fig:architecture} shows a general outline of the main components of the process and the steps QuickR takes to perform its objective. It is important to note how there are no external steps, intermediaries or processes outside of the two peers exchanging information between each other. That is, excluding the
+single-time-use STUN server that gives each peer its own public facing IP address + port tuple, and the external communication medium used between both peers to exchange their connection codes. Further routines each peer executes are detailed on the following chapters.
 \begin{figure}[htbp]
     \centering
     \includegraphics[height=0.75\textheight]{architecture2.pdf}
-    \caption{Overview of QuickR's architecture. Numbers indicate the connection steps;
-             control messages travel through the UDP sockets but are drawn directly for clarity.}
+    \caption{Overview of QuickR's architecture. Numbers indicate the steps taken to establish connection and send stream packets.}
     \label{fig:architecture}
 \end{figure}
 
+\newpage
+Figure~\ref{fig:header} details another relevant aspect of the program's own datagram architecture, which is its custom header structure. It is 17 bytes long and every packet shared between the 2 peers uses it. Following is the detail and reasoning behind every attribute's inclusion in the header:
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{header1.pdf}
+    \caption{QuickR's custom packet header}
+    \label{fig:header}
+\end{figure}
+
+\begin{itemize}
+    \item FragmentType (1 byte): A u8 integer between 1 and 4 that states if the packet is a fragment of a larger structure or if the whole structure is contained inside of the 1200 byte payload. If the structure has to be fragmented, (in most cases, a large frame that cannot be sent in one single payload), it will detail if the payload is
+    the start of the structure (1), the end (3), or any fragment in between (2). If the structure can be sent without fragmentation, it will be marked as Unfragmented (4).
+    \item Version (1 byte): A u8 number indicating the protocol's version. Fixed at 1 for the moment, but implemented to be updated in the future.
+    \item Padding (1 bit): A bool determining if the payload has padding at the end. Unused for now, but designed with code extensibility in mind
+    \item ChannelType (1 byte):  A u8 integer between 1 and 5, the receiver can use it to determine what to do with the packet as follows:
+    \begin{enumerate}
+        \item Video: The packet contains video information of a frame.
+        \item Audio: The packet contains 200ms of audio.
+        \item \begin{sloppypar}
+                   Control: Generic type for control messages in regards to the stream. For example, it can be used to request a different resolution to be sent from that point onwards, or a request for a new IDR when the decoder encounters an error with the current frame and needs a refresh.
+               \end{sloppypar}
+        \item Sync: Packets that contain the sync channel are part of the hole punching process detailed in ~\ref{sec:connection}
+        \item IdrAck: ACK packet the receiver sends back to the broadcaster after it requested an IDR to prevent unnecessary IDR retries. Explained further on ~\ref{sec:screencap}
+    \end{enumerate}
+    \item SequenceNum: A u16 integer that determines the sequence number of the payload. Due to the nature of sending packets by UDP, there is no guarantee of an ordered arrival of payloads, so this allows the receiver to reorder arriving packets. This attribute is only relevant for packets with ChannelTypes 1 (video) or 2 (audio), and the value of sequencenum is 0 for any other case. 
+    \item Size: A u16 integer that stores the size in bytes of the payload.
+    \item Timestamp: A u32 integer that details the exact time in milliseconds the header was created. This is useful mostly for frame reconstruction, as every fragment of the same frame has the same timestamp value.
+    \item ssrc: Based off of RFC 3550\cite{rfc3550}, the ssrc is a ID stored on a u32 integer that is unique for each peer's audio or video stream. Designed for a future implementation of QuickR when multiple peers can connect and stream at the same time to the same connection, this ID guarantees that video or audio packets from one peer are not mixed with another's packets. 
+\end{itemize}   
+
+\subsection{Connection Establishment}
+\label{sec:connection}
+
+For connection establishment, there are 3 main steps to successfully 
 
 
-\subsection{Implementation}
+\subsection{Transport Logic}
+
+\subsection{Screen Capture Pipeline}
+\label{sec:screencap}
+
+\subsection{Audio}
+
+\subsection{Graphical User Interface}
+
+\subsection{Code Repository Structure}
 
 \section{Results and Discussion}
 \label{sec:results}
