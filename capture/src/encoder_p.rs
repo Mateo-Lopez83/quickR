@@ -1,7 +1,7 @@
 
 
 pub mod encoder_p{
-    use openh264::{encoder::{BitRate, Encoder, EncoderConfig, FrameRate, FrameType, IntraFramePeriod, RateControlMode},Timestamp};
+    use openh264::{Timestamp, encoder::{BitRate, Encoder, EncoderConfig, FrameRate, FrameType, IntraFramePeriod, RateControlMode}, formats::YUVSource};
     use openh264::formats::{BgraSliceU8, YUVBuffer};
     use tokio::sync::mpsc as udp_mpsc;
     use std::error::Error;
@@ -95,9 +95,10 @@ pub mod encoder_p{
                 
                 let encoded_bytes = Bytes::from(encoded.to_vec());
                 
-                println!("ENC ts={} type={:?} bytes={} frags={} seq_start={} enc_ms={:.2} wall_us={}",
-                    timestamp, encoded.frame_type(), encoded_bytes.len(), encoded_bytes.len().div_ceil(PAYLOADSIZE),
-                    sequence_num, t_in.elapsed().as_secs_f64() * 1000.0, wall_us());
+                println!("ENC ts={} type={:?} bytes={} frags={} seq_start={} enc_ms={:.2} wall_us={} w={} h={}",
+                timestamp, encoded.frame_type(), encoded_bytes.len(), encoded_bytes.len().div_ceil(PAYLOADSIZE),
+                sequence_num, t_in.elapsed().as_secs_f64() * 1000.0, wall_us(), yubytes.dimensions().0, yubytes.dimensions().1);
+
                 match encoded.frame_type() {
                     FrameType::I => {
                         match udp_connect::frame_send(false, encoded_bytes, &udp_tx, &mut sequence_num, timestamp){
