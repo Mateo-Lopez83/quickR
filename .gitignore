@@ -1,1 +1,22 @@
 /target
+CLAUDE.md
+CONTEXT.md
+script.py
+quickr_idr_changes.md
+/outputs
+# LaTeX build artifacts (the .tex, .bib, .pdf and images are still tracked)
+documento/*.aux
+documento/*.bbl
+documento/*.bbl-SAVE-ERROR
+documento/*.bcf
+documento/*.blg
+documento/*.fdb_latexmk
+documento/*.fls
+documento/*.log
+documento/*.out
+documento/*.run.xml
+documento/*.synctex.gz
+documento/*.toc
+documento/*.lof
+documento/*.lot
+documento/*.xdv

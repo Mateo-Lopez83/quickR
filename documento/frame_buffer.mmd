@@ -1,0 +1,55 @@
+---
+config:
+  flowchart:
+    rankSpacing: 25
+    nodeSpacing: 20
+    wrappingWidth: 400
+---
+%% Estructura del buffer de reensamblaje del receptor (transprot/src/udp.rs)
+%% saved_frames_map: BTreeMap<u32, FrameInProgress>  ->  FrameInProgress.map: BTreeMap<u16, Bytes>
+%% Simplificado: en Rust cada nodo de un BTreeMap guarda hasta 11 claves ordenadas.
+flowchart LR
+
+subgraph group_outer["saved_frames_map : BTreeMap#lt;u32 timestamp, FrameInProgress#gt;"]
+  direction TB
+  %% Declarados en orden inverso: este renderizador invierte el orden de los hermanos
+  o_root["166 · 233"]
+  o_leaf3["266"]
+  o_leaf2["200"]
+  o_leaf1["100 · 133<br/>oldest → drain_ready_frames"]
+  o_root --> o_leaf3
+  o_root --> o_leaf2
+  o_root --> o_leaf1
+end
+
+subgraph group_frame["FrameInProgress (timestamp 266)"]
+  direction TB
+  f_meta["start_seqnum: 1 · end_seqnum: 5 · start_appeared · end_appeared<br/>is_complete · is_idr · last_updated"]
+
+  subgraph group_inner["map : BTreeMap#lt;u16 seq, Bytes#gt;"]
+    direction TB
+    i_root["3<br/>Middle"]
+    i_leaf1["1 · 2<br/>Start · Middle"]
+    i_leaf2["4 · 5<br/>Middle · End"]
+    i_root --> i_leaf1
+    i_root --> i_leaf2
+  end
+
+  f_meta ~~~ group_inner
+end
+
+o_leaf3 -.->|"value"| group_frame
+
+decoder["decode_btree_frame: payloads concatenated in seq order → H.264 decodes the frame"]
+group_inner ==>|"when is_complete"| decoder
+
+classDef toneNeutral fill:#f8fafc,stroke:#334155,stroke-width:1.5px,color:#0f172a
+classDef toneBlue fill:#dbeafe,stroke:#2563eb,stroke-width:1.5px,color:#172554
+classDef toneAmber fill:#fef3c7,stroke:#d97706,stroke-width:1.5px,color:#78350f
+classDef toneMint fill:#dcfce7,stroke:#16a34a,stroke-width:1.5px,color:#14532d
+classDef toneRose fill:#ffe4e6,stroke:#e11d48,stroke-width:1.5px,color:#881337
+class o_root,o_leaf1,o_leaf2,o_leaf3 toneBlue
+class i_root,i_leaf1,i_leaf2 toneAmber
+class f_meta toneNeutral
+class decoder toneMint
+class o_leaf3 toneRose

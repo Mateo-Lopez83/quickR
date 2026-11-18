@@ -1,10 +1,11 @@
-\documentclass[12pt]{article}
+\documentclass{article}
 \usepackage{hyperref}
 \usepackage{xurl}
 \usepackage{graphicx}
 \usepackage{xltabular}  % longtable + tabularx: wrapped columns that can break across pages
 \usepackage{array}
 \usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
 \newcolumntype{Y}{>{\raggedright\arraybackslash}X}  % wrapped column, left-aligned
 
 \usepackage[backend=biber, style=ieee]{biblatex}
@@ -12,7 +13,6 @@
 
 
 \begin{document}
-
 % Title page
 \pagenumbering{roman}
 \begin{titlepage}
@@ -50,7 +50,7 @@
 \vspace{3cm}
 
 % App name
-{\Large\textbf{QuickR: A P2P Media Sharing Application}}
+{\Large\textbf{QuickR: A P2P Media Sharing Application in Rust}}
 \vspace{0.3cm}
 
 \vspace{1cm}
@@ -187,8 +187,11 @@ application, to be followed by a series of tests and performance comparisons aga
     \item \textbf{Latency:} Streaming-based metric that measures the time delay between a piece of data (a frame) getting captured and the moment it arrives at the destination. In this case, it will be measured by comparing packets with the same sequence header by computing the difference between their timestamps.
     \item \textbf{Frames Per Second (FPS):} Amount of distinct images (frames) the client screen can display, measured per second.
     \item \textbf{Codec:} Process that can compress video into a smaller size and can afterwards decompress it using mathematical algorithms. Some common codecs that are mentioned in this document are H.264, H.265, VP9, AV1, among others.  
-    \item \textbf{KeyFrame:} In a codec-compressed video, KeyFrames are complete frames that store all of the frame's data by itself without a reference to any other frames. 
+    \item \textbf{IDR Frame:} In a codec-compressed video, IDR frames are complete frames that store all of the frame's data by itself without a reference to any other previous frames. 
     \item \textbf{DeltaFrame:} In a codec-compressed video, DeltaFrames are a type of frame that only contains the information of changes in regards to the previous frame. These frames are in most cases smaller than KeyFrames, but depend on the decoder having the exact previous frame as a reference to work properly.
+    \item \textbf{MPSC (Multi-Producer, Single-Consumer channel): }Concurrency primitive used to send data safely between one or more threads to a single receiving thread without concurrency issues or race conditions. The sender is called a Tx and the consumer is called an Rx and retreives data in a FIFO order. These channels can be either unbounded (no theoretical limit to the channel size) or bounded (a fixed limit on the channel on startup). On a bounded channel, 
+    whenever it is full and a thread wants to send data to it, the thread can either block itself until the channel can accept the data (blocking\_send) or it can drop the data and continue its process.  
+    \item \textbf{B-Tree:} Self balancing tree data structure that allows for search, insertion, deletion, and sequential access in logarithmic time. One ofthe main differences from the binary tree is that the B-Tree allows nodes to have more than 2 children, and it prioritizes reducing tree height.
 \end{itemize}
 
 \section{State of the Art}
@@ -411,12 +414,17 @@ QuickR is an application built entirely on the Rust programming language, using 
 \subsection{Architectural Overview}
 Figure~\ref{fig:architecture} shows a general outline of the main components of the process and the steps QuickR takes to perform its objective. It is important to note how there are no external steps, intermediaries or processes outside of the two peers exchanging information between each other. That is, excluding the
 single-time-use STUN server that gives each peer its own public facing IP address + port tuple, and the external communication medium used between both peers to exchange their connection codes. Further routines each peer executes are detailed on the following chapters.
+\clearpage
+\newgeometry{top=0in} 
+
 \begin{figure}[htbp]
     \centering
     \includegraphics[height=0.75\textheight]{architecture2.pdf}
     \caption{Overview of QuickR's architecture. Numbers indicate the steps taken to establish connection and send stream packets.}
     \label{fig:architecture}
 \end{figure}
+\clearpage
+\restoregeometry
 
 \newpage
 Figure~\ref{fig:header} details another relevant aspect of the program's own datagram architecture, which is its custom header structure. It is 17 bytes long and every packet shared between the 2 peers uses it. Following is the detail and reasoning behind every attribute's inclusion in the header:
@@ -454,13 +462,14 @@ Figure~\ref{fig:header} details another relevant aspect of the program's own dat
 
 For connection establishment, there are 4 main steps to successfully allow the two nodes/peers to send information between each other:
 \begin{enumerate}
-    \item STUN server request (on \colorbox{gray!20}{`/transprot/src/stuntry.rs`}): As soon as the program boots up, each peer sends a Binding Request (20-byte payload) to a hardcoded STUN server, in this case 'stun4.l.google.com:19302'. The server accepts the connection and the Binding Request and replies with a XOR Mapped Address. This address can be converted into the public IP Address + port tuple easily and loaded on local memory. 
-    \item Public Address to connection code conversion (on \newline \colorbox{gray!20}{`/commons/src/ip\_converter.rs`}): After receiving the public address tuple from the STUN server, internally the program converts both the IP address and port into a string by transforming each octet into its Hexadecimal representation (for example, 192 would become C0) plus dropping the periods (.) in between octets. The same process is done with the 
+    \item STUN server request (on \colorbox{gray!20}{`/transprot/src/stuntry.rs`}): As soon as the program boots up, each peer sends a Binding Request (20-byte payload) to a hardcoded STUN server, in this case
+    \newline 'stun4.l.google.com:19302'. The server accepts the connection and the Binding Request and replies with a XOR Mapped Address. This address can be converted into the public IP Address + port tuple easily and loaded on local memory. 
+    \item Public Address to connection code conversion (on \colorbox{gray!20}{`/commons/src/ip\_converter.rs`}): After receiving the public address tuple from the STUN server, internally the program converts both the IP address and port into a string by transforming each octet into its Hexadecimal representation (for example, 192 would become C0) plus dropping the periods (.) in between octets. The same process is done with the 
     port number, but both address and port hexadecimal representations are separated by a colon. For example, if the original tuple is '186.155.19.201:29539', the connection code would be 'BA9B13C9:7363', which, although not the best compression method, does reduce character amount per code and makes it easier to share between peers. 
     \item Connection code sharing: This step generates some friction, as the current implementation of QuickR does not offer any in-app methods to share these connection codes between the two devices. It is necessary for both users to use a different medium to share these codes and register them on the app. 
     \item Hole Punching: Once both devices know each other's connection code, they revert it back to the IP address + port tuple, and send via UDP a packet containing only the header with ChannelType = 4, for a Sync Channel. These messages are sent 19 times with a delay of 400ms in between. This is because of the requirement of the other device to have already opened up the "hole" on their firewall so that the packet from the other peer gets delivered correctly, 
     thus the need for multiple packets. Once any device gets a single Sync packet from the other peer, they have guaranteed the hole punching worked and there is a way to communicate with the other device. To make sure the other device has also received at least 1 packet to confirm connection, it sends 5 more Sync packets in quick succession (delay reduced to 100ms in between packets) but it itself starts discarding any leftover incoming Sync packet. After both devices send the 5 packets each, they are both
-    ready to start the transmission, and the receiver is ready to get packets with the Video and Audio ChannelTypes.
+    ready to start the transmission, and the receiver is ready to get packets with the Video and Audio ChannelTypes. These future communications are done exclusively by the \textbf{sockets} opened already for this communication.
 \end{enumerate}
 
 Figure~\ref{fig:connseq} illustrates the step-by-step process of achieving the connection detailed above. 
@@ -473,12 +482,47 @@ Figure~\ref{fig:connseq} illustrates the step-by-step process of achieving the c
 \end{figure}
 
 \subsection{Transport Logic}
+Most of the network logic resides in \colorbox{gray!20}{`/transprot/src/udp.rs`}. This collection of processes rely mainly on the \textbf{tokio} Rust package, which provides tools for async operations, as well as simplified methods for communication over the internet. The main components used are:
+\begin{itemize}
+    \item \textbf{Header Generators:} Methods that generate headers with different information depending on what type of packet is being prepared (video, audio, Sync request, Control packet, ACK of an IDR, etc). 
+    \item \textbf{Main Sender Process:} As soon as the sender process gets initialized, the sender device starts 2 processes: the IDR request listener on the socket bound to the other peer, and more importantly, the video and audio captures. For the first process, the sender can only receive from the receiver one type of packet, which is the IDR request (the IDR process will be delved upon more on the next chapter) at ChannelType 4. Whenever the sender receives this request, it forces the capture stream to process an IDR frame
+    and send it as soon as possible.
 
+    The other process started is the main capture logic, which is explained in depth in the next chapter. The relevant aspect of it for this section is the existence of 2 MPSC channels with the network transport module as the single channel consumer. These 2 channels belong to the audio and video capture routines, and both already send the correct header plus their respective encoded data as a raw stream of the Bytes data buffer~\cite{bytes_rs}. Whenever any of the two channels contain a new data object (the payload), the channel consumer retreives this data and sends 
+    to the receiver via the socket opened on the Connection Establishment step.  
+    \item \textbf{Main Receiving Process:} The receiver process's main characteristic to be detailed is the video frame buffer data structure. Since the nature of UDP does not guarantee an ordered arrival of packets, it is very common for the receiver to have in memory more than one frame at a specific point in time. Added to this, unless the retreived frame is a small DeltaFrame, most frames are larger than the maximum size an individual payload can hold (~1200 bytes), so each frame the receiver has a reference to is probably incomplete. For these reasons, the receiver was designed
+    to utilize a \textbf{B-Tree} to store each frame in progress. Each node key is the frame's timestamp, while the value is yet another B-tree that stores all of the frame's fragments/chunks. Each node on this internal B-Tree also includes some necessary information to be able to discern when a frame is complete and ready for decoding:
+    \begin{itemize}
+        \item Seqnum of the starting chunk
+        \item Seqnum of the last chunk (last\_chunk -- start\_chunk gives the amount of middle chunks needed)
+        \item Boolean on whether the starting chunk has been received (start\_appeared)
+        \item Boolean on whether the last chunk has been received  (end\_appeared)
+        \item Boolean on whether the frame is complete (is\_complete)
+        \item Boolean on whether the frame is an IDR (is\_idr)
+        \item Timestamp of the last time this node has been updated (for stale eviction)
+    \end{itemize}
+    Each time the receiver gets a new stream of raw Bytes, it takes the first 17 of them and deserializes them to access the header information. In the case the packet has a video ChannelType, it compares its timestamp with the video buffer; if a node with the same timestamp exists already, it means the frame is already in the process of being compiled, so the payload gets inserted into the internal B-Tree (which orders all chunks in logarithmic time through the insertion process). If there is no node with the same timestamp, the process creates one, creates the internal B-Tree, and inserts the payload.
+    On both cases, the header is analyzed further to know if the chunk is a starting, middle of ending chunk and modify the node's attributes depending on the FragmentType. 
+
+    On each loop cycle of the receiver, there are two different scenarios that can produce a node/frame to be deleted from the B-Tree: frame completeness or eviction. The first scenario gets triggered when the frame gets completed with the start, end chunk and all middle chunks in between. When this condition is met, the node gets popped out of the external B-Tree, and all fragments get concatenated into a stream of bytes to be decoded by the codec. The other scenario happens when a node has not been updated for more than 700ms. Since a reconstructed frame that is shown 700ms late is very easily noticeable by the human
+    eye, it is considered useless, the node will be popped out of the external B-Tree, and it will be discarded. 
+    
+    Figure~\ref{fig:frame_buff} represents a visualization of the data structures described above.
+
+    \begin{figure}[htbp]
+        \centering
+        \includegraphics[width=\textwidth]{frame_buffer2.pdf}
+        \caption{Video Receiver Frame Buffer Visualization}
+        \label{fig:frame_buff}
+    \end{figure}
+
+\end{itemize}
 
 \subsection{Screen Capture Pipeline}
 \label{sec:screencap}
+The screen capture logic resides in the Rust files located on \colorbox{gray!20}{`/capture/src`}. 
 
-\subsection{Audio}
+\subsection{Audio Capture Pipeline}
 
 \subsection{Graphical User Interface}
 
