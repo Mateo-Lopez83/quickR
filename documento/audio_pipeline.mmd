@@ -1,0 +1,80 @@
+---
+config:
+  flowchart:
+    rankSpacing: 25
+    nodeSpacing: 15
+    wrappingWidth: 260
+---
+%% Flujo de audio: loopback WASAPI -> Opus -> UDP -> Opus/PLC -> cola -> reproducción
+%% Emisor: capture/src/audio_capture.rs + transprot/src/udp.rs (channel_consumer)
+%% Receptor: transprot/src/udp.rs (AudioReceiver), gui/src/audio_playback.rs
+%% Igual que capture_pipeline.mmd: las flechas entre bloques van de subgraph a subgraph
+%% para que Mermaid respete el "direction" de cada uno.
+flowchart LR
+
+subgraph group_sender["Sender"]
+  direction TB
+  start(("Start"))
+
+  subgraph group_cb["cpal callback (WASAPI loopback)"]
+    direction TB
+    n_dev["default output device<br/>48 kHz · f32 only"]
+    n_chunk["PCM chunk + arrival ts"]
+    n_dev --> n_chunk
+  end
+
+  subgraph group_enc["Audio encoder thread"]
+    direction TB
+    n_acc["accumulate to stereo<br/>until 20 ms (960 samples/ch)"]
+    n_opus["Opus encode_float<br/>64 kbps · in-band FEC"]
+    n_hdr["17 B Header<br/>Unfragmented · channel Audio<br/>ssrc 2 · own seq"]
+    n_acc --> n_opus --> n_hdr
+  end
+
+  subgraph group_cons["channel_consumer (tokio task)"]
+    n_send["biased select:<br/>audio before video<br/>-> socket.send"]
+  end
+
+  start --> group_cb
+  group_cb -.->|"std mpsc<br/>send"| group_enc
+  group_enc -.->|"tokio mpsc(50)<br/>try_send"| group_cons
+end
+
+subgraph group_receiver["Receiver"]
+  direction TB
+
+  subgraph group_recv["receiving_process: AudioReceiver"]
+    direction TB
+    n_route["Header::unserialize<br/>channel Audio -> AudioReceiver<br/>(before the video gap check)"]
+    n_gap{"seq gap?"}
+    n_plc["Opus PLC<br/>up to 3 packets"]
+    n_dec["Opus decode_float -> PCM"]
+    n_route --> n_gap
+    n_gap -->|"lost"| n_plc --> n_dec
+    n_gap -->|"in order"| n_dec
+  end
+
+  subgraph group_play["Playback thread (cpal output)"]
+    direction TB
+    n_buf["wait for 120 ms buffered"]
+    n_out["copy samples to output device"]
+    n_clock["update AudioClock<br/>(ts now playing)"]
+    finish(("End"))
+    n_buf --> n_out --> n_clock --> finish
+  end
+
+  group_recv -.->|"AudioQueue<br/>Double-Ended queue, max 25 (~500 ms)"| group_play
+end
+
+group_sender ==>|"UDP over<br/>the Internet"| group_receiver
+
+classDef toneNeutral fill:#f8fafc,stroke:#334155,stroke-width:1.5px,color:#0f172a
+classDef toneBlue fill:#dbeafe,stroke:#2563eb,stroke-width:1.5px,color:#172554
+classDef toneAmber fill:#fef3c7,stroke:#d97706,stroke-width:1.5px,color:#78350f
+classDef toneMint fill:#dcfce7,stroke:#16a34a,stroke-width:1.5px,color:#14532d
+classDef toneRose fill:#ffe4e6,stroke:#e11d48,stroke-width:1.5px,color:#881337
+class start,finish toneRose
+class n_dev,n_chunk toneBlue
+class n_acc,n_opus,n_hdr toneAmber
+class n_send toneNeutral
+class n_route,n_gap,n_plc,n_dec,n_buf,n_out,n_clock toneMint

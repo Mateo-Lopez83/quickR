@@ -19,7 +19,7 @@ sequenceDiagram
         A->>B: Sync
         B->>A: Sync
     end
-    Note over A,B: First Sync received → 5 more Sync at 100 ms intervals, NAT mappings open
+    Note over A,B: First Sync received -> 5 more Sync at 100 ms intervals, NAT mappings open
 
     A->>B: Video + audio datagrams
     B-->>A: IDR request (when loss is detected)

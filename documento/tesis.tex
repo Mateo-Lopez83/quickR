@@ -520,13 +520,71 @@ Most of the network logic resides in \colorbox{gray!20}{`/transprot/src/udp.rs`}
 
 \subsection{Screen Capture Pipeline}
 \label{sec:screencap}
-The screen capture logic resides in the Rust files located on \colorbox{gray!20}{`/capture/src`}. 
+The screen capture logic resides in the Rust files located on \colorbox{gray!20}{`/capture/src`}. Both sender and receiver devices primarily use two Rust packages: a Rust-based OpenH.264 implementation~\cite{openh264_rs} and a library to screen capture called Windows-capture~\cite{windows_capture}. On the \textbf{sender}'s side, the main screen capture, packetization, and transmission routine are developed in a data pipeline divided into independent threads and asynchronous tasks connected by bounded MPSC channels. The pipeline steps are as follows::
+\begin{description}
+     \item[Capture.]The Windows-capture library copies each frame shown on screen and loads it into the \textit{RawStreamData} buffer via the native Graphics Capture API. Immediately afterwards, it attempts to send it through a bounded MCSP channel with capacity 1 to the encoder. If the MPSC is currently full (mainly due to the encoder being busy with another frame), the frame is dropped
+    in favor of copying a newer frame over blocking the entire pipeline over an old one, and tries to send it to the MPSC again.  
+    \item[Encoding.]  Every time the MPSC channel consumer receives a new raw frame, it takes it out of the channel as BGRA (Blue Green Red Alpha) data and converts it into YUV (Yis for Luma, U and V for chrominance), which converts the requirement of 4 bytes per pixel into 3 bytes per pixel, which can reduce frame sizes significantly with a barely noticeable visual impact. With the frame being formatted 
+    in YUV, it can be encoded with openh264 to produce either IDRs, DeltaFrames, or Skip Frames. Skip Frames are created when the amount of bits per second already processed surpasses the encoder's bitrate (for example, if the bitrate is 1.5Mbps and the encoder has already encoded more than 1.5Mb, the remaining frames encoded on what remains of that second will be discarded).
+    \item[Fragmentation and transmission.] Having either an IDR or DeltaFrames, the frame is split into 1180-byte long chunks, and each is attached with a 17-byte header with crucial information to reconstruct the entire frame. The maximum datagram size is locked to 1200 bytes to avoid surpassing the Maximum Transmission Unit (MTU) and forcing the Internet Protocol (IP) to fragment the data with unintended behavior. Each header plus payload packet is 
+    sent to another bounded MPSC (with a capacity of 90 packets), whose receiver is the Tokio socket that already established a connection with the receiver device. It will then proceed to send every packet that arrives on the channel via UDP to the receiver.   
+  \end{description}
+
+  On the \textbf{receiver}'s side, the routine handles packet reception, reassembly, and decoding:
+  \begin{description}  
+    \item [Reception and reassembly.] Each time the receiver gets a new packet, the first thing done is checking the header. The next step is to insert it into the \textbf{B-Tree} structures detailed in Figure~\ref{fig:frame_buff} until the frame is complete.
+    \item [Decoding and display.] As soon as a frame is completed, it gets decoded with the same openh264 library, which converts the frame from a Byte array into an image in YUV format. This image is then converted back into the BGRA format and sent to another size-1 MPSC channel. The receiver of that channel retreives any frames sent to the channel and renders it into the GUI. If a frame gets reassembled and shown on the GUI, any uncompleted frames on the B-Tree with a timestamp earlier than the 
+    processed frame are discarded, as they are considered stale as soon as a later frame shows up on the screen.   
+\end{description}
+
+Figure~\ref{fig:captture_pipeline} represents a visualization of the data flow sequence described above.
+
+    \begin{figure}[htbp]
+        \centering
+        \includegraphics[height=0.85\textheight]{capture_pipeline1.pdf}
+        \caption{Screen video capture pipeline visualization}
+        \label{fig:captture_pipeline}
+    \end{figure}
+
 
 \subsection{Audio Capture Pipeline}
 
+Audio capture, transmission, and playback also has its own separate pipeline that works in parallel with the video capture. Instead of the video capture and encoding libraries, the audio capture package used is CPAL~\cite{cpal} and its encoder is Opus~\cite{opus_rs}. The main steps it follows are the same as the video pipeline:
+\begin{description}
+    \item[Capture.] A Windows Audio Session API (WASAPI) loopback stream is opened via the cpal library, which records any sounds playing on the sender's device (not on the microphone). The callback records samples of audio at a rate of 48,000 samples per second (48kHz) and stores them as Pulse Code Modulation (PCM) chunks. Since this 
+    audio capture is processed by a separate thread, the sampler never gets blocked.
+    \item[Encoding.] Every chunk of 960 samples (roughly 20ms of audio) is collected and sent to the encoder (Opus) with a bitrate of 64kbps. The encoded chunk gets drastically reduced in size to around 160 bytes per packet. Since these packets are never surpassing the MTU limit, they are attached to a header with the FragmentType value as Unfragmented. Both header and packet are sent to a 50-packet bound MPSC channel, whose receiver is the same Tokio socket used for UDP communcation as the video pipeline.
+    \item[Transmission.] On each loop, the channel consumer does a biased selection between the incoming video and audio packets, prioritizing each time any audio packets before processing the video. This is because the audio packets are small in comparison to an entire video frame, so this prevents an audio packet being stuck on the MPSC channel while the consumer socket processes a large IDR frame (could be more than 15 packets long). This bias does not produce any significant overhead or desynchronization between audio and video.
+    \item[Reception.]  On each audio packet delivered to the client, the receiver skips the B-Tree data structure and sends it straight to the \textit{AudioReceiver} process. In this process, the sequence number attribute on the header is used to find any gaps in the audio, which is concealed using packet loss concealment (PLC) to approximate the lost sound for up to 60 ms (3 back-to-back packets). Afterwards, each chunk is decoded back into PCM samples, and any late packet is discarded.
+    \item[Playback.] Decoded chunks are sent to a double-ended queue with a hard limit of 25 chunks (around 500ms of audio). The playback callback waits a 120ms buffer before starting to play audio (a buffer to synchronize video, since audio always arrives first). Whenever the queue gets full, older chunks get dropped in favor of newer ones.
+\end{description}
+
+Figure~\ref{fig:captture_pipeline} represents a visualization of the audio pipeline sequence described above.
+
+    \begin{figure}[htbp]
+        \centering
+        \includegraphics[height=0.85\textheight]{audio_pipeline1.pdf}
+        \caption{Screen audio capture pipeline visualization}
+        \label{fig:audio_pipeline}
+    \end{figure}
+
 \subsection{Graphical User Interface}
 
-\subsection{Code Repository Structure}
+The screen capture logic resides in the Rust files located on \colorbox{gray!20}{`/gui/src`}. This directory contains the \textbf{main.rs} file, which is where the entire project logic starts. This is because the GUI is the starting point of the whole application, and to work it needs to start up all of the transport, communication, and capture routines. It is also important to mention the main library used for this module of the app; which is \textit{egui}~\cite{egui}. This library offers a native framework called \textit{eframe} to build and customize GUIs.
+
+The complete process to have the sender's video and audio on the receiver's screen is as follows:
+\begin{description}
+    \item[App Startup.] The \colorbox{gray!10}{main()} method builds the Tokio runtime, opens a socket, and binds it to the runtime. This socket is wrapped inside of an Arc or Atomically Reference Counted structure, which is a specialized pointer that lets multiple threads share ownership and access to the same socket without attempting to create duplicates. The first step is sending the public address request to the STUN server (as detailed in section \ref{sec:connection}) to get a connection code. After getting the code, this method hands 
+    control of the main thread to \colorbox{gray!20}{eframe()}
+    \item[Connection Screen.] Before the hole punching process can start, both users need to share their connection code to the other user. After each user types the other's code on the text field and clicks the \textit{Connect} button, the hole punching process is started asynchronously. If the process fails, the user can try again until the process is successful and both clients have set up their communication channel via UDP.
+    \item[Session Logic.] As soon as the GUI receives an Ok status from the hole punching thread, the receiver starts the audio playback loop, and the main sending/receiving processes are started. The sender has no more logic besides the capture and transport routines detailed on the previous sections. On the case of the receiver, however, repaints are triggered around every 16ms. On each repaint, the GUI takes any decoded frame awaiting on the MPSC channel, converts it to a \textit{ColorImage} object and writes it into the texture buffer. This texture is created once and
+    overwritten on every frame repaint to avoid reallocating memory space on every new frame. 
+    \item[Session UI.] There is different behavior on what gets shown on the screen depending on the type of client:
+    \begin{itemize}
+        \item \textbf{Receiver:} There is a stats bar on the top of the window. It shows packets received/lost, frames shown/dropped, and fps. Below the stats, the texture is scaled to fit the window and shown to the user. It gets updated every ~16ms.
+        \item \textbf{Sender:} There is a dropdown menu that allows the sender to change the quality of the stream between Native resolution, 1080p, 720p, and 480p. The selection is written on a shared object the encoder thread can read, so resolution can change immediately after selection without the need to restart or pause the streaming. There is no other content shown on the sender screen, which is a current limitation of the app.
+    \end{itemize}
+\end{description}
 
 \section{Results and Discussion}
 \label{sec:results}

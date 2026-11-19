@@ -1,0 +1,67 @@
+---
+config:
+  flowchart:
+    rankSpacing: 25
+    nodeSpacing: 15
+    wrappingWidth: 260
+---
+%% Flujo de la GUI (gui/src/main.rs): arranque -> pantalla de conexión -> sesión
+%% logic() hace el trabajo sin dibujar; ui() dibuja. Ambos corren en el hilo principal (eframe).
+%% Igual que los otros diagramas: flechas entre bloques de subgraph a subgraph.
+flowchart LR
+
+subgraph group_main["Startup: main()"]
+  direction TB
+  start(("Start"))
+  n_rt["build tokio Runtime<br/>(Arc, shared with the GUI)"]
+  n_bind["block_on: bind UdpSocket 0.0.0.0:0"]
+  n_stun["block_on: STUN -> public ip:port<br/>-> own room code"]
+  n_native["eframe::run_native(MyApp)"]
+  start --> n_rt --> n_bind --> n_stun --> n_native
+end
+
+subgraph group_lobby["Connection screen"]
+  direction TB
+  n_code["show own code<br/>user types peer code"]
+  n_parse{"turn_code_to_ip<br/>valid?"}
+  n_err["red error label"]
+  n_task["spawn tokio task:<br/>conn.connect + hole punching"]
+  n_wait["'Connecting...'<br/>repaint every 100 ms"]
+  n_code -->|"Connect"| n_parse
+  n_parse -->|"no"| n_err
+  n_parse -->|"yes"| n_task --> n_wait
+end
+
+subgraph group_logic["Session: logic()"]
+  direction TB
+  n_ok["status Ok"]
+  n_spawn["receiver: start audio playback<br/>both: spawn udp_main_process"]
+  n_drain["try_recv RGBFrameData<br/>(from receiving_process)"]
+  n_tex["ColorImage -> reuse TextureHandle<br/>fps counter · AV log"]
+  n_repaint["request_repaint_after(16 ms)"]
+  n_ok --> n_spawn --> n_drain --> n_tex --> n_repaint
+end
+
+subgraph group_ui["Session: ui()"]
+  direction TB
+  n_stats["stats bar: packets received/lost,<br/>frames shown/dropped, fps"]
+  n_quality["sender: Quality selector<br/>-> AtomicU32 target_height (encoder)"]
+  n_img["receiver: Image shrink_to_fit"]
+  n_stats --> n_quality --> n_img
+end
+
+group_main -.-> group_lobby
+group_lobby -.->|"status channel<br/>Result"| group_logic
+group_logic -.->|"texture, stats"| group_ui
+
+classDef toneNeutral fill:#f8fafc,stroke:#334155,stroke-width:1.5px,color:#0f172a
+classDef toneBlue fill:#dbeafe,stroke:#2563eb,stroke-width:1.5px,color:#172554
+classDef toneAmber fill:#fef3c7,stroke:#d97706,stroke-width:1.5px,color:#78350f
+classDef toneMint fill:#dcfce7,stroke:#16a34a,stroke-width:1.5px,color:#14532d
+classDef toneRose fill:#ffe4e6,stroke:#e11d48,stroke-width:1.5px,color:#881337
+class start toneRose
+class n_rt,n_bind,n_stun,n_native toneBlue
+class n_code,n_parse,n_task,n_wait toneAmber
+class n_err toneRose
+class n_ok,n_spawn,n_drain,n_tex,n_repaint toneMint
+class n_stats,n_quality,n_img toneNeutral

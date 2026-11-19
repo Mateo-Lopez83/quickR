@@ -1,0 +1,83 @@
+---
+config:
+  flowchart:
+    rankSpacing: 25
+    nodeSpacing: 15
+    wrappingWidth: 260
+---
+%% Flujo de captura -> codificación -> envío -> recepción -> GUI
+%% Emisor: capture/src (capturetry.rs, lib.rs, encoder_p.rs, udp_connect.rs) + transprot/src/udp.rs (channel_consumer)
+%% Receptor: transprot/src/udp.rs (receiving_process), commons/src/frame_decoder.rs, gui/src/main.rs
+%% Dos columnas: emisor a la izquierda, receptor a la derecha, cada una de arriba hacia abajo.
+%% Todas las flechas entre bloques van de subgraph a subgraph: si un nodo interno se enlaza
+%% hacia afuera, Mermaid ignora el "direction" de ese subgraph y se rompe el layout.
+flowchart LR
+
+subgraph group_sender["Sender"]
+  direction TB
+  start(("Start"))
+
+  subgraph group_cap["Capture thread"]
+    direction TB
+    n_sc["ScreenCapture<br/>impl GraphicsCaptureApiHandler"]
+    n_ofa["on_frame_arrived()"]
+    n_raw["RawStreamData<br/>data: Bytes (BGRA8)<br/>width, height: usize"]
+    n_sc --> n_ofa --> n_raw
+  end
+
+  subgraph group_enc["Encoder thread (run_encoder)"]
+    direction TB
+    n_down["downscale_bgra<br/>(if target_height set)"]
+    n_yuv["BGRA8 -> YUV"]
+    n_h264["Encoder::encode_at<br/>-> EncodedBitStream"]
+    n_type{"frame_type()"}
+    n_frag["frame_send<br/>1180 B chunks + 17 B Header"]
+    n_skip["Skip · Invalid · IPMixed<br/>not sent"]
+    n_down --> n_yuv --> n_h264 --> n_type
+    n_type -->|"IDR · I · P"| n_frag
+    n_type -.-> n_skip
+  end
+
+  subgraph group_cons["channel_consumer (tokio task)"]
+    n_send["socket.send"]
+  end
+
+  start --> group_cap
+  group_cap -.->|"sync_channel(1)<br/>try_send"| group_enc
+  group_enc -.->|"tokio mpsc(90)<br/>blocking_send"| group_cons
+end
+
+subgraph group_receiver["Receiver"]
+  direction TB
+
+  subgraph group_recv["receiving_process (tokio task)"]
+    direction TB
+    n_recv["socket.recv<br/>Header::unserialize + checks"]
+    n_reasm["Reassembly<br/>BTreeMap#lt;ts, FrameInProgress#gt;"]
+    n_dec["Decoder::decode -> YUV"]
+    n_rgb["write_rgb8 -> RGBFrameData"]
+    n_recv --> n_reasm -->|"complete"| n_dec --> n_rgb
+  end
+
+  subgraph group_gui["GUI thread"]
+    direction TB
+    n_gui["egui TextureHandle"]
+    finish(("End"))
+    n_gui --> finish
+  end
+
+  group_recv -.->|"sync_channel(1)<br/>try_send"| group_gui
+end
+
+group_sender ==>|"UDP over<br/>the Internet"| group_receiver
+
+classDef toneNeutral fill:#f8fafc,stroke:#334155,stroke-width:1.5px,color:#0f172a
+classDef toneBlue fill:#dbeafe,stroke:#2563eb,stroke-width:1.5px,color:#172554
+classDef toneAmber fill:#fef3c7,stroke:#d97706,stroke-width:1.5px,color:#78350f
+classDef toneMint fill:#dcfce7,stroke:#16a34a,stroke-width:1.5px,color:#14532d
+classDef toneRose fill:#ffe4e6,stroke:#e11d48,stroke-width:1.5px,color:#881337
+class start,finish toneRose
+class n_sc,n_ofa,n_raw toneBlue
+class n_down,n_yuv,n_h264,n_type,n_frag toneAmber
+class n_skip,n_send toneNeutral
+class n_recv,n_reasm,n_dec,n_rgb,n_gui toneMint
