@@ -16,6 +16,7 @@ documento/*.log
 documento/*.out
 documento/*.run.xml
 documento/*.synctex.gz
+documento/*.synctex
 documento/*.toc
 documento/*.lof
 documento/*.lot

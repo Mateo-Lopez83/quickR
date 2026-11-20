@@ -1,9 +1,9 @@
 sequenceDiagram
-    actor UA as User A (sharer)
+    actor UA as User A (sender)
     participant A as QuickR (send)
     participant S as STUN server
     participant B as QuickR (receive)
-    actor UB as User B (viewer)
+    actor UB as User B (receiver)
 
     A->>S: Binding request
     S-->>A: Public IP:port of A

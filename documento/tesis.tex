@@ -476,7 +476,7 @@ Figure~\ref{fig:connseq} illustrates the step-by-step process of achieving the c
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=\textwidth]{conn_seq1.pdf}
+    \includegraphics[width=\textwidth]{conn_seq2.pdf}
     \caption{QuickR's connection establishment sequence}
     \label{fig:connseq}
 \end{figure}
@@ -590,6 +590,45 @@ The complete process to have the sender's video and audio on the receiver's scre
 \label{sec:results}
 
 \subsection{Results}
+\subsubsection{QuickR testing}
+Testing was done in an iterative and continuous manner, checking for any changes in performance after rolling out new modifications and extensions to the application's logic. Due to this, there were 7 different testing phases spread out in ~1 month. These were taken from the first day a frame was able to get transferred from the sender to the receiver and then shown on the receiver's screen. The main changes and improvements each testing round got against the previous ones are as follows:
+\begin{enumerate}
+    \item Tested on Oct 22, 2026 with 2 separate devices on the same local network. Very early implementation, had a couple of bugs that throttled down performance, the main one being a typo in the IDR request logic that made the receiver ask for an IDR frame every time it was \textbf{not} supposed to ask for one. The receiver also did not ask for an IDR when it was supposed to. This, coupled with unoptimized libraries, hindered performance the most.
+    \item Tested on Oct 22, 2026 with 2 separate devices on the same local network. The IDR requesting bug was fixed, but the dependencies were still unoptimized.
+    \item Tested on Oct 22, 2026 with 2 separate devices on the same local network. Other minor bugs fixed, the main improvement was the forced optimizacion of used libraries to have their best performance using \colorbox{gray!30}{opt-level = 3} as a compiler option. The library that was the most affected was the \textit{openh264} encoder, which dramatically decreased encode time per frame.
+    \item Tested on Nov 5, 2026 between 2 separate devices on different networks. The audio logic was integrated into the streaming process, along with some minor fixes.
+    \item Tested on Nov 16, 2026 between 2 separate devices on different networks. The encode() method was fixed, adding an actual timestamp as a parameter to have an actual comparison of frames' frequency and size compared to the encoder's bitrate. Other parameter options were A/B tested, such as the complexity model (which determines whether to prioritize speed over quality), and usage type (for the type of stream the user is trying to do, whether it's of a camera feed, a screen's content, and whether it is live or recorded).
+    \item Tested on Nov 16, 2026 between 2 separate devices on different networks. After the A/B testing, the settings were selected to have the encoder with only the timestamp value plus the Low Complexity parameters. This test was done with different videos of varying amount of information (videos with long stretches of static, ummovable backgrounds have lower decode times and smaller fragmentizations with more complex backgrounds and/or frames) to check for stream quality on different scenarios.
+    \item Tested on Nov 16, 2026 between 2 separate devices on different networks. All tests on phase 7 were done with the same 1 minute clip of animation, which has many background and screen changes per second and proved as a great benchmark for different settings. On these tests, the stream bitrate was changed between 1.5Mbps to 3Mbps, plus the resolution was downscaled to 720p on some of the tests. All combinations of these two options were tested and compared. 
+\end{enumerate}
+For each test, although performance could be perceived by the receiver's eyes manually, the main metrics were taken by logs written by both sender and receiver during each of the test runs. These logs go in-depth with each device's logic and what process they are running at almost every point of the run, including key details like timestamps between an encoder's start time encoding and its finish time, amount of DeltaFrames created, amount of IDR frames created, amounts of Skip Frames dropped, timestamp of each incoming packet plus the time of the same packet being sent, etc. 
+It is with these data sources that the following graphs and analysis were based on.
+
+The first analysis graph on figure~\ref{fig:graph1} visualizes two equally important metrics: The first one being frames-per-second based on the amount of frames the receiver was able to decode, while the second one is the percentage of stream time the stream was having a freeze, which is a time interval longer than 700ms in which there is no update to the current frame. 700ms were chosen because it is noticeable by the naked eye, so as to make sense on why it is important to detect how many times this happens during a session.
+\begin{figure}[htbp]
+        \centering
+        \includegraphics[width=\textwidth]{fig1_timeline.pdf}
+        \caption{Decoded FPS plus Freeze\%}
+        \label{fig:graph1}
+    \end{figure}
+For this graph, it is evident how ever since test 3, allowing \textit{openh264} to be fully optimized by the compiler brought freeze events to an absolute minimum and allowed fps to increase considerably. After this test, it is evident how logic modification allowed for a steady improvement over time for the amount of frames decoded each second. 
+
+The second analysis graph on figure~\ref{fig:graph3} shows the results of test 5, which was done specifically to test different encoder configurations based on the many options the library has to offer. The most important settings taken into consideration were:
+\begin{enumerate}
+    \item \textbf{Timestamp:} By running \colorbox{gray!30}{encode\_at(~)} instead of \colorbox{gray!30}{encode(~)} from the encoder library, the timestamp of the frame can be sent as a parameter. This is important for the encoder because it allows the encoder's rate control to measure how much time has passed since the last frame, and with that information decides how many bits can be allocated to this incoming frame.
+    \item \textbf{Encoder Complexity: } Specifies how much to prioritize speed over quality on the encoder process, with options ranging from Low (faster speeds, lower quality) to High (better quality, worse speed).
+    \item \textbf{Usage Type: } Specifies the context of what is being streamed, to prioritize some qualities over other. The options are 'CameraVideoRealTime', 'ScreenContentRealTime', 'CameraVideoNonRealTime', 'ScreenContentNonRealTime', and 'InputContentTypeAll'. 
+    
+\end{enumerate} These tests were done to compare how much does each selection affect the stream's quality and performance.
+
+\begin{figure}[htbp]
+        \centering
+        \includegraphics[width=\textwidth]{fig3_encoder_ab.pdf}
+        \caption{Encoder settings comparison}
+        \label{fig:graph3}
+\end{figure}
+
+It is apparent how in all 3 metrics, the best performer was
 
 
 \subsection{Conclusion}
