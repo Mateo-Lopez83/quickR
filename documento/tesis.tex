@@ -201,6 +201,7 @@ application, to be followed by a series of tests and performance comparisons aga
 \end{itemize}
 
 \section{State of the Art}
+\label{sec:stateart}
     \subsection{Parsec} Parsec is a desktop application whose main goal is to allow for a seamless experience using remote desktop connections, with online gaming as the primary focus, but allowing for connections to cloud devices and personal computers as well.
         According to the information provided by the official Parsec Team (including 2 different blog posts and a talk at Code Driven NYC~\cite{parsec_streaming,parsec_udp_primer,parsec_udp_slides}), this application's streaming logic was built based these
         priorities in the following order of importance: \textbf{latency, then frame rate, then video quality}. To achieve the goal set on reducing latency to the absolute minimum, many standard technologies were
@@ -658,9 +659,68 @@ can cut in half the amount of Skip frames, reducing the time the encoder is bein
 
 \subsubsection{Cross-comparison with other streaming services}
 
+To further test the streaming performance of the proposed app, it proved necessary to realize a benchmark test comparing QuickR against similar applications. To acquire meaningful insights, the comparison has to be done on consistent conditions, both network and hardware-wise. Taking into account the analysis done on section~\ref{sec:stateart}, the programs selected to be compared against QuickR are Parsec and Discord's \textit{Go Live} feature.  The selection was done primarily to have two alternatives that offer similar screen-streaming services, although with some differences between each other. 
+Even though Parsec is built on a similar P2P architecture, Discord makes use of relay servers on each stream. These differences offer enough of a contrast to make testing viable.
+
+To perform these tests, the test configuration has to be consistent between sessions and services. To achieve thisgoal, all testing rounds were realized on the same hardware, listed as follows:
+\begin{itemize}
+    \item \textbf{Sender device: } Windows 11-based laptop with an AMD Ryzen 5 5600H as its CPU, with 6 logical cores. As its GPU, it used an integrated AMD Radeon graphics card.
+    \item \textbf{Receiver device: } Windows 11-based laptop with (specs de Tomas)
+\end{itemize}
+The same video clip was used for all testing rounds, this being an animated, 1 minute and 30 seconds long video in 30fps. This video was chosen because its length was apt for benchmark testing, the framerate was adequate, and it had enough screen movement and full-screen cuts to avoid having very small DeltaFrames due to the small amount of information that changes. Since Discord's free tier for screen sharing caps the resolution to 720p, all three services were downscaled respectively to have similar frame sizes on all accounds.
+
+For the testing rounds, 3 different rounds were done in alternating order (QuickR -> Discord -> Parsec for round one, then Parsec -> Discord, QuickR for round two). The first two rounds had normal network conditions, while the final round used Clumsy (an open-source windows tool to simulate degraded network conditions) to simulate a 5\% packet loss on the sender. Each run was approximately 90 seconds long, with the first 15 seconds of each session being discarded to avoid any data outliers on the measurements.
+
+Due to both Parsec and Discord being closed-source applications, measurements had to be done manually by having the receiver record their own screen at 60fps, where the recording was subsequently analized for the same metrics across all services:
+\begin{itemize}
+    \item FPS: Median amount of frames changed during one second on the receiver's screen
+    \item Freeze: Gaps on the receiver's screen where the frame is not updated for more than 700ms
+    \item Latency: Using 
+\end{itemize}
+
+\begin{table}[htbp]
+\centering
+\footnotesize
+\renewcommand{\arraystretch}{1.3}
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{|l|l|l|r|r|r|r|r|}
+\hline
+\textbf{Condition} & \textbf{App} & \textbf{Path} & \textbf{FPS} & \textbf{Freeze} & \textbf{Latency} & \textbf{Bitrate} & \textbf{Sender CPU} \\
+ & & & & (\%) & (ms) & (Mbps) & (\%) \\
+\hline
+Baseline & QuickR & P2P & 15.8 & 0.0 & 192 & 1.12 & 8.7 \\
+\cline{2-8}
+ & Parsec & P2P & 57.1  & 0.0 & 60 & 3.01 & 2.9 \\
+\cline{2-8}
+ & Discord & Relay & 29.1 & 1.3 & 316 & 3.42 & 4.3 \\
+\hline
+5 \% packet loss & QuickR & P2P & 0.2 & 98.5 & 216$^{*}$ & 1.09 & 8.9 \\
+\cline{2-8}
+ & Parsec & P2P & 43.5 & 3.9 & 94 & 3.04 & 2.8 \\
+\cline{2-8}
+ & Discord & Relay & 26.9 & 1.6 & 468 & 3.46 & 4.8 \\
+\hline
+\end{tabular}
+\caption{Performance of QuickR, Parsec and Discord streaming the same 720p clip between the same two devices. Baseline values are the mean of two runs; the packet-loss condition is a single run. Latency is the median of clock readings between the sender and the receiver's clocks, corrected for clock offset ($\pm$40\,ms). Sender CPU is the share of the whole 12-core CPU. $^{*}$Only 3 frames could be read because the stream was frozen 98\,\% of the time.}
+\label{tab:crosscomparison}
+\end{table}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{fig_cmp_fps_freeze.pdf}
+    \caption{Frames shown per second and freeze time per application, under normal conditions and with 5\,\% outbound packet loss.}
+    \label{fig:cmp_fps}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{fig_cmp_latency.pdf}
+    \caption{Glass-to-glass latency of freshly delivered frames. Each dot is one clock reading; the bar is the median.}
+    \label{fig:cmp_latency}
+\end{figure}
 
 \subsection{Conclusion}
-
+\colorbox{red!30}{TODO}
 
 
 

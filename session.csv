@@ -1,0 +1,10 @@
+run_id,round,app,condition,res_setting,fps_setting,share_mode,time_start,time_end,time_to_first_frame_s,res_actual,quickr_logs,valid,notes, sender_offset_start_ms,receiver_offset_start_ms 
+R01,1,quickr,base,720p,,entire screen,21:46:40,21:48:17,2,,finalsend1.out/ finalrec1.out,y,,-288,-36
+R02,1,parsec,base,720p,60,entire screen,21:49:17,21:50:57,0.4,,,y,,-288,-36
+R03,1,discord,base,720p,30,entire screen,21:51:17,21:52:57,2,,,y,,-288,-36
+R06,2,parsec,base,720p,60,entire screen,21:53:17,21:54:55,4,,,y,,-288,-36
+R07,2,discord,base,720p,30,entire screen,21:55:09,21:56:55,2,,,y,,-288,-36
+R08,2,quickr,base,720p,,entire screen,21:57:36,21:59:22,3,,finalsend2.out/ finalrec2.out,y,,-288,-36
+R09,3,quickr,loss5,720p,,entire screen,22:03:24,22:05:06,3,,finalsend3.out/ finalrec3.out,y,,-288,-36
+R10,3,discord,loss5,720p,30,entire screen,22:05:20,22:06:50,0.3,,,y,,-288,-36
+R11,3,parsec,loss5,720p,60,entire screen,22:07:05,22:08:43,3,,,y,,-288,-36
